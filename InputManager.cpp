@@ -52,10 +52,10 @@ class InputManager {
 					case Keyboard::Scancode::Up:
 						player2Jumped = true;
 						break;
-					case Keyboard::Scancode::F:
+					case Keyboard::Scancode::J:
 						player1Shot = true;
 						break;
-					case Keyboard::Scancode::Period:
+					case Keyboard::Scancode::Space:
 						player2Shot = true;
 						break;
 				}
