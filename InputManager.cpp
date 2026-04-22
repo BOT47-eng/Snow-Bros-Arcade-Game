@@ -13,6 +13,7 @@ class InputManager {
 		//0-left, 1-right, 2-up, 3-shoot
 		Keyboard::Scancode player1Keys[4] = { Keyboard::Scancode::Left , Keyboard::Scancode::Right , Keyboard::Scancode::Space , Keyboard::Scancode::J };
 		Keyboard::Scancode player2Keys[4] = { Keyboard::Scancode::A , Keyboard::Scancode::D , Keyboard::Scancode::W , Keyboard::Scancode::Space };
+		//P-Esc for pause and H-F1 for debug hitbox mode
 
 	public:
 		void setKeys(Keyboard::Scancode player1[4], Keyboard::Scancode player2[4])
@@ -36,24 +37,55 @@ class InputManager {
 		}
 
 		//Movement does not use events and hence is smooth/continuous
-		bool p1Left()
+		bool p1Left() const
 		{
 			return Keyboard::isKeyPressed(player1Keys[0]);
 		}
 
-		bool p2Left()
+		bool p2Left() const
 		{
 			return Keyboard::isKeyPressed(player2Keys[0]);
 		}
 
-		bool p1Right()
+		bool p1Right() const
 		{
 			return Keyboard::isKeyPressed(player1Keys[1]);
 		}
 
-		bool p2Right()
+		bool p2Right() const
 		{
 			return Keyboard::isKeyPressed(player2Keys[1]);
+		}
+	
+		//Getters for event checkers
+		bool gamePause() const
+		{
+			return gamePaused;
+		}
+
+		bool debug() const
+		{
+			return debugHit;
+		}
+
+		bool p1Jump() const
+		{
+			return player1Jumped;
+		}
+
+		bool p2Jump() const
+		{
+			return player2Jumped;
+		}
+
+		bool p1Shoot() const
+		{
+			return player1Shot;
+		}
+
+		bool p2Shoot() const
+		{
+			return player2Shot;
 		}
 
 		//Both jump and shoot uses events so they can only happen once per press
@@ -76,6 +108,14 @@ class InputManager {
 				else if (event.key.scancode == player2Keys[3])
 				{
 					player2Shot = true;
+				}
+				else if (event.key.scancode == Keyboard::Scancode::P || event.key.scancode == Keyboard::Scancode::Escape)
+				{
+					gamePaused = true;
+				}
+				else if (event.key.scancode == Keyboard::Scancode::H || event.key.scancode == Keyboard::Scancode::F1)
+				{
+					debugHit = true;
 				}
 			}
 		}
