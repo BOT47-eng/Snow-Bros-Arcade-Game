@@ -23,8 +23,8 @@ float y;
 float dx ;
 float dy ;
 
-/////////////////////
-///// HitBox
+////////////////////////////////
+///// Different Sprite Animation 
 sf::Texture EnemySpriteTexture ; 
 HitboxSprite EnemySprite;
 sf::Texture *EnemySpriteAnimationsTextures_X ; 
@@ -32,7 +32,10 @@ sf::Sprite *EnemySpriteAnimations_X ; // It will only store the different animat
 sf::Texture *EnemySpriteAnimationsTextures_Y ; 
 sf::Sprite *EnemySpriteAnimations_Y ; // It will only store the different animation of enemy wrt y movement  , which we can assign to the main sprite hitbox
 int TotalAnimationNumber_X;
-int TotalAnimationNumber_Y; 
+int TotalAnimationNumber_Y;
+
+int CurrentIndexofAnimation_X ; 
+int CurrentIndexofAnimation_Y ; 
 
 
 
@@ -57,7 +60,9 @@ void setEnemySpriteAnimationsTexture_X(sf::Texture *t , const int SIZE) ;
 void setEnemySpriteAnimationsTexture_Y(sf::Texture *t , const int SIZE) ; 
 void setEnemySpriteAnimation_X(sf::Sprite *S  , const int SIZE) ;
 void setEnemySpriteAnimation_Y(sf::Sprite *S  , const int SIZE) ;
-void setTotalAnimationNumber(int n) ;
+void setTotalAnimationNumber_X(int n) ;
+void setTotalAnimationNumber_Y(int n) ;
+
 
 ////////////////////////////
 ////// Getters 
@@ -74,7 +79,7 @@ float getDy() const {return dy;}
 
 
 public :
-Enemy(): health(0) , x(0) ,  y(0) , dx(0) , dy(0) , TotalAnimationNumber_X(0) , TotalAnimationNumber_Y(0)
+Enemy(): health(0) , x(0) ,  y(0) , dx(0) , dy(0) , TotalAnimationNumber_X(0) , TotalAnimationNumber_Y(0) , CurrentIndexofAnimation_X(0) , CurrentIndexofAnimation_Y(0)
 {
     EnemySpriteAnimationsTextures_X = nullptr ;
     EnemySpriteAnimations_X = nullptr ;
@@ -102,9 +107,8 @@ virtual ~Enemy()
 }
 
 
-void Gravityfactor() ; // Not Necessary to affect all the enemies
 //////////////////////
-//// Main Functions 
+//// Main Functions for Every Enemy 
 virtual void CreateEnemy() = 0 ;
 virtual void Update() = 0 ;
 virtual void Draw() = 0 ;
