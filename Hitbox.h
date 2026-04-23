@@ -19,6 +19,6 @@ public:
 
 	bool intersects(const FloatRect& rect) const;
 
-	void drawHitbox(sf::RenderWindow& window, Color color = Color::Green) const;
+	void drawHitbox(RenderWindow& window, Color color = Color::Green) const;
 
 };

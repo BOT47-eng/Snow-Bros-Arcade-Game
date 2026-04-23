@@ -20,7 +20,7 @@ bool HitboxSprite::intersects(const FloatRect& rect) const
 	return getGlobalHitbox().intersects(rect);
 }
 
-void HitboxSprite::drawHitbox(sf::RenderWindow& window, Color color = Color::Green) const
+void HitboxSprite::drawHitbox(RenderWindow& window, Color color = Color::Green) const
 {
 	FloatRect temp = getGlobalHitbox();
 	RectangleShape outline(Vector2f(temp.width, temp.height));

@@ -3,7 +3,7 @@
 
 const float Player::INVINCIBLE_TIME = 1.5f;
 
-Player::Player(int index, PlayerStats stats) : stats(stats), m_index(index), m_velocityX(0.f), m_velocityY(0.f), m_onGround(false), m_wantsShoot(false), m_lives(3), m_gems(0), m_score(0), m_invincible(false), m_invincibleTimer(0.f)
+Player::Player(int index, PlayerStats stats) : stats(stats), m_index(index), m_velocityX(0), m_velocityY(0), m_onGround(false), m_wantsShoot(false), m_lives(3), m_gems(0), m_score(0), m_invincible(false), m_invincibleTimer(0.f)
 {
     if (index == 0)
         m_facingRight = true;
@@ -85,7 +85,7 @@ void Player::update(float dt)
     if (!isAlive()) 
         return;
 
-    tickInvincibility(dt);
+    updateInvincibility(dt);
 }
 
 void Player::draw(RenderWindow& window, bool debug) const
