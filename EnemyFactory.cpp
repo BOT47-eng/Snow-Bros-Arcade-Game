@@ -11,21 +11,32 @@ void Enemy::setPos(sf::Vector2f v)
    x = v.x; 
    y = v.y ;
 }
-void Enemy::setDx(float d) 
+void Enemy::setVx(float d) 
 {
-    dx = d ; 
+    Vx = d ; 
 }
-void Enemy::setDy(float d) 
+void Enemy::setVy(float d) 
 {
-    dy = d ;
+    Vy = d ;
 } 
-void Enemy::setEnemyTexture(sf::Texture T) 
+void Enemy::setCopyVx(float d)
+{
+    CopyVx = d ; 
+}
+
+void Enemy::setCopyVy(float d)
+{
+    CopyVy = d ; 
+}
+void Enemy::setEnemyTexture(const sf::Texture& T) 
 {
     EnemySpriteTexture = T ;
 }
-void Enemy::setEnemyHitBoxSprite(HitboxSprite h) 
+void Enemy::setEnemyHitBoxSprite() // Just Call it To change the current Set Texture
 {
-    EnemySprite = h ;
+    EnemySprite.setTexture(EnemySpriteTexture) ;
+    sf::FloatRect bounds = EnemySprite.getLocalBounds();
+    EnemySprite.setHitbox(bounds);
 }
 void Enemy::setEnemySpriteAnimationsTexture_X(sf::Texture *t , const int SIZE)
 {
