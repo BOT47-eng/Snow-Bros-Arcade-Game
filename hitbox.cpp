@@ -20,7 +20,9 @@ bool HitboxSprite::intersects(const FloatRect& rect) const
 	return getGlobalHitbox().intersects(rect);
 }
 
-void HitboxSprite::drawHitbox(RenderWindow& window, Color color = Color::Green) const
+// By Saad :
+// Removed the default argument of color,  cannot redefine it if already define .h file 
+void HitboxSprite::drawHitbox(RenderWindow& window, Color color) const
 {
 	FloatRect temp = getGlobalHitbox();
 	RectangleShape outline(Vector2f(temp.width, temp.height));

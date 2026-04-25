@@ -36,4 +36,5 @@ public:
     { 
         return m_sprite.getGlobalHitbox();
     }
+    HitboxSprite getHitboxSprite() const {return m_sprite;}
 };
