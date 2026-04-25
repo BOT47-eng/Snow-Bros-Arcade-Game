@@ -152,7 +152,8 @@ Botom() : isLeft(false) , isRight(true) , isJumping(false) , isFallingDown(false
 } 
 void UpdateDirection_X()
 {
-    if(timeToChangeDirection.getElapsedTime().asSeconds() > 3)
+    int RandomTimeToChangeDirection = (rand() % (5 - 3 + 1)) + 3 ; // To make the movement feel more natural
+    if(timeToChangeDirection.getElapsedTime().asSeconds() > RandomTimeToChangeDirection)
     {
         setVx(-getVx()) ; 
         timeToChangeDirection.restart() ; 
@@ -197,30 +198,41 @@ void UpdateY(float dt)
 {
     y += Vy * dt ;
 }
-void CheckCollionsWithScreen(const float width , const float height)
+bool CheckCollionsWithScreenX(const float width , const float height)
 {
+    bool flag = false ; 
     if (x + EnemySprite.getGlobalBounds().width > width)
     {
         x = width - EnemySprite.getGlobalBounds().width; 
-        setVx(-abs(getVx())); 
+        setVx(-abs(getVx()));
+        flag = true ; 
     }
     else if (x < 0)
     {
         x = 0; 
-        setVx(abs(getVx())); 
+        setVx(abs(getVx()));
+        flag = true ; 
     }
-
+    EnemySprite.setPosition(x, y);
+    return flag ;
+}
+bool CheckCollionsWithScreenY(const float width , const float height)
+{
+    bool flag = false ;
     if (y + EnemySprite.getGlobalBounds().height > height)
     {
         y = height - EnemySprite.getGlobalBounds().height; 
         setVy(0); // It has to walk so change in y is now 0 else if bounce setVy(-abs(getVy())) ; 
+        flag = true ;
     }
     else if (y < 0)
     {
         y = 0;
         setVy(abs(getVy())); 
+        flag = true ;
     }
     EnemySprite.setPosition(x, y);
+    return flag ;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //// Return True if It is on land else it return false in which case we have add the gravity factor
@@ -257,13 +269,14 @@ bool CheckCollosionsWithPlatforms(sf::RenderWindow &mywindow, Block *b, const in
                 {
                     y = blockBox.top - enemyBox.height; 
                     setVy(0);             
-                    true ;
+                    OnLand = true ;
                 }
             }
             
             // CRITICAL: Update the sprite's position immediately so it doesn't get stuck
             EnemySprite.setPosition(x, y);
         }
+        b[st].draw(mywindow , true) ;
     }
     return OnLand ;
 }
@@ -286,23 +299,31 @@ void Update(sf::RenderWindow &mywindow , const float dt , Block *B , const int B
 
     //////////////////////////////////////////
     /// Update the Position  of the sprite 
+    UpdateX(dt) ; // it will always be moving in x-direction
+    UpdateY(dt);
 
-    // JUST A TEST CHANGE ACCORDING TO NEED 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-      {  setVy(getVy());
-        UpdateY(dt) ;}
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-       { setVy(-getVy());
-        UpdateY(dt) ;
-       }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        UpdateX(dt) ; 
-    UpdateDirection_X() ;
 
     EnemySprite.setPosition(x , y) ;
 
+    UpdateDirection_X() ;
+    if(getVx() > 0)
+    {
+        isRight = true ; 
+        isLeft = false ; 
+    }
+    else 
+    {
+        isLeft = true ;
+        isRight = false ;
+    }
 
-    CheckCollionsWithScreen(mywindow.getSize().x  , mywindow.getSize().y) ; 
+
+
+    CheckCollionsWithScreenX(mywindow.getSize().x  , mywindow.getSize().y) ; 
+    CheckCollionsWithScreenY(mywindow.getSize().x  , mywindow.getSize().y) ; 
+    /// If the enemy Jumps Ignore  the platform collosions and go up till the box it is currently colliding with is not below it.
+    if(!isJumping) 
+    {
     bool CheckCollosionAndAlsoTellIfEnemyisOnLand = CheckCollosionsWithPlatforms(mywindow , B , BLOCKSIZE);
     if(!CheckCollosionAndAlsoTellIfEnemyisOnLand)
     {
@@ -313,14 +334,18 @@ void Update(sf::RenderWindow &mywindow , const float dt , Block *B , const int B
     else
     {
         // Else enemy is on land set it's Vx 
-        setVx(CopyVx) ; 
+        isFallingDown = false ;
+        setVx(getVx()) ; 
+        setVy(0) ;
     }
+    }
+
+    
     
     EnemyWantsToJumporNot() ; 
 
     if(isJumping && float(JumpInterval.getElapsedTime().asSeconds()) < 0.3)
     {
-        setVx(0) ; 
         const int JumpFactorToSpeed = 1000 ;
         setVy(-getVy() - JumpFactorToSpeed) ;
     }
@@ -329,10 +354,6 @@ void Update(sf::RenderWindow &mywindow , const float dt , Block *B , const int B
         isJumping = false ; 
         setVy(gravityfactor) ; 
     }
-    UpdateY(dt);
-
-    /// If the enemy Jumps Ignore  the platform collosions and go up till the box it is currently colliding with is not below it.
-
 }
 
 

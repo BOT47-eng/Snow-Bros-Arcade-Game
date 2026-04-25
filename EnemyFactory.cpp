@@ -35,6 +35,7 @@ void Enemy::setEnemyTexture(const sf::Texture& T)
 void Enemy::setEnemyHitBoxSprite() // Just Call it To change the current Set Texture
 {
     EnemySprite.setTexture(EnemySpriteTexture) ;
+    EnemySprite.setScale({0.5 , 0.5}); 
     sf::FloatRect bounds = EnemySprite.getLocalBounds();
     EnemySprite.setHitbox(bounds);
 }

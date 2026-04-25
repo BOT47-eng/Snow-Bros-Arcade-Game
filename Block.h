@@ -11,11 +11,13 @@ private:
     HitboxSprite m_sprite;
 
 public:
+    Block() {} 
+
     Block(float x, float y, float width, float height, const Texture& texture)
     {
         m_sprite.setHitbox(FloatRect{ 0,0,width,height });
         m_sprite.setPosition(x, y);
-        m_sprite.setTexture(texture);
+        // m_sprite.setTexture(texture);
     }
 
     void draw(RenderWindow& window, bool debug = false) const
