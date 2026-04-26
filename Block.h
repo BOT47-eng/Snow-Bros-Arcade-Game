@@ -20,9 +20,16 @@ public:
         // m_sprite.setTexture(texture);
     }
 
+    Block(float x, float y, float width, float height)
+    {
+        m_sprite.setHitbox(FloatRect{ 0,0,width,height });
+        m_sprite.setPosition(x, y);
+    }
+
     void draw(RenderWindow& window, bool debug = false) const
     {
         window.draw(m_sprite);
+
         if (debug)
         {
             RectangleShape hitbox(Vector2f(m_sprite.getGlobalHitbox().width, m_sprite.getGlobalHitbox().height));
@@ -32,11 +39,17 @@ public:
             hitbox.setOutlineThickness(1.f);
             window.draw(hitbox);
         }
+        else
+        {
+            RectangleShape hitbox(Vector2f(m_sprite.getGlobalHitbox().width, m_sprite.getGlobalHitbox().height));
+            hitbox.setPosition(m_sprite.getGlobalHitbox().left, m_sprite.getGlobalHitbox().top);
+            hitbox.setFillColor(Color(230, 216, 25, 255));
+            window.draw(hitbox);
+        }
     }
 
     FloatRect getHitbox() const 
     { 
         return m_sprite.getGlobalHitbox();
     }
-    HitboxSprite getHitboxSprite() const {return m_sprite;}
 };

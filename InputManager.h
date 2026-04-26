@@ -12,7 +12,7 @@ private:
 	bool gamePaused, debugHit;
 
 	//0-left, 1-right, 2-up, 3-shoot
-	Keyboard::Scancode player1Keys[4] = { Keyboard::Scancode::Left , Keyboard::Scancode::Right , Keyboard::Scancode::Space , Keyboard::Scancode::J };
+	Keyboard::Scancode player1Keys[4] = { Keyboard::Scancode::Left , Keyboard::Scancode::Right , Keyboard::Scancode::Up , Keyboard::Scancode::J };
 	Keyboard::Scancode player2Keys[4] = { Keyboard::Scancode::A , Keyboard::Scancode::D , Keyboard::Scancode::W , Keyboard::Scancode::Space };
 	//P-Esc for pause and H-F1 for debug hitbox mode
 

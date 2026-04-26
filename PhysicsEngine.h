@@ -6,7 +6,7 @@
 class PhysicsEngine
 {
 public:
-    static const int MAX_PLATFORMS = 64;
+    static const int MAX_PLATFORMS = 80;
 private:
     void applyGravity(Player& player, float dt) const;
     void checkPlatforms(Player& player, float dt) const;
@@ -33,3 +33,4 @@ public:
     //for both players
     void update(Player& p1, Player& p2, float dt); 
 };
+

@@ -102,5 +102,5 @@ void PhysicsEngine::wrapScreen(Player& player) const
     if (playerHitbox.left + playerHitbox.width < 0)
         player.setPosition(Vector2f(m_screenWidth, pos.y));
     else if (playerHitbox.left > m_screenWidth)
-        player.setPosition(Vector2f(-playerHitbox.width, pos.y));
+        player.setPosition(Vector2f(0, pos.y));
 }

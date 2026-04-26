@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Hitbox.h"
 #include "InputManager.h"
+#include "AnimationComponent.h"
 
 //These stats can be loaded from config file
 struct PlayerStats
@@ -23,14 +24,26 @@ private:
     float m_velocityX;
     float m_velocityY;
     float m_invincibleTimer;
+    float m_snowballTimer;
     bool m_onGround;
     bool m_facingRight;
     bool m_wantsShoot;
     bool m_invincible;
+    bool m_isShooting;
 
     HitboxSprite m_sprite;
 
+    void updateAnimation(float dt);     // tick current anim + apply frame to sprite
+    void selectAnimation();
+
+    AnimationComponent m_animIdle;
+    AnimationComponent m_animWalk;
+    AnimationComponent m_animJump;
+    AnimationComponent m_animShoot;
+    AnimationComponent* m_currentAnim;
+
     static const float INVINCIBLE_TIME;
+    static const float SNOWBALL_COOLDOWN;
 
 public:
     Player(int index, PlayerStats stats = PlayerStats());
@@ -39,6 +52,8 @@ public:
     void handleInput(const InputManager& input, float dt);
     void update(float dt);
     void draw(RenderWindow& window, bool debug = false) const;
+
+    void loadSpritesheet(const Texture& tex, const IntRect* idleFrames, int idleCount, const IntRect* walkFrames, int walkCount, const IntRect* jumpFrames, int jumpCount, const IntRect* fallFrames, int fallCount, FloatRect        hitboxRect, float            frameDuration = 0.1f);
 
     //These functions are for moving and pushing player out of walls, ceiling and ground
     void applyVelocity(float dt);          
@@ -128,6 +143,8 @@ public:
     { 
         m_onGround = v; 
     }
+
+    void setDirectionRight(bool faceRight);
 
     PlayerStats stats;
 };

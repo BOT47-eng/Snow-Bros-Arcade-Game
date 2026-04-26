@@ -18,7 +18,7 @@ void Snowball::setTexture(const Texture& texture)
 void Snowball::loadSpritesheet(const Texture& texture, const IntRect* frames, int count, float duration)
 {
     m_sprite.setTexture(texture);
-    m_anim.load(frames, count, duration, true);
+    m_anim.loadSprite(frames, count, duration, true);
     m_animated = true;
     m_sprite.setTextureRect(m_anim.getCurrentFrame());
 }
@@ -64,7 +64,9 @@ void Snowball::update(float dt)
     }
 
     if (m_distTraveled >= m_maxDistance)
+    {
         m_active = false;
+    }
 }
 
 void Snowball::draw(RenderWindow& window, bool debug) const
