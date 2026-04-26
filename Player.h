@@ -3,6 +3,7 @@
 #include "Hitbox.h"
 #include "InputManager.h"
 #include "AnimationComponent.h"
+#include "Projectile.h"
 
 //These stats can be loaded from config file
 struct PlayerStats
@@ -14,8 +15,16 @@ struct PlayerStats
 //Player 1 is 0 index, Player 2 is 1 index
 class Player
 {
+public:
+    static const int MAX_BALLS = 16;
+    static const int SCREEN_WIDTH = 600;
 private:
+    Texture playerTexture;
+
     void updateInvincibility(float dt);
+
+    Snowball m_balls[MAX_BALLS];
+    float m_cooldown;
 
     int m_index;
     int m_lives;
@@ -25,11 +34,19 @@ private:
     float m_velocityY;
     float m_invincibleTimer;
     float m_snowballTimer;
+    float m_snowballCooldown;
     bool m_onGround;
     bool m_facingRight;
     bool m_wantsShoot;
     bool m_invincible;
     bool m_isShooting;
+
+    const FloatRect playerHitbox = { 0, 0, 60, 72 };
+    const IntRect idlePlayerFrames = { IntRect(19, 3, 57, 72) };
+    const IntRect walkPlayerFrames[3] = { IntRect(100, 3, 45, 72), IntRect(185 , 3, 52, 73), IntRect(269, 1, 49, 74) };
+    const IntRect jumpPlayerFrames[6] = { IntRect(9, 83, 60, 75), IntRect(95, 83, 60, 65), IntRect(180, 83, 60, 65), IntRect(263, 85, 60, 75), IntRect(351, 88, 60, 70), IntRect(433, 86, 68, 68) };
+    const IntRect shootPlayerFrames = { IntRect(252, 172, 72, 72) };
+    IntRect snowballFrames = { IntRect(514, 1022, 22, 33) };
 
     HitboxSprite m_sprite;
 
@@ -43,7 +60,6 @@ private:
     AnimationComponent* m_currentAnim;
 
     static const float INVINCIBLE_TIME;
-    static const float SNOWBALL_COOLDOWN;
 
 public:
     Player(int index, PlayerStats stats = PlayerStats());
@@ -53,7 +69,7 @@ public:
     void update(float dt);
     void draw(RenderWindow& window, bool debug = false) const;
 
-    void loadSpritesheet(const Texture& tex, const IntRect* idleFrames, int idleCount, const IntRect* walkFrames, int walkCount, const IntRect* jumpFrames, int jumpCount, const IntRect* fallFrames, int fallCount, FloatRect        hitboxRect, float            frameDuration = 0.1f);
+    void loadSpritesheet(const Texture& texture, const IntRect* idleFrames, int idleCount, const IntRect* walkFrames, int walkCount, const IntRect* jumpFrames, int jumpCount, const IntRect* fallFrames, int fallCount, FloatRect        hitboxRect, float            frameDuration = 0.1f);
 
     //These functions are for moving and pushing player out of walls, ceiling and ground
     void applyVelocity(float dt);          
@@ -143,8 +159,16 @@ public:
     { 
         m_onGround = v; 
     }
-
     void setDirectionRight(bool faceRight);
+
+    //For snowballs
+    void setTextureSnowball(const Texture& texture);
+    void loadSpritesheetSnowball(const Texture& texture, const IntRect* frames, int count, float duration = 0.05);
+    void updateSnowballs(float dt);
+    Snowball& getBall(int i)
+    {
+        return m_balls[i];
+    }
 
     PlayerStats stats;
 };

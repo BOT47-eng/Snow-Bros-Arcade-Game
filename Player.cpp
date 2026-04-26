@@ -2,14 +2,28 @@
 #include <cmath>
 
 const float Player::INVINCIBLE_TIME = 1.5f;
-const float Player::SNOWBALL_COOLDOWN = 0.3f;
 
-Player::Player(int index, PlayerStats stats) : stats(stats), m_index(index), m_velocityX(0), m_velocityY(0), m_onGround(false), m_wantsShoot(false), m_lives(2), m_gems(0), m_score(0), m_invincible(false), m_invincibleTimer(0), m_currentAnim(&m_animIdle), m_isShooting(false), m_snowballTimer(0)
+Player::Player(int index, PlayerStats stats) : stats(stats), m_index(index), m_velocityX(0), m_velocityY(0), m_onGround(false), m_wantsShoot(false), m_lives(2), m_gems(0), m_score(0), m_invincible(false), m_invincibleTimer(0), m_currentAnim(&m_animIdle), m_isShooting(false), m_snowballTimer(0), m_cooldown(0), m_snowballCooldown(0.3f)
 {
     if (index == 0)
         m_facingRight = true;
     else
         m_facingRight = false;
+
+    if (index == 0)
+    {
+        playerTexture.loadFromFile("SnowBrosAssets/Images/Player_Blue.png");
+        setDirectionRight(true);
+        loadSpritesheetSnowball(playerTexture, &snowballFrames, 1);
+    }
+    else
+    {
+        playerTexture.loadFromFile("SnowBrosAssets/Images/Player_Red.png");
+        snowballFrames.left = 557;
+        loadSpritesheetSnowball(playerTexture, &snowballFrames, 1);
+    }
+
+    loadSpritesheet(playerTexture, &idlePlayerFrames, 1, walkPlayerFrames, 3, jumpPlayerFrames, 6, &shootPlayerFrames, 1, playerHitbox);
 }
 
 void Player::setTexture(const Texture& texture, IntRect rect)
@@ -94,7 +108,7 @@ void Player::handleInput(const InputManager& input, float dt)
     {
         m_wantsShoot = true;
         m_isShooting = true;
-        m_snowballTimer = SNOWBALL_COOLDOWN;
+        m_snowballTimer = m_snowballCooldown;
     }
 }
 
@@ -128,6 +142,7 @@ void Player::update(float dt)
         }
     }
 
+    updateSnowballs(dt);
     updateInvincibility(dt);
     updateAnimation(dt);
 }
@@ -138,6 +153,9 @@ void Player::draw(RenderWindow& window, bool debug) const
         return;
 
     window.draw(m_sprite);
+
+    for (int i = 0; i < MAX_BALLS; i++)
+        m_balls[i].draw(window, debug);
 
     //For F1 debug later on
     if (debug)
@@ -273,5 +291,50 @@ void Player::selectAnimation()
     {
         m_currentAnim = next;
         m_currentAnim->reset();
+    }
+}
+
+void Player::setTextureSnowball(const Texture& texture)
+{
+    for (int i = 0; i < MAX_BALLS; i++)
+        m_balls[i].setTexture(texture);
+}
+
+void Player::loadSpritesheetSnowball(const Texture& texture, const IntRect* frames, int count, float duration)
+{
+    for (int i = 0; i < MAX_BALLS; i++)
+        m_balls[i].loadSpritesheet(texture, frames, count, duration);
+}
+
+void Player::updateSnowballs(float dt)
+{
+    if (m_cooldown > 0.f)
+        m_cooldown -= dt;
+
+    for (int i = 0; i < MAX_BALLS; i++)
+        m_balls[i].update(dt);
+
+    if (!consumeShoot() || m_cooldown > 0.f)
+        return;
+
+    for (int i = 0; i < MAX_BALLS; i++)
+    {
+        if (!m_balls[i].isActive())
+        {
+            FloatRect hitbox = getHitbox();
+
+            float spawnX = 0, spawnY = 0;
+            if (isFacingRight())
+                spawnX = hitbox.left + hitbox.width + 2.f;
+            else
+                spawnX = hitbox.left - 18.f;
+
+            spawnY = hitbox.top + hitbox.height * 0.35f;
+
+            m_balls[i].fire(Vector2f(spawnX, spawnY), isFacingRight(), SCREEN_WIDTH);
+
+            m_cooldown = m_snowballCooldown;
+            return;
+        }
     }
 }

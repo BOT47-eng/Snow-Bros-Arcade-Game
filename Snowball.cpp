@@ -5,7 +5,9 @@ using namespace sf;
 
 Snowball::Snowball() : m_animated(false), m_distTraveled(0), m_screenWidth(600), m_snowAmount(1), m_maxDistance(150), m_speed(250)
 {
-    m_sprite.setHitbox(FloatRect(1.f, 1.f, 14.f, 14.f));
+    FloatRect hitbox = m_sprite.getGlobalHitbox();
+    m_sprite.setHitbox(FloatRect(1, 1, 22, 33));
+    m_sprite.setOrigin(Vector2f(hitbox.width / 2.f, hitbox.height / 2.f));
 }
 
 void Snowball::setTexture(const Texture& texture)
@@ -26,9 +28,15 @@ void Snowball::loadSpritesheet(const Texture& texture, const IntRect* frames, in
 void Snowball::fire(Vector2f pos, bool facingRight, float screenWidth)
 {
     if (facingRight)
+    {
         m_Vx = m_speed;
+        m_sprite.setScale(-1, 1);
+    }
     else
+    {
         m_Vx = -m_speed;
+        m_sprite.setScale(1, 1);
+    }
     m_Vy = 0;
     m_distTraveled = 0;
     m_screenWidth = screenWidth;
@@ -55,7 +63,7 @@ void Snowball::update(float dt)
     if (hitbox.left + hitbox.width < 0.f)
         m_sprite.setPosition(Vector2f(m_screenWidth, pos.y));
     else if (hitbox.left > m_screenWidth)
-        m_sprite.setPosition(Vector2f(-hitbox.width, pos.y));
+        m_sprite.setPosition(Vector2f(0, pos.y));
 
     if (m_animated)
     {
