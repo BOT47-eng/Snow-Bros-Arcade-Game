@@ -17,7 +17,7 @@ public:
     {
         m_sprite.setHitbox(FloatRect{ 0,0,width,height });
         m_sprite.setPosition(x, y);
-        // m_sprite.setTexture(texture);
+         m_sprite.setTexture(texture);
     }
 
     Block(float x, float y, float width, float height)
