@@ -1,10 +1,89 @@
-#include "GameUnit.h"
+#include "GameUnit.hpp"
 
 using namespace std;
 using namespace sf;
 
 const float GameUnit::WIDTH = 600;
 const float GameUnit::HEIGHT = 600;
+
+void GameUnit::launchGame()
+{
+    //Latter on, button will be there for both players
+    drawLoginMenu(0);
+    loggedIn = loginPlayer[0].isLoggedIn();
+
+    if (loggedIn)
+        loginPlayer[1].setOtherPlayer(loginPlayer[0].getCurrentUser());
+
+    drawLoginMenu(1);
+    loggedIn = loginPlayer[1].isLoggedIn();
+
+    players[0] = loginPlayer[0].getCurrentUser();
+    players[1] = loginPlayer[1].getCurrentUser();
+
+    if (loggedIn)
+        drawTesting();
+
+}
+
+void GameUnit::drawLoginMenu(int loginIndex)
+{
+    Clock clock;
+    float dt = 0;
+
+    while (window.isOpen()) {
+
+        dt = clock.restart().asSeconds();
+
+        if (dt < 0.05)
+            dt = 0.05;
+
+        Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == Event::Closed) 
+            {
+                window.close();
+            }
+
+            if (!loginPlayer[loginIndex].isLoggedIn()) {
+                loginPlayer[loginIndex].handleInput(event, window);
+            }
+        }
+
+        window.clear();
+
+        string playerTextString = "";
+
+        if (loginIndex == 0)
+            playerTextString = "Player 1";
+        else
+            playerTextString = "Player 2";
+
+        Text playerText(playerTextString, fontHeader, 20);
+        playerText.setPosition(Vector2f(5, 5));
+
+        window.draw(playerText);
+
+        if (!loginPlayer[loginIndex].isLoggedIn())
+        {
+            loginPlayer[loginIndex].draw(window);
+        }
+        else 
+        {
+            if (loginIndex == 0)
+            {
+                cout << "Login Player 1 Successful!" << endl;
+            }
+            else
+            {
+                cout << "Login Player 2 Successful!" << endl;
+            }
+
+            return;
+        }
+        window.display();
+    }
+}
 
 void GameUnit::drawTesting()
 {
@@ -35,13 +114,12 @@ void GameUnit::drawTesting()
 
     InputManager input;
 
-    Font font;
-    bool fontOk = font.loadFromFile("SnowBrosAssets/Fonts/LEMONMILK-Regular.otf");
+    bool fontOk = fontHeader.loadFromFile("SnowBrosAssets/Fonts/header-font.ttf");
 
     Text hudText;
     if (fontOk)
     {
-        hudText.setFont(font);
+        hudText.setFont(fontHeader);
         hudText.setCharacterSize(16);
         hudText.setFillColor(Color::White);
     }
@@ -114,12 +192,12 @@ void GameUnit::drawTesting()
 
         if (fontOk)
         {
-            hudText.setString("P1  Lives:" + to_string(p1.getLives()) +
+            hudText.setString(players[0].username + "  Lives:" + to_string(p1.getLives()) +
                 "  Score:" + to_string(p1.getScore()));
             hudText.setPosition(8.f, 4.f);
             window.draw(hudText);
 
-            hudText.setString("P2  Lives:" + to_string(p2.getLives()) +
+            hudText.setString(players[1].username + "  Lives:" + to_string(p2.getLives()) +
                 "  Score:" + to_string(p2.getScore()));
             hudText.setPosition(8.f, 24.f);
             window.draw(hudText);
