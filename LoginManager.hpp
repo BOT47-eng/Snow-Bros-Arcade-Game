@@ -38,7 +38,7 @@ private:
     void saveUserToFile(PlayerInfo player);
     bool verifyCredentials(string username, string password);
     bool usernameExists(const string& username);
-    int generateUniqueID();
+
 public:
     LoginManager();
     void handleInput(Event& event, RenderWindow& window);

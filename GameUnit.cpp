@@ -10,19 +10,26 @@ void GameUnit::launchGame()
 {
     //Latter on, button will be there for both players
     drawLoginMenu(0);
-    loggedIn = loginPlayer[0].isLoggedIn();
+    loggedIn[0] = loginPlayer[0].isLoggedIn();
 
-    if (loggedIn)
+    if (loggedIn[0])
         loginPlayer[1].setOtherPlayer(loginPlayer[0].getCurrentUser());
 
     drawLoginMenu(1);
-    loggedIn = loginPlayer[1].isLoggedIn();
+    loggedIn[1] = loginPlayer[1].isLoggedIn();
+
+    if (loggedIn[1])
+        loginPlayer[0].setOtherPlayer(loginPlayer[1].getCurrentUser());
 
     players[0] = loginPlayer[0].getCurrentUser();
     players[1] = loginPlayer[1].getCurrentUser();
 
     if (loggedIn)
         drawTesting();
+
+    //Logout button
+    //Causes players to logout and players information is changed for gameUnit
+    //When logged out, player losses information about the other
 
 }
 

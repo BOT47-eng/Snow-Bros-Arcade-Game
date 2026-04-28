@@ -17,7 +17,7 @@ private:
 	bool isGameActive;
 	bool levelMenu;
 	bool leaderboard;
-	bool loginMenu, loggedIn;
+	bool loginMenu, loggedIn[2];
 	Font fontHeader, fontNormal;
 
 	PlayerInfo players[2];
@@ -25,7 +25,7 @@ private:
 	//Leaderboard leaderboard;
 	//Database manageSaves;
 public:
-	GameUnit() : isGameActive(false), levelMenu(false), leaderboard(false), loginMenu(false), loggedIn(false)
+	GameUnit() : isGameActive(false), levelMenu(false), leaderboard(false), loginMenu(false)
 	{
 		window.create(VideoMode({ 600,600 }), "SnowBros 25I-3014 25I-3039", Style::Close);
 		window.setFramerateLimit(60);
@@ -33,6 +33,9 @@ public:
 		fontNormal.loadFromFile("SnowBrosAssets/Fonts/normal-font.ttf");
 		loginPlayer[0].setFonts(fontHeader, fontNormal);
 		loginPlayer[1].setFonts(fontHeader, fontNormal);
+
+		loggedIn[0] = false;
+		loggedIn[1] = false;
 	}
 
 	void launchGame();

@@ -67,6 +67,12 @@ void LoginManager::logout()
     inputPassword = "";
     inputEmail = "";
     statusMessage = "Logged out successfully.";
+
+    if (otherPlayer.username != "Guest")
+    {
+        PlayerInfo temp;
+        otherPlayer = temp;
+    }
 }
 
 void LoginManager::handleInput(Event& event, RenderWindow& window)
