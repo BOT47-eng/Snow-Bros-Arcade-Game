@@ -1,26 +1,27 @@
-#include "PhysicsEngine.h"
+#include "PhysicsEngine.hpp"
+#include "GameUnit.hpp"
 #include <cmath>
 
 const float PhysicsEngine::GRAVITY = 980.f;
-const float PhysicsEngine::MAX_FALL_SPEED = 800.f;
+const float PhysicsEngine::TERMINAL_VELOCITY = 800.f;
 
-PhysicsEngine::PhysicsEngine(float screenWidth, float screenHeight) : m_screenWidth(screenWidth), m_screenHeight(screenHeight), m_blockCount(0)
+PhysicsEngine::PhysicsEngine() : blockCount(0)
 {
     for (int i = 0; i < MAX_PLATFORMS; i++)
-        m_blocks[i] = nullptr;
+        blocks[i] = nullptr;
 }
 
 void PhysicsEngine::addPlatform(Block* block)
 {
-    if (m_blockCount < MAX_PLATFORMS)
-        m_blocks[m_blockCount++] = block;
+    if (blockCount < MAX_PLATFORMS)
+        blocks[blockCount++] = block;
 }
 
 void PhysicsEngine::clearPlatforms()
 {
     for (int i = 0; i < MAX_PLATFORMS; i++)
-        m_blocks[i] = nullptr;
-    m_blockCount = 0;
+        blocks[i] = nullptr;
+    blockCount = 0;
 }
 
 void PhysicsEngine::update(Player& player, float dt)
@@ -49,16 +50,16 @@ void PhysicsEngine::applyGravity(Player& player, float dt) const
         return;
 
     float Vy = player.getVelocityY() + GRAVITY * dt;
-    if (Vy > MAX_FALL_SPEED)
-        Vy = MAX_FALL_SPEED;
+    if (Vy > TERMINAL_VELOCITY)
+        Vy = TERMINAL_VELOCITY;
     player.setVelocityY(Vy);
 }
 
 void PhysicsEngine::checkPlatforms(Player& player, float dt) const
 {
-    for (int i = 0; i < m_blockCount; i++)
+    for (int i = 0; i < blockCount; i++)
     {
-        Block* block = m_blocks[i];
+        Block* block = blocks[i];
 
         if (!block)
             continue;
@@ -88,7 +89,7 @@ void PhysicsEngine::checkPlatforms(Player& player, float dt) const
 
 void PhysicsEngine::checkFloor(Player& player) const
 {
-    float floorY = m_screenHeight - 8;
+    float floorY = GameUnit::HEIGHT - 8;
     FloatRect playerHitbox = player.getHitbox();
     if (playerHitbox.top + playerHitbox.height >= floorY)
         player.landPush(floorY);
@@ -100,7 +101,7 @@ void PhysicsEngine::wrapScreen(Player& player) const
     Vector2f  pos = player.getPosition();
 
     if (playerHitbox.left + playerHitbox.width < 0)
-        player.setPosition(Vector2f(m_screenWidth, pos.y));
-    else if (playerHitbox.left > m_screenWidth)
+        player.setPosition(Vector2f(GameUnit::WIDTH, pos.y));
+    else if (playerHitbox.left > GameUnit::WIDTH)
         player.setPosition(Vector2f(0, pos.y));
 }

@@ -9,13 +9,13 @@ public:
     static const int MAX_FRAMES = 24;
 
 private:
-    IntRect m_frames[MAX_FRAMES];
-    int m_frameCount;
-    int m_currentFrame;
-    float m_frameDuration;
-    float m_frameTimer;
-    bool m_looping;
-    bool m_finished;
+    IntRect frames[MAX_FRAMES];
+    int frameCount;
+    int currentFrame;
+    float frameDuration;
+    float frameTimer;
+    bool looping;
+    bool finished;
 
 public:
     AnimationComponent();

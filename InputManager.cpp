@@ -1,4 +1,4 @@
-#include "InputManager.h"
+#include "InputManager.hpp"
 
 
 void InputManager::setKeys(Keyboard::Scancode player1[4], Keyboard::Scancode player2[4])

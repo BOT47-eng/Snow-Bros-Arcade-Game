@@ -7,7 +7,7 @@ using namespace sf;
 
 class HitboxSprite : public Sprite {
 private:
-	FloatRect m_hitbox;
+	FloatRect hitbox;
 
 public:
 	void setHitbox(const FloatRect& hitbox);

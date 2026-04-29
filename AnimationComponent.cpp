@@ -1,50 +1,50 @@
-#include "AnimationComponent.h"
+#include "AnimationComponent.hpp"
 
-AnimationComponent::AnimationComponent() : m_frameCount(0), m_currentFrame(0), m_frameDuration(0.1f), m_frameTimer(0.f), m_looping(true), m_finished(false)
+AnimationComponent::AnimationComponent() : frameCount(0), currentFrame(0), frameDuration(0.1f), frameTimer(0.f), looping(true), finished(false)
 {
     for (int i = 0; i < MAX_FRAMES; i++)
-        m_frames[i] = IntRect(0, 0, 0, 0);
+        frames[i] = IntRect(0, 0, 0, 0);
 }
 
 void AnimationComponent::loadSprite(const IntRect* frames, int count, float frameDuration, bool looping)
 {
     if (count <= MAX_FRAMES)
-        m_frameCount = count;
+        frameCount = count;
     else
-        m_frameCount = MAX_FRAMES;
+        frameCount = MAX_FRAMES;
 
-    for (int i = 0; i < m_frameCount; i++)
-        m_frames[i] = frames[i];
+    for (int i = 0; i < frameCount; i++)
+        this->frames[i] = frames[i];
 
-    m_frameDuration = frameDuration;
-    m_looping = looping;
-    m_currentFrame = 0;
-    m_frameTimer = 0;
-    m_finished = false;
+    this->frameDuration = frameDuration;
+    this->looping = looping;
+    currentFrame = 0;
+    frameTimer = 0;
+    finished = false;
 }
 
 void AnimationComponent::update(float dt)
 {
-    if (m_frameCount == 0 || m_finished)
+    if (frameCount == 0 || finished)
         return;
 
-    m_frameTimer += dt;
+    frameTimer += dt;
 
-    if (m_frameTimer >= m_frameDuration)
+    if (frameTimer >= frameDuration)
     {
-        m_frameTimer -= m_frameDuration;
-        m_currentFrame++;
+        frameTimer -= frameDuration;
+        currentFrame++;
 
-        if (m_currentFrame >= m_frameCount)
+        if (currentFrame >= frameCount)
         {
-            if (m_looping)
+            if (looping)
             {
-                m_currentFrame = 0;
+                currentFrame = 0;
             }
             else
             {
-                m_currentFrame = m_frameCount - 1;  
-                m_finished = true;
+                currentFrame = frameCount - 1;  
+                finished = true;
             }
         }
     }
@@ -52,20 +52,20 @@ void AnimationComponent::update(float dt)
 
 IntRect AnimationComponent::getCurrentFrame() const
 {
-    if (m_frameCount == 0)
+    if (frameCount == 0)
         return IntRect(0, 0, 0, 0);
 
-    return m_frames[m_currentFrame];
+    return frames[currentFrame];
 }
 
 void AnimationComponent::reset()
 {
-    m_currentFrame = 0;
-    m_frameTimer = 0;
-    m_finished = false;
+    currentFrame = 0;
+    frameTimer = 0;
+    finished = false;
 }
 
 bool AnimationComponent::isFinished() const
 {
-    return m_finished;
+    return finished;
 }

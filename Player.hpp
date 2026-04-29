@@ -1,9 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Hitbox.h"
-#include "InputManager.h"
-#include "AnimationComponent.h"
-#include "Projectile.h"
+#include "Hitbox.hpp"
+#include "InputManager.hpp"
+#include "AnimationComponent.hpp"
+#include "Projectile.hpp"
 
 //These stats can be loaded from config file
 struct PlayerStats
@@ -23,23 +23,23 @@ private:
 
     void updateInvincibility(float dt);
 
-    Snowball m_balls[MAX_BALLS];
-    float m_cooldown;
+    Snowball snowballs[MAX_BALLS];
+    float cooldown;
 
-    int m_index;
-    int m_lives;
-    int m_gems;
-    int m_score;
-    float m_velocityX;
-    float m_velocityY;
-    float m_invincibleTimer;
-    float m_snowballTimer;
-    float m_snowballCooldown;
-    bool m_onGround;
-    bool m_facingRight;
-    bool m_wantsShoot;
-    bool m_invincible;
-    bool m_isShooting;
+    int index;
+    int lives;
+    int gems;
+    int score;
+    float velocityX;
+    float velocityY;
+    float invincibleTimer;
+    float snowballTimer;
+    float snowballCooldown;
+    bool onGround;
+    bool facingRight;
+    bool wantsShoot;
+    bool invincible;
+    bool isShooting;
 
     const FloatRect playerHitbox = { 0, 0, 60, 72 };
     const IntRect idlePlayerFrames = { IntRect(19, 3, 57, 72) };
@@ -48,16 +48,16 @@ private:
     const IntRect shootPlayerFrames = { IntRect(252, 172, 72, 72) };
     IntRect snowballFrames = { IntRect(514, 1022, 22, 33) };
 
-    HitboxSprite m_sprite;
+    HitboxSprite sprite;
 
     void updateAnimation(float dt);     // tick current anim + apply frame to sprite
     void selectAnimation();
 
-    AnimationComponent m_animIdle;
-    AnimationComponent m_animWalk;
-    AnimationComponent m_animJump;
-    AnimationComponent m_animShoot;
-    AnimationComponent* m_currentAnim;
+    AnimationComponent animIdle;
+    AnimationComponent animWalk;
+    AnimationComponent animJump;
+    AnimationComponent animShoot;
+    AnimationComponent* currentAnim;
 
     static const float INVINCIBLE_TIME;
 
@@ -80,68 +80,68 @@ public:
     void takeDamage();
     void addScore(int points) 
     { 
-        m_score += points;
+        score += points;
     }
     void addGems(int n) 
     { 
-        m_gems += n;
+        gems += n;
     }
     void addLife() 
     { 
-        m_lives++;
+        lives++;
     }
 
     FloatRect getHitbox() const;
     Vector2f getPosition() const 
     { 
-        return m_sprite.getPosition(); 
+        return sprite.getPosition(); 
     }
     float getVelocityX() const 
     { 
-        return m_velocityX; 
+        return velocityX; 
     }
     float getVelocityY() const 
     { 
-        return m_velocityY; 
+        return velocityY; 
     }
     bool isOnGround() const
     { 
-        return m_onGround; 
+        return onGround; 
     }
     bool isAlive() const 
     { 
-        return m_lives > 0;
+        return lives > 0;
     }
     bool isInvincible() const 
     { 
-        return m_invincible;
+        return invincible;
     }
     bool isFacingRight() const 
     { 
-        return m_facingRight; 
+        return facingRight; 
     }
     int getLives() const 
     { 
-        return m_lives; 
+        return lives; 
     }
     int getGems() const 
     { 
-        return m_gems; 
+        return gems; 
     }
     int getScore() const 
     { 
-        return m_score;
+        return score;
     }
     int getIndex() const 
     { 
-        return m_index; 
+        return index; 
     }
     
     //This returns shoot flag and resets it
     bool consumeShoot() 
     { 
-        bool temp = m_wantsShoot; 
-        m_wantsShoot = false; 
+        bool temp = wantsShoot; 
+        wantsShoot = false; 
         return temp; 
     }
 
@@ -149,15 +149,15 @@ public:
     void setPosition(Vector2f pos);
     void setVelocityX(float Vx) 
     { 
-        m_velocityX = Vx; 
+        velocityX = Vx; 
     }
     void setVelocityY(float Vy)
     { 
-        m_velocityY = Vy; 
+        velocityY = Vy; 
     }
     void setOnGround(bool v) 
     { 
-        m_onGround = v; 
+        onGround = v; 
     }
     void setDirectionRight(bool faceRight);
 
@@ -165,9 +165,10 @@ public:
     void setTextureSnowball(const Texture& texture);
     void loadSpritesheetSnowball(const Texture& texture, const IntRect* frames, int count, float duration = 0.05);
     void updateSnowballs(float dt);
+
     Snowball& getBall(int i)
     {
-        return m_balls[i];
+        return snowballs[i];
     }
 
     PlayerStats stats;

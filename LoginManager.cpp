@@ -61,18 +61,13 @@ void LoginManager::saveUserToFile(PlayerInfo player)
 
 void LoginManager::logout() 
 {
+    currentUser = PlayerInfo();
     loggedIn = false;
     currentScreen = LOGIN_SCREEN;
     inputUsername = ""; 
     inputPassword = "";
     inputEmail = "";
     statusMessage = "Logged out successfully.";
-
-    if (otherPlayer.username != "Guest")
-    {
-        PlayerInfo temp;
-        otherPlayer = temp;
-    }
 }
 
 void LoginManager::handleInput(Event& event, RenderWindow& window)
@@ -203,7 +198,8 @@ void LoginManager::draw(RenderWindow& window)
     RectangleShape verticalLine, horizontalLine;
 
     
-    //    UI Debug Lines:
+    /*
+        UI Debug Lines:
         verticalLine.setSize(Vector2f(1,600));
         verticalLine.setFillColor(Color::White);
         verticalLine.setPosition(Vector2f(300, 0));
@@ -212,6 +208,7 @@ void LoginManager::draw(RenderWindow& window)
         horizontalLine.setFillColor(Color::White);
         horizontalLine.setPosition(Vector2f(0, 300));
         horizontalLine.setRotation(-90);
+    */
     
 
     window.draw(verticalLine);

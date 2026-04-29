@@ -1,20 +1,21 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Hitbox.h"
-#include "AnimationComponent.h"
+#include "Hitbox.hpp"
+#include "AnimationComponent.hpp"
 
 using namespace sf;
 
 class Projectile
 {
 protected:
-    HitboxSprite m_sprite;
-    float m_Vx;
-    float m_Vy;
-    bool m_active;
+    HitboxSprite sprite;
+    float Vx;
+    float Vy;
+    bool active;
+    static int const GAME_WIDTH = 600;
 
 public:
-    Projectile() : m_Vx(0), m_Vy(0), m_active(false) {}
+    Projectile() : Vx(0), Vy(0), active(false) {}
 
     virtual void update(float dt) = 0;
     virtual void draw(RenderWindow& window, bool debug) const = 0;
@@ -22,36 +23,35 @@ public:
 
     FloatRect getHitbox() const 
     { 
-        return m_sprite.getGlobalHitbox(); 
+        return sprite.getGlobalHitbox(); 
     }
     Vector2f getPosition() const 
     { 
-        return m_sprite.getPosition(); 
+        return sprite.getPosition(); 
     }
     bool isActive() const 
     {
-        return m_active; 
+        return active; 
     }
     void setActive(bool act) 
     {
-        m_active = act; 
+        active = act; 
     }
 };
 
 class Snowball : public Projectile
 {
 private:
-    AnimationComponent m_anim;
-    bool m_animated;       
+    AnimationComponent anim;
+    bool animated;       
 
     //Snow amount dictates how much snow a single snowball deposits on an enemy
     //By default it is 1 but can be increased by power ups
-    float m_distTraveled;
-    float m_screenWidth;
-    int m_snowAmount;
+    float distTraveled;
+    int snowAmount;
 
-    float m_speed;
-    float m_maxDistance;
+    float speed;
+    float maxDistance;
 
 public:
     Snowball();
@@ -60,13 +60,13 @@ public:
 
     void loadSpritesheet(const Texture& texture, const IntRect* frames, int count, float duration = 0.05);
 
-    void fire(Vector2f pos, bool facingRight, float screenWidth);
+    void fire(Vector2f pos, bool facingRight);
 
     void update(float dt) override;
     void draw(RenderWindow& window, bool debug = false) const override;
 
     int getSnowAmount() const 
     {
-        return m_snowAmount;
+        return snowAmount;
     }
 };

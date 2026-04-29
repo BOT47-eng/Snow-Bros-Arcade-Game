@@ -1,13 +1,13 @@
-#include "Hitbox.h"
+#include "Hitbox.hpp"
 
 void HitboxSprite::setHitbox(const FloatRect& hitbox)
 {
-	m_hitbox = hitbox;
+	this->hitbox = hitbox;
 }
 
 FloatRect HitboxSprite::getGlobalHitbox() const
 {
-	return getTransform().transformRect(m_hitbox);
+	return getTransform().transformRect(hitbox);
 }
 
 bool HitboxSprite::intersects(const HitboxSprite& other) const
@@ -21,7 +21,7 @@ bool HitboxSprite::intersects(const FloatRect& rect) const
 }
 
 // By Saad :
-// Removed the default argument of color,  cannot redefine it if already define .h file 
+// Removed the default argument of color, cannot redefine it if already define .hpp file 
 void HitboxSprite::drawHitbox(RenderWindow& window, Color color) const
 {
 	FloatRect temp = getGlobalHitbox();

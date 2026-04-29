@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Player.h"
-#include "Block.h"
+#include "Player.hpp"
+#include "Block.hpp"
 
 class PhysicsEngine
 {
@@ -13,17 +13,14 @@ private:
     void checkFloor(Player& player) const;
     void wrapScreen(Player& player) const;
 
-    float m_screenWidth;
-    float m_screenHeight;
-
-    Block* m_blocks[MAX_PLATFORMS];
-    int m_blockCount;
+    Block* blocks[MAX_PLATFORMS];
+    int blockCount;
 
     static const float GRAVITY;
-    static const float MAX_FALL_SPEED;
+    static const float TERMINAL_VELOCITY;
 
 public:
-    PhysicsEngine(float screenWidth, float screenHeight);
+    PhysicsEngine();
 
     void addPlatform(Block* block);
     void clearPlatforms();

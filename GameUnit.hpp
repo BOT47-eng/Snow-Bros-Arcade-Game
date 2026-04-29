@@ -44,4 +44,10 @@ public:
 	void drawLeaderboard();
 	void drawLoginMenu(int loginIndex);
 	void drawTesting();
+
+	~GameUnit()
+	{
+		if (window.isOpen())
+			window.close();
+	}
 }; 
