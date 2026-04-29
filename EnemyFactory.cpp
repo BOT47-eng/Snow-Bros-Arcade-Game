@@ -34,59 +34,13 @@ void Enemy::setEnemyTexture(const sf::Texture& T)
 }
 void Enemy::setEnemyHitBoxSprite() // Just Call it To change the current Set Texture
 {
-    EnemySprite.setTexture(EnemySpriteTexture) ;
-    EnemySprite.setScale({0.5 , 0.5}); 
+    EnemySpriteTexture.setSmooth(true) ;
+    EnemySpriteTexture.setRepeated(true) ; 
+    EnemySprite.setTexture(EnemySpriteTexture, true); // true = reset texture rect to full texture
+    
+    sf::Vector2u texSize = EnemySpriteTexture.getSize();
+    EnemySprite.setTextureRect(sf::IntRect(0, 0, texSize.x, texSize.y));
+    
     sf::FloatRect bounds = EnemySprite.getLocalBounds();
     EnemySprite.setHitbox(bounds);
-}
-void Enemy::setEnemySpriteAnimationsTexture_X(sf::Texture *t , const int SIZE)
-{
-    EnemySpriteAnimationsTextures_X = new sf::Texture[SIZE] ;
-    for(int st = 0 ; st <= SIZE -1 ;  st++)
-    {
-        EnemySpriteAnimationsTextures_X[st] = t[st] ;
-    }
-}
-void Enemy::setEnemySpriteAnimationsTexture_Y(sf::Texture *t , const int SIZE) 
-{
-    EnemySpriteAnimationsTextures_Y = new sf::Texture[SIZE] ;
-    for(int st = 0 ; st <= SIZE - 1 ;  st++)
-    {
-        EnemySpriteAnimationsTextures_Y[st] = t[st] ;
-    }
-}
-void Enemy::setEnemySpriteAnimation_X(sf::Sprite *S  , const int SIZE) 
-{
-    EnemySpriteAnimations_X = new sf::Sprite[SIZE] ; 
-    for(int st = 0 ; st <= SIZE - 1 ; st++)
-    {
-        EnemySpriteAnimations_X[st] = S[st]; 
-    }
-}
-void Enemy::setEnemySpriteAnimation_Y(sf::Sprite *S  , const int SIZE)
-{
-    EnemySpriteAnimations_Y = new sf::Sprite[SIZE] ; 
-    for(int st = 0 ; st <= SIZE - 1 ; st++)
-    {
-        EnemySpriteAnimations_Y[st] = S[st]; 
-    }
-}
-void Enemy::setTotalAnimationNumber_X(int n) 
-{
-    TotalAnimationNumber_X = n  ;
-}
-void Enemy::setTotalAnimationNumber_Y(int n) 
-{
-    TotalAnimationNumber_Y = n  ; 
-}
-
-void Enemy::UpateAnimationPerFrameofEnemy_X()
-{
-    EnemySprite.setTexture(EnemySpriteAnimationsTextures_X[CurrentIndexofAnimation_X]) ;
-    CurrentIndexofAnimation_X = (CurrentIndexofAnimation_X + 1) % TotalAnimationNumber_X ;
-}
-void Enemy::UpateAnimationPerFrameofEnemy_Y()
-{
-    EnemySprite.setTexture(EnemySpriteAnimationsTextures_Y[CurrentIndexofAnimation_Y]) ; 
-    CurrentIndexofAnimation_Y = (CurrentIndexofAnimation_Y + 1) % TotalAnimationNumber_Y ;
 }
