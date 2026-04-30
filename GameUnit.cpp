@@ -59,10 +59,12 @@ void GameUnit::drawLoginMenu(int loginIndex)
         {
             if (loginIndex == 0)
             {
+                loginPlayer[1].setOtherPlayer(loginPlayer[0].getCurrentUser());
                 cout << "Login Player 1 Successful!" << endl;
             }
             else
             {
+                loginPlayer[0].setOtherPlayer(loginPlayer[1].getCurrentUser());
                 cout << "Login Player 2 Successful!" << endl;
             }
 
@@ -79,6 +81,9 @@ void GameUnit::drawTesting()
 
     Player p2(1);
     p2.setPosition(Vector2f(440.f, 480.f));
+
+    Enemy* pinkEnemy = new FlyingFoogaFoog;
+    pinkEnemy->CreateEnemy(300.f, 50.f);
 
     const int BLOCK_COUNT = 11;
     Block blocks[BLOCK_COUNT] = {
@@ -144,29 +149,11 @@ void GameUnit::drawTesting()
         p1.handleInput(input, dt);
         p2.handleInput(input, dt);
 
-        physics.update(p1, p2, dt);
+        physics.update(p1, p2, &pinkEnemy, 1, dt);
 
         p1.update(dt);
         p2.update(dt);
-
-        for (int i = 0; i < Player::MAX_BALLS; i++)
-        {
-            Snowball& b = p1.getBall(i);
-            if (b.isActive() && p2.isAlive() && b.getHitbox().intersects(p2.getHitbox()))
-            {
-                p2.takeDamage();
-                b.setActive(false);
-            }
-        }
-        for (int i = 0; i < Player::MAX_BALLS; i++)
-        {
-            Snowball& b = p2.getBall(i);
-            if (b.isActive() && p1.isAlive() && b.getHitbox().intersects(p1.getHitbox()))
-            {
-                p1.takeDamage();
-                b.setActive(false);
-            }
-        }
+        //pinkEnemy.update(window, dt, blocks, BLOCK_COUNT);
 
         window.clear();
         window.draw(bg);
@@ -176,6 +163,9 @@ void GameUnit::drawTesting()
 
         p1.draw(window, debugOn);
         p2.draw(window, debugOn);
+
+        if (pinkEnemy)
+            pinkEnemy->draw(window, debugOn);
 
         if (fontOk)
         {

@@ -69,4 +69,9 @@ public:
     {
         return snowAmount;
     }
+
+    void setSnowAmount(int amount)
+    {
+        snowAmount = amount;
+    }
 };

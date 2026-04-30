@@ -33,12 +33,19 @@ bool LoginManager::verifyCredentials(string username, string password)
     PlayerInfo temp;
     long long inputHash = hash(password);
 
+    cout << "Dash" << endl;
+
     while (getline(inFile, temp.username))
     { 
         inFile >> temp.passwordHash;
         inFile.ignore();
         getline(inFile, temp.email);
         getline(inFile, temp.created);
+
+        cout << temp.username << endl;
+        cout << temp.passwordHash << endl;
+        cout << temp.email << endl;
+        cout << temp.created << endl;
 
         if (string(temp.username) == username && temp.passwordHash == inputHash) 
         {
@@ -61,13 +68,14 @@ void LoginManager::saveUserToFile(PlayerInfo player)
 
 void LoginManager::logout() 
 {
+    cout << currentUser.username << " logged out" << endl;
     currentUser = PlayerInfo();
     loggedIn = false;
     currentScreen = LOGIN_SCREEN;
     inputUsername = ""; 
     inputPassword = "";
     inputEmail = "";
-    statusMessage = "Logged out successfully.";
+    statusMessage = "Welcome! Please Login";
 }
 
 void LoginManager::handleInput(Event& event, RenderWindow& window)
@@ -83,7 +91,7 @@ void LoginManager::handleInput(Event& event, RenderWindow& window)
             else if (activeField == 2 && !inputEmail.empty()) 
                 inputEmail.pop_back();
         }
-        else if (event.text.unicode < 128 && event.text.unicode > 31)
+        else if (event.text.unicode < 128 && event.text.unicode > 31 && event.text.unicode != 32)
         {
             char tempChar = static_cast<char>(event.text.unicode);
 

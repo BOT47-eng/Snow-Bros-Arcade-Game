@@ -7,6 +7,7 @@
 #include "Player.hpp"
 #include "PhysicsEngine.hpp"
 #include "LoginManager.hpp"
+#include "EnemyFactory.hpp"
 
 class GameUnit {
 public:

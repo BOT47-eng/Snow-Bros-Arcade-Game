@@ -2,13 +2,12 @@
 #include <iostream>
 #include <cstring>
 #include <SFML/Graphics.hpp>
-#include "Hitbox.h"
-#include "hitbox.cpp"
-#include "Block.h"
+#include "Hitbox.hpp"
+#include "Block.hpp"
 
 
-#ifndef ENEMYFACTORY 
-#define ENEMYFACTORY 
+//#ifndef ENEMYFACTORY 
+//#define ENEMYFACTORY 
 
 
 ///////////////////////
@@ -17,748 +16,805 @@
 class Enemy
 {
 protected:
-///////////////////////
-//// Basic Properties
-int health ; 
-float x;
-float y; 
-float Vx ;
-float Vy ;
+    ///////////////////////
+    //// Basic Properties
+    int health ; 
+    float x;
+    float y; 
+    float Vx ;
+    float Vy ;
 
-float CopyVx ;  // To use incase the actual value is 0
-float CopyVy ; 
+    float CopyVx ;  // To use incase the actual value is 0
+    float CopyVy ; 
 
-////////////////////////////////
-///// Different Sprite Animation 
-sf::Texture EnemySpriteTexture ; 
-HitboxSprite EnemySprite;
-
-
+    ////////////////////////////////
+    ///// Different Sprite Animation 
+    sf::Texture EnemySpriteTexture ; 
+    HitboxSprite EnemySprite;
 
 
-///////////////////////////
-///// All Other Necessary Functions for an Enemy Class 
 
-void UpateAnimationPerFrameofEnemy_X() ;
-void UpateAnimationPerFrameofEnemy_Y() ;
- 
+
+    ///////////////////////////
+    ///// All Other Necessary Functions for an Enemy Class 
+
+    void UpateAnimationPerFrameofEnemy_X() ;
+    void UpateAnimationPerFrameofEnemy_Y() ;
+
+    float snowAccumulated;
+    bool isFullyCoated;
+    sf::Clock shakeTimer;
+    float originalSpeed;
 
 public:
-/////////////////////////////
-//////// Setters 
-void sethealth(int  h) ; 
-void setPos(float x  , float y) ;
-void setPos(sf::Vector2f v) ; 
-void setVx(float d) ;
-void setVy(float d) ; 
-void setCopyVx(float d) ;
-void setCopyVy(float d) ; 
-void setEnemyTexture(const sf::Texture& T) ; 
-void setEnemyHitBoxSprite() ; 
-void setEnemySpriteAnimationsTexture_X(sf::Texture *t , const int SIZE) ; 
-void setEnemySpriteAnimationsTexture_Y(sf::Texture *t , const int SIZE) ; 
-void setEnemySpriteAnimation_X(sf::Sprite *S  , const int SIZE) ;
-void setEnemySpriteAnimation_Y(sf::Sprite *S  , const int SIZE) ;
-void setTotalAnimationNumber_X(int n) ;
-void setTotalAnimationNumber_Y(int n) ;
+    /////////////////////////////
+    //////// Setters 
+    void sethealth(int  h) ; 
+    void setPos(float x  , float y) ;
+    void setPos(sf::Vector2f v) ; 
+    void setVx(float d) ;
+    void setVy(float d) ; 
+    void setCopyVx(float d) ;
+    void setCopyVy(float d) ; 
+    void setEnemyTexture(const sf::Texture& T) ; 
+    void setEnemyHitBoxSprite() ; 
+    void setEnemySpriteAnimationsTexture_X(sf::Texture *t , const int SIZE) ; 
+    void setEnemySpriteAnimationsTexture_Y(sf::Texture *t , const int SIZE) ; 
+    void setEnemySpriteAnimation_X(sf::Sprite *S  , const int SIZE) ;
+    void setEnemySpriteAnimation_Y(sf::Sprite *S  , const int SIZE) ;
+    void setTotalAnimationNumber_X(int n) ;
+    void setTotalAnimationNumber_Y(int n) ;
 
 
-////////////////////////////
-////// Getters 
-int getHealth() const {return health;}
-float getPosX() const {return x;}
-float getPosY() const {return y;}
-sf::Vector2f getPos() const {return {x , y};}
-float getVx() const {return Vx;}
-float getVy() const {return Vy;}
-HitboxSprite getEnemySprite() const {return EnemySprite ; }
-FloatRect getEnemyHitBox() const {return EnemySprite.getGlobalHitbox(); }
+    ////////////////////////////
+    ////// Getters 
+    int getHealth() const {return health;}
+    float getPosX() const {return x;}
+    float getPosY() const {return y;}
+    sf::Vector2f getPos() const {return {x , y};}
+    float getVx() const {return Vx;}
+    float getVy() const {return Vy;}
+    HitboxSprite getEnemySprite() const {return EnemySprite ; }
+    FloatRect getEnemyHitBox() const {return EnemySprite.getGlobalHitbox(); }
+    float getSnowAccumulated() const { return snowAccumulated; }
+    bool getIsFullyCoated() const { return isFullyCoated; }
+
+    void applySnow(float amount);
+    void updateCoatedState();
+    void shakeOffSnow();
+
+    Enemy(): health(0) , x(0) ,  y(0) , Vx(0) , Vy(0) , CopyVx(0) , CopyVy(0) 
+    {} 
+    Enemy(int h , float x , float y  , float dx  , float dy) : health(h) , x(x) , y(y) , Vx(dx)  , Vy(dy), snowAccumulated(0), isFullyCoated(false), originalSpeed(0)
+    {}
 
 
-
-
-public :
-Enemy(): health(0) , x(0) ,  y(0) , Vx(0) , Vy(0) , CopyVx(0) , CopyVy(0) 
-{} 
-Enemy(int h , float x , float y  , float dx  , float dy) : health(h) , x(x) , y(y) , Vx(dx)  , Vy(dy) 
-{}
-
-
-virtual ~Enemy()
-{
+    virtual ~Enemy()
+    {
   
-}
+    }
 
 
-//////////////////////
-//// Main Functions for Every Enemy 
-virtual void CreateEnemy(float x , float y) = 0 ;
-virtual void Update(sf::RenderWindow &mywindow , const float dt , Block *B , const int BLOCKSIZE) = 0 ;
-virtual void Draw(sf::RenderWindow &mywindow) = 0 ;
+    //////////////////////
+    //// Main Functions for Every Enemy 
+    virtual void CreateEnemy(float x , float y) = 0 ;
+    virtual void update(const float dt, Block* B, const int BLOCKSIZE) = 0;
+    virtual void draw(sf::RenderWindow &mywindow, bool debug) = 0 ;
 }; 
-#endif
+//#endif
 
 ///////////////////////////////////////////////////////////////
 /////////// Dereiving All the other Necessary Enemy Classes
 
 
-#ifndef BOTOM
-#define BOTOM
+//#ifndef BOTOM
+//#define BOTOM
 
 class Botom : public Enemy
 {
 protected : 
 
-bool isLeft ; // For whenever change in x is negative 
-bool isRight; // For whenever change in x is positive 
-bool isJumping ; // For whenever change in y is negative hence true 
-bool isFallingDown ; // For whenever change in y is postive hence true 
-float gravityfactor ;
-sf::Clock timeToChangeDirection ; 
-sf::Clock timeToJump ; 
-sf::Clock  JumpInterval ; // To Keep track of the Jump time and bring it back to land
+    bool isLeft ; // For whenever change in x is negative 
+    bool isRight; // For whenever change in x is positive 
+    bool isJumping ; // For whenever change in y is negative hence true 
+    bool isFallingDown ; // For whenever change in y is postive hence true 
+    float gravityfactor ;
+    sf::Clock timeToChangeDirection ; 
+    sf::Clock timeToJump ; 
+    sf::Clock  JumpInterval ; // To Keep track of the Jump time and bring it back to land
 
 
 
-//////////////////////////////
-///// Adding the Different animation sprite 
-sf::Texture *EnemySpriteFallingDownTexture ; 
-sf::Texture *EnemySpriteRightMovementTextures ;
-sf::Texture *EnemySpriteLeftMovementTextures ;
-sf::Texture *EnemySpriteJumpingUpTexture ; 
+    //////////////////////////////
+    ///// Adding the Different animation sprite 
+    sf::Texture *EnemySpriteFallingDownTexture ; 
+    sf::Texture *EnemySpriteRightMovementTextures ;
+    sf::Texture *EnemySpriteLeftMovementTextures ;
+    sf::Texture *EnemySpriteJumpingUpTexture ; 
 
 
-int TotalAnimationofJump ;
-int TotalAnimationofFalling ;
-int TotalAnimationofRightMovement ;
-int TotalAnimationofleftMovement ; 
+    int TotalAnimationofJump ;
+    int TotalAnimationofFalling ;
+    int TotalAnimationofRightMovement ;
+    int TotalAnimationofleftMovement ; 
 
-int currentIndexofJumpAnimation ;
-int currentIndexofFallAnimation ;
-int currentIndexofRightAnimation ;
-int currentIndexofLeftAnimation ;
+    int currentIndexofJumpAnimation ;
+    int currentIndexofFallAnimation ;
+    int currentIndexofRightAnimation ;
+    int currentIndexofLeftAnimation ;
 
 
-sf::Clock animationClock; 
-float animationSpeed; // How long each frame stays on screen (in seconds)
+    sf::Clock animationClock; 
+    float animationSpeed; // How long each frame stays on screen (in seconds)
 
 
 
 public:
-///////////////////////
-/////// Constructors
+    ///////////////////////
+    /////// Constructors
 
-Botom() : isLeft(false) , isRight(true) , isJumping(false) , isFallingDown(false) , gravityfactor(980)  , Enemy()
-{
-    timeToChangeDirection.restart() ; 
-    timeToJump.restart() ; 
-    JumpInterval.restart() ;
-    EnemySpriteFallingDownTexture = nullptr ; 
-    EnemySpriteRightMovementTextures = nullptr ;
-    EnemySpriteLeftMovementTextures = nullptr ;
-    EnemySpriteJumpingUpTexture = nullptr ; 
-    
-    TotalAnimationofFalling =  0 ;
-    TotalAnimationofJump = 0 ; 
-    TotalAnimationofleftMovement = 0 ;
-    TotalAnimationofRightMovement = 0 ;
-
-    currentIndexofFallAnimation = 0 ;
-    currentIndexofJumpAnimation = 0 ;
-    currentIndexofLeftAnimation = 0 ;
-    currentIndexofRightAnimation = 0 ;
-    
-    animationSpeed = 0.15f ; 
-    animationClock.restart() ; 
-} 
-///////////////////////////
-//////// Destructors 
-virtual ~Botom()
-{
-    delete [] EnemySpriteFallingDownTexture ;
-    delete [] EnemySpriteJumpingUpTexture ;
-    delete [] EnemySpriteLeftMovementTextures ; 
-    delete [] EnemySpriteRightMovementTextures ; 
-}
-void UpdateDirection_X() // It is just  a random direction setter 
-{
-    int RandomTimeToChangeDirection = (rand() % (5 - 3 + 1)) + 3 ; // To make the movement feel more natural
-    if(timeToChangeDirection.getElapsedTime().asSeconds() > RandomTimeToChangeDirection)
+    Botom() : isLeft(false) , isRight(true) , isJumping(false) , isFallingDown(false) , gravityfactor(980)  , Enemy()
     {
-        setVx(-getVx()) ; 
         timeToChangeDirection.restart() ; 
-    }
-}
-///////////////////////////////////////////////////////////////////////////////////////////
-/////////////// So Extra Functions Required in the Update function 
-///////////////
-// So The Animation of sprites starts from the beginning not the end
-void ResetCurrentIndexofFallAnimation()
-{
-    currentIndexofFallAnimation = 0 ;
-}
-
-void ResetCurrentIndexofJumpAnimation()
-{
-    currentIndexofJumpAnimation =  0 ; 
-}
-void ResetCurrentIndexofLeftAnimation()
-{
-    currentIndexofLeftAnimation = 0 ;
-}
-void ResetCurrentIndexofRightAnimation()
-{
-    currentIndexofRightAnimation = 0; 
-}
-
-void UpdateToRightMovementAnimation()
-{
-    EnemySprite.setTexture(EnemySpriteRightMovementTextures[currentIndexofRightAnimation] , true) ;
-    currentIndexofRightAnimation = (currentIndexofRightAnimation + 1) % TotalAnimationofRightMovement ; 
-}
-void UpdateToLeftMovementAnimation()
-{
-    EnemySprite.setTexture(EnemySpriteLeftMovementTextures[currentIndexofLeftAnimation] , true) ;
-    currentIndexofLeftAnimation = (currentIndexofLeftAnimation + 1) % TotalAnimationofleftMovement ; 
-}
-void UpdateToJumpMovementAnimation()
-{
-    EnemySprite.setTexture(EnemySpriteJumpingUpTexture[currentIndexofJumpAnimation] , true) ;
-    currentIndexofJumpAnimation = (currentIndexofJumpAnimation + 1) % TotalAnimationofJump ; 
-}
-void UpdateToFallingMovementAnimation()
-{
-    EnemySprite.setTexture(EnemySpriteFallingDownTexture[currentIndexofFallAnimation] ,true) ;
-    currentIndexofFallAnimation = (currentIndexofFallAnimation) % TotalAnimationofFalling ; 
-}
-
-
-virtual void CreateEnemy(float x , float y) override
-{
-    ///////////////////////////////////////
-    ////// Creating the Enemy first 
-    sf::Texture EnemyTexture;
-    sf::IntRect area(2 , 934 , 88 , 93) ; // Default idle/start state
-    
-    std::string imagePath = "Resources/SnowBrosAssets/Images/Botom_Pink.png";
-    
-    if(!EnemyTexture.loadFromFile(imagePath , area))
-    {
-        std::cout << "Error in Loading the file\n" ;
-        exit(0) ;
-    }
-    setEnemyTexture(EnemyTexture) ; // Default Standing 
-    setEnemyHitBoxSprite() ; 
-    ////////////////////////////////////////
-    ///// SCALING THE SPRITE
-    EnemySprite.setScale(0.5f, 0.5f); 
-
-    ////////////////////////////////////////
-    ///// Loading Different Animation texture in the arrays 
-
-    TotalAnimationofRightMovement = 3;
-    TotalAnimationofleftMovement = 3;
-    TotalAnimationofJump = 1;
-    TotalAnimationofFalling = 1;
-
-    EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
-    EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
-    EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
-    EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
-
-
-    // --- Right Movement Textures ---
-    EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight1.png");
-    EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight2.png");
-    EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight3.png");
-
-    // --- Left Movement Textures ---
-    EnemySpriteLeftMovementTextures[0].loadFromFile(imagePath, sf::IntRect(2, 367, 92, 82));
-    EnemySpriteLeftMovementTextures[1].loadFromFile(imagePath, sf::IntRect(96, 367, 92, 82));
-    EnemySpriteLeftMovementTextures[2].loadFromFile(imagePath, sf::IntRect(188, 367, 92, 82));
-
-    // --- Jumping Up Textures ---
-    EnemySpriteJumpingUpTexture[0].loadFromFile(imagePath, sf::IntRect(7, 477, 87, 95));
-
-    // --- Falling Down Textures ---
-    EnemySpriteFallingDownTexture[0].loadFromFile(imagePath, sf::IntRect(5, 597, 84, 91));
-
-    
-    /////////////////////////////////////////////
-    ///// Now Setting the Properties of the Enemy
-    setPos(x , y) ;
-    setVx(200) ;  /// TEST TO CHANGE LATER
-    setVy(200) ;  // TEST TO CHANGE LATER 
-    setCopyVx(200) ;
-    setCopyVy(200) ;
-}
-////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////// UPDATE FUNCTION AND ALL IT'S RELATED FUNCTIONS FOR THE BOTOM ENEMY CLASS 
-
-void checkforShowHitBoxDetection(sf::RenderWindow &mywindow,  const Block *B , const int SIZE)
-{
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::F1) || sf::Keyboard::isKeyPressed(sf::Keyboard::F2))
-    {
-        EnemySprite.drawHitbox(mywindow) ; 
-        for(int st = 0 ; st <= SIZE - 1 ; st++)
-        {
-            B[st].draw(mywindow , true) ; 
-        }
-    }
-}
-
-
-void UpdateX(float dt)
-{
-    x += Vx * dt ; 
-}
-void UpdateY(float dt)
-{
-    y += Vy * dt ;
-}
-bool CheckCollionsWithScreenX(const float width , const float height)
-{
-    bool flag = false ; 
-    if (x + EnemySprite.getGlobalBounds().width > width)
-    {
-        x = width - EnemySprite.getGlobalBounds().width; 
-        setVx(-abs(getVx()));
-        flag = true ; 
-    }
-    else if (x < 0)
-    {
-        x = 0; 
-        setVx(abs(getVx()));
-        flag = true ; 
-    }
-    EnemySprite.setPosition(x, y);
-    return flag ;
-}
-bool CheckCollionsWithScreenY(const float width , const float height)
-{
-    bool flag = false ;
-    if (y + EnemySprite.getGlobalBounds().height > height)
-    {
-        y = height - EnemySprite.getGlobalBounds().height; 
-        setVy(0); // It has to walk so change in y is now 0 else if bounce setVy(-abs(getVy())) ; 
-        flag = true ;
-    }
-    else if (y < 0)
-    {
-        y = 0;
-        setVy(abs(getVy())); 
-        flag = true ;
-    }
-    EnemySprite.setPosition(x, y);
-    return flag ;
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//// Return True if It is on land else it return false in which case we have add the gravity factor
-bool CheckCollosionsWithPlatforms(sf::RenderWindow &mywindow, Block *b, const int SIZE)
-{
-    bool OnLand = false ;
-
-    for(int st = 0; st < SIZE; st++)
-    {
-        sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
-        sf::FloatRect blockBox = b[st].getHitbox();
-        sf::FloatRect overlap; 
-
-        // If they touch, calculate the overlap area
-        if (enemyBox.intersects(blockBox, overlap)) 
-        {
-            // Calculates the horizontal area i.e THE SIDES
-            if (overlap.width < overlap.height) 
-            {
-                if (enemyBox.left < blockBox.left) 
-                {
-                    x = blockBox.left - enemyBox.width; 
-                    setVx(-abs(getVx()));               
-                }
-                else 
-                {
-                    x = blockBox.left + blockBox.width; 
-                    setVx(abs(getVx()));             
-                }
-            }
-            else // Calculates the vertical area  i.e THE TOP
-            {
-                if (enemyBox.top < blockBox.top) 
-                {
-                    y = blockBox.top - enemyBox.height; 
-                    setVy(0);             
-                    OnLand = true ;
-                }
-                else 
-                {
-                    y = blockBox.top + blockBox.height; 
-                    setVy(0); // Stops upward momentum immediately
-                }
-            }
-            
-            // CRITICAL: Update the sprite's position immediately so it doesn't get stuck
-            EnemySprite.setPosition(x, y);
-        }
-    }
-    return OnLand ;
-}
-
-void EnemyWantsToJumporNot()
-{
-    if(timeToJump.getElapsedTime().asSeconds() > 5)
-    {
-        if(rand() % 2)
-        {
-            isJumping = true ;
-            JumpInterval.restart() ;
-        }
         timeToJump.restart() ; 
-    }
-}
+        JumpInterval.restart() ;
+        EnemySpriteFallingDownTexture = nullptr ; 
+        EnemySpriteRightMovementTextures = nullptr ;
+        EnemySpriteLeftMovementTextures = nullptr ;
+        EnemySpriteJumpingUpTexture = nullptr ; 
+    
+        TotalAnimationofFalling =  0 ;
+        TotalAnimationofJump = 0 ; 
+        TotalAnimationofleftMovement = 0 ;
+        TotalAnimationofRightMovement = 0 ;
 
-virtual void Update(sf::RenderWindow &mywindow , const float dt , Block *B , const int BLOCKSIZE) override
-{
-
-    //////////////////////////////////////////
-    /// Update the Position  of the sprite 
-    UpdateX(dt) ; // it will always be moving in x-direction
-    UpdateY(dt);
-
-
-    EnemySprite.setPosition(x , y) ;
-
-    UpdateDirection_X() ;
-    if(getVx() > 0)
+        currentIndexofFallAnimation = 0 ;
+        currentIndexofJumpAnimation = 0 ;
+        currentIndexofLeftAnimation = 0 ;
+        currentIndexofRightAnimation = 0 ;
+    
+        animationSpeed = 0.15f ; 
+        animationClock.restart() ; 
+    } 
+    ///////////////////////////
+    //////// Destructors 
+    virtual ~Botom()
     {
-        isRight = true ; 
-        isLeft = false ; 
+        delete [] EnemySpriteFallingDownTexture ;
+        delete [] EnemySpriteJumpingUpTexture ;
+        delete [] EnemySpriteLeftMovementTextures ; 
+        delete [] EnemySpriteRightMovementTextures ; 
     }
-    else 
+    void UpdateDirection_X() // It is just  a random direction setter 
     {
-        isLeft = true ;
-        isRight = false ;
-    }
-
-    CheckCollionsWithScreenX(mywindow.getSize().x  , mywindow.getSize().y) ; 
-    CheckCollionsWithScreenY(mywindow.getSize().x  , mywindow.getSize().y) ; 
-    /// If the enemy Jumps Ignore  the platform collosions and go up till the box it is currently colliding with is not below it.
-    if(!isJumping) 
-    {
-        bool CheckCollosionAndAlsoTellIfEnemyisOnLand = CheckCollosionsWithPlatforms(mywindow , B , BLOCKSIZE);
-        if(!CheckCollosionAndAlsoTellIfEnemyisOnLand)
+        int RandomTimeToChangeDirection = (rand() % (5 - 3 + 1)) + 3 ; // To make the movement feel more natural
+        if(timeToChangeDirection.getElapsedTime().asSeconds() > RandomTimeToChangeDirection)
         {
-            // Add the gravity factor because if it was on land then Vy is 0 
-            isFallingDown = true ;
-            setVy(gravityfactor) ; 
+            setVx(-getVx()) ; 
+            timeToChangeDirection.restart() ; 
+        }
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    /////////////// So Extra Functions Required in the update function 
+    ///////////////
+    // So The Animation of sprites starts from the beginning not the end
+    void ResetCurrentIndexofFallAnimation()
+    {
+        currentIndexofFallAnimation = 0 ;
+    }
+
+    void ResetCurrentIndexofJumpAnimation()
+    {
+        currentIndexofJumpAnimation =  0 ; 
+    }
+    void ResetCurrentIndexofLeftAnimation()
+    {
+        currentIndexofLeftAnimation = 0 ;
+    }
+    void ResetCurrentIndexofRightAnimation()
+    {
+        currentIndexofRightAnimation = 0; 
+    }
+
+    void UpdateToRightMovementAnimation()
+    {
+        EnemySprite.setTexture(EnemySpriteRightMovementTextures[currentIndexofRightAnimation] , true) ;
+        currentIndexofRightAnimation = (currentIndexofRightAnimation + 1) % TotalAnimationofRightMovement ; 
+    }
+    void UpdateToLeftMovementAnimation()
+    {
+        EnemySprite.setTexture(EnemySpriteLeftMovementTextures[currentIndexofLeftAnimation] , true) ;
+        currentIndexofLeftAnimation = (currentIndexofLeftAnimation + 1) % TotalAnimationofleftMovement ; 
+    }
+    void UpdateToJumpMovementAnimation()
+    {
+        EnemySprite.setTexture(EnemySpriteJumpingUpTexture[currentIndexofJumpAnimation] , true) ;
+        currentIndexofJumpAnimation = (currentIndexofJumpAnimation + 1) % TotalAnimationofJump ; 
+    }
+    void UpdateToFallingMovementAnimation()
+    {
+        EnemySprite.setTexture(EnemySpriteFallingDownTexture[currentIndexofFallAnimation] ,true) ;
+        currentIndexofFallAnimation = (currentIndexofFallAnimation) % TotalAnimationofFalling ; 
+    }
+
+
+    virtual void CreateEnemy(float x , float y) override
+    {
+        ///////////////////////////////////////
+        ////// Creating the Enemy first 
+        sf::Texture EnemyTexture;
+        sf::IntRect area(2 , 934 , 88 , 93) ; // Default idle/start state
+    
+        std::string imagePath = "Resources/SnowBrosAssets/Images/Botom_Pink.png";
+    
+        if(!EnemyTexture.loadFromFile(imagePath , area))
+        {
+            std::cout << "Error in Loading the file\n" ;
+            exit(0) ;
+        }
+        setEnemyTexture(EnemyTexture) ; // Default Standing 
+        setEnemyHitBoxSprite() ; 
+        ////////////////////////////////////////
+        ///// SCALING THE SPRITE
+        EnemySprite.setScale(0.5f, 0.5f); 
+
+        ////////////////////////////////////////
+        ///// Loading Different Animation texture in the arrays 
+
+        TotalAnimationofRightMovement = 3;
+        TotalAnimationofleftMovement = 3;
+        TotalAnimationofJump = 1;
+        TotalAnimationofFalling = 1;
+
+        EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
+        EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
+        EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
+        EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
+
+
+        // --- Right Movement Textures ---
+        EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight1.png");
+        EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight2.png");
+        EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight3.png");
+
+        // --- Left Movement Textures ---
+        EnemySpriteLeftMovementTextures[0].loadFromFile(imagePath, sf::IntRect(2, 367, 92, 82));
+        EnemySpriteLeftMovementTextures[1].loadFromFile(imagePath, sf::IntRect(96, 367, 92, 82));
+        EnemySpriteLeftMovementTextures[2].loadFromFile(imagePath, sf::IntRect(188, 367, 92, 82));
+
+        // --- Jumping Up Textures ---
+        EnemySpriteJumpingUpTexture[0].loadFromFile(imagePath, sf::IntRect(7, 477, 87, 95));
+
+        // --- Falling Down Textures ---
+        EnemySpriteFallingDownTexture[0].loadFromFile(imagePath, sf::IntRect(5, 597, 84, 91));
+
+    
+        /////////////////////////////////////////////
+        ///// Now Setting the Properties of the Enemy
+        sethealth(2);
+        setPos(x , y) ;
+        setVx(200) ;  /// TEST TO CHANGE LATER
+        setVy(200) ;  // TEST TO CHANGE LATER 
+        originalSpeed = 200;
+        setCopyVx(200) ;
+        setCopyVy(200) ;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////// UPDATE FUNCTION AND ALL IT'S RELATED FUNCTIONS FOR THE BOTOM ENEMY CLASS 
+
+    void UpdateX(float dt)
+    {
+        x += Vx * dt ; 
+    }
+    void UpdateY(float dt)
+    {
+        y += Vy * dt ;
+    }
+    bool CheckCollionsWithScreenX(const float width, const float height)
+    {
+        bool flag = false;
+        float halfW = EnemySprite.getGlobalBounds().width / 2.f;
+
+        if (x + halfW > width)
+        {
+            x = width - halfW;
+            setVx(-getVx());
+            flag = true;
+        }
+        else if (x - halfW < 0)
+        {
+            x = halfW;  
+            setVx(-getVx());
+            flag = true;
+        }
+
+        EnemySprite.setPosition(x, y);
+        return flag;
+    }
+
+    bool CheckCollionsWithScreenY(const float width, const float height)
+    {
+        bool flag = false;
+        float halfH = EnemySprite.getGlobalBounds().height / 2.f;
+
+        if (y + halfH > height)
+        {
+            y = height - halfH;
+            setVy(0);
+            flag = true;
+        }
+        else if (y - halfH < 0)
+        {
+            y = halfH;  
+            setVy(abs(getVy()));
+            flag = true;
+        }
+
+        EnemySprite.setPosition(x, y);
+        return flag;
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    //// Return True if It is on land else it return false in which case we have add the gravity factor
+    bool CheckCollosionsWithPlatforms(Block *b, const int SIZE)
+    {
+        bool OnLand = false ;
+
+        for(int st = 0; st < SIZE; st++)
+        {
+            sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
+            sf::FloatRect blockBox = b[st].getHitbox();
+            sf::FloatRect overlap; 
+
+            // If they touch, calculate the overlap area
+            if (enemyBox.intersects(blockBox, overlap)) 
+            {
+                // Calculates the horizontal area i.e THE SIDES
+                if (overlap.width < overlap.height) 
+                {
+                    if (enemyBox.left < blockBox.left) 
+                    {
+                        x = blockBox.left - enemyBox.width/ 2.0; 
+                        setVx(-abs(getVx()));               
+                    }
+                    else 
+                    {
+                        x = blockBox.left + blockBox.width + enemyBox.width / 2.0; 
+                        setVx(abs(getVx()));             
+                    }
+                }
+                else // Calculates the vertical area  i.e THE TOP
+                {
+                    if (enemyBox.top < blockBox.top) 
+                    {
+                        y = blockBox.top - enemyBox.height / 2.0f;
+                        setVy(0);             
+                        OnLand = true ;
+                    }
+                    else 
+                    {
+                        y = blockBox.top + blockBox.height + enemyBox.height / 2.0f;
+                        setVy(0); // Stops upward momentum immediately
+                    }
+                }
+            
+                // CRITICAL: update the sprite's position immediately so it doesn't get stuck
+                EnemySprite.setPosition(x, y);
             }
+        }
+        return OnLand ;
+    }
+
+    void EnemyWantsToJumporNot()
+    {
+        if(timeToJump.getElapsedTime().asSeconds() > 5 && Vx != 0)
+        {
+            if(rand() % 2)
+            {
+                isJumping = true ;
+                JumpInterval.restart() ;
+            }
+            timeToJump.restart() ; 
+        }
+    }
+
+    virtual void update(const float dt, Block* B, const int BLOCKSIZE) override
+    {
+
+        //////////////////////////////////////////
+        /// update the Position  of the sprite 
+        UpdateX(dt) ; // it will always be moving in x-direction
+        UpdateY(dt);
+
+
+        EnemySprite.setPosition(x , y) ;
+
+        UpdateDirection_X() ;
+        if(getVx() > 0)
+        {
+            isRight = true ; 
+            isLeft = false ; 
+        }
+        else 
+        {
+            isLeft = true ;
+            isRight = false ;
+        }
+
+        CheckCollionsWithScreenX(600  , 600) ; 
+        CheckCollionsWithScreenY(600  , 600) ; 
+        /// If the enemy Jumps Ignore  the platform collosions and go up till the box it is currently colliding with is not below it.
+        if(!isJumping) 
+        {
+            bool CheckCollosionAndAlsoTellIfEnemyisOnLand = CheckCollosionsWithPlatforms(B , BLOCKSIZE);
+            if(!CheckCollosionAndAlsoTellIfEnemyisOnLand)
+            {
+                // Add the gravity factor because if it was on land then Vy is 0 
+                isFallingDown = true ;
+                setVy(gravityfactor) ; 
+                }
+            else
+            {
+                // Else enemy is on land set it's Vx 
+                isFallingDown = false ;
+                setVx(getVx()) ; 
+                setVy(0) ;
+            }
+        }
+        EnemyWantsToJumporNot() ; 
+
+        if(isJumping && float(JumpInterval.getElapsedTime().asSeconds()) < 0.3)
+        {
+            const int JumpFactorToSpeed = 1000 ;
+            setVy(-getVy() - JumpFactorToSpeed) ;
+        }
         else
         {
-            // Else enemy is on land set it's Vx 
-            isFallingDown = false ;
-            setVx(getVx()) ; 
-            setVy(0) ;
+            isJumping = false ; 
+            setVy(gravityfactor) ; 
         }
-    }
-    EnemyWantsToJumporNot() ; 
-
-    if(isJumping && float(JumpInterval.getElapsedTime().asSeconds()) < 0.3)
-    {
-        const int JumpFactorToSpeed = 1000 ;
-        setVy(-getVy() - JumpFactorToSpeed) ;
-    }
-    else
-    {
-        isJumping = false ; 
-        setVy(gravityfactor) ; 
-    }
 
 
-    ///////////////////////////////////////////////////////////////////////
-    ////////////////////  Updating all the Animations of Enemy in Specific movements
+        ///////////////////////////////////////////////////////////////////////
+        ////////////////////  Updating all the Animations of Enemy in Specific movements
     
-    if(float(animationClock.getElapsedTime().asSeconds()) >= animationSpeed)
-    {
-        if(isLeft)
+        if(float(animationClock.getElapsedTime().asSeconds()) >= animationSpeed)
         {
-            UpdateToLeftMovementAnimation() ; 
+            if(isLeft)
+            {
+                UpdateToLeftMovementAnimation() ; 
+            }
+            else if (isRight)
+            {
+                UpdateToRightMovementAnimation() ;
+            }   
+            else if(isJumping)
+            {
+                UpdateToJumpMovementAnimation() ;
+            }
+            else if(isFallingDown)
+            {
+                UpdateToFallingMovementAnimation() ; 
+            }
+            animationClock.restart() ;
         }
-        else if (isRight)
-        {
-            UpdateToRightMovementAnimation() ;
-        }   
-        else if(isJumping)
-        {
-            UpdateToJumpMovementAnimation() ;
-        }
-        else if(isFallingDown)
-        {
-            UpdateToFallingMovementAnimation() ; 
-        }
-        animationClock.restart() ;
+
+
+
+        //// If User Presses the F1/F2 button then we draw the hitbox 
+        /*checkforShowHitBoxDetection(B , BLOCKSIZE) ; */
     }
+    virtual void draw(sf::RenderWindow &mywindow, bool debug)  override
+    {
+        /// ONLY DRAW DON'T CLEAR OR DISPLAY
+        mywindow.draw(Enemy::getEnemySprite()) ; 
 
-
-
-    //// If User Presses the F1/F2 button then we draw the hitbox 
-    checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ; 
-}
-virtual void Draw(sf::RenderWindow &mywindow)  override
-{
-    /// ONLY DRAW DON'T CLEAR OR DISPLAY
-    mywindow.draw(Enemy::getEnemySprite()) ; 
-}
+        if (debug)
+        {
+            EnemySprite.drawHitbox(mywindow, Color::Red);
+        }
+    }
 
 }; 
-#endif
-
-
-#ifndef FLYINGFOOGAFOOG
-#define FLYINGFOOGAFOOG
+//#endif
+//
+//
+//#ifndef FLYINGFOOGAFOOG
+//#define FLYINGFOOGAFOOG
 
 class FlyingFoogaFoog : public virtual Botom 
 {
 protected : 
-//////////////////////////
-/////// Brid Properties
-float isOnRestModeTime ; 
-sf::Clock CurrentTimeofIsOnRestMode ;
+    //////////////////////////
+    /////// Brid Properties
+    float isOnRestModeTime ; 
+    sf::Clock CurrentTimeofIsOnRestMode ;
 
-float TotalTimeToChangeToRestMode ; 
-sf::Clock CurrentTimeToChangeToRestMode ; 
+    float TotalTimeToChangeToRestMode ; 
+    sf::Clock CurrentTimeToChangeToRestMode ; 
 
-float  Areialtime;
-sf::Clock CurrentAreialTime ;
-
-
-bool ChangedToRestMode ;
-bool isInAeialMode ;
-bool isOnRestMode; 
+    float  Areialtime;
+    sf::Clock CurrentAreialTime ;
 
 
-/////////////////////////
-/// Bird Sprites Texture 
-/// I have my sprite inhereited from botom no need to add extra
-sf::Texture  DefaultOnLandTexture ; 
-sf::Texture *FlyingTexture ; 
+    bool ChangedToRestMode ;
+    bool isInAeialMode ;
+    bool isOnRestMode; 
 
 
-int TotalAnimationofFlying ;
+    /////////////////////////
+    /// Bird Sprites Texture 
+    /// I have my sprite inhereited from botom no need to add extra
+    sf::Texture  DefaultOnLandTexture ; 
+    sf::Texture *FlyingTexture ; 
 
-int CurrentIndexofAnimationofFlying;
+
+    int TotalAnimationofFlying ;
+
+    int CurrentIndexofAnimationofFlying;
 
 
 public : 
-FlyingFoogaFoog() : Botom()
-{
-    isOnRestModeTime = 2.0f ;
-    Areialtime  = 8.0f ;
-    CurrentAreialTime.restart() ;
-    TotalTimeToChangeToRestMode =  5 ; 
-    CurrentTimeToChangeToRestMode.restart() ; 
-
-    isInAeialMode = false ;
-    isOnRestMode = false ;
-    ChangedToRestMode = false  ; 
-
-    TotalAnimationofFlying  = 0 ;
-    CurrentIndexofAnimationofFlying = 0; 
-    FlyingTexture = nullptr ;
-
-}
-~FlyingFoogaFoog() 
-{
-    delete [] FlyingTexture ;
-}
-
-
-void setAreialtime(float f) {Areialtime = f;} 
-float getAreialtime() const {return Areialtime;} 
-
-
-private : 
-///////////////////////////////////////////////////////////////
-///////// All the animation helpers for FlyingFoog
-void UpdateToRestMovementAnimation()
-{
-    EnemySprite.setTexture(DefaultOnLandTexture) ; 
-}
-
-void UpdateToFlyingAnimation()
-{
-    EnemySprite.setTexture(FlyingTexture[CurrentIndexofAnimationofFlying] , true) ;
-    CurrentIndexofAnimationofFlying = (CurrentIndexofAnimationofFlying + 1) % TotalAnimationofFlying ;
-}
-
-///////////////////////////////////////////////////////////////
-///////// FIX: Clock only restarts after the threshold fires.
-///////// Previously the else branch restarted on every non-triggering
-///////// frame, so elapsed time could never reach TotalTimeToChangeToRestMode.
-bool ChangeToRestModeOrNot()
-{
-    if(CurrentTimeToChangeToRestMode.getElapsedTime().asSeconds() >= TotalTimeToChangeToRestMode)
+    FlyingFoogaFoog() : Botom()
     {
-        CurrentTimeToChangeToRestMode.restart() ; // restart only after threshold reached
-        return (rand() % 2) == 1 ;
+        isOnRestModeTime = 2.0f ;
+        Areialtime  = 8.0f ;
+        CurrentAreialTime.restart() ;
+        TotalTimeToChangeToRestMode =  5 ; 
+        CurrentTimeToChangeToRestMode.restart() ; 
+
+        isInAeialMode = false ;
+        isOnRestMode = false ;
+        ChangedToRestMode = false  ; 
+
+        TotalAnimationofFlying  = 0 ;
+        CurrentIndexofAnimationofFlying = 0; 
+        FlyingTexture = nullptr ;
+
+        sethealth(2);
+        originalSpeed = 200;
     }
-    return false ;
-}
-
-bool CheckIfItIsOnLand(Block* b, const int SIZE)
-{
-    bool onLand = false;
-
-    for (int st = 0; st < SIZE; st++)
+    ~FlyingFoogaFoog() 
     {
-        sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
-        sf::FloatRect blockBox = b[st].getHitbox();
-        sf::FloatRect overlap;
+        delete [] FlyingTexture ;
+    }
 
-        if (enemyBox.intersects(blockBox, overlap))
+
+    void setAreialtime(float f) {Areialtime = f;} 
+    float getAreialtime() const {return Areialtime;} 
+
+
+    private : 
+    ///////////////////////////////////////////////////////////////
+    ///////// All the animation helpers for FlyingFoog
+    void UpdateToRestMovementAnimation()
+    {
+        EnemySprite.setTexture(DefaultOnLandTexture) ; 
+    }
+
+    void UpdateToFlyingAnimation()
+    {
+        EnemySprite.setTexture(FlyingTexture[CurrentIndexofAnimationofFlying] , true) ;
+        CurrentIndexofAnimationofFlying = (CurrentIndexofAnimationofFlying + 1) % TotalAnimationofFlying ;
+    }
+
+    ///////////////////////////////////////////////////////////////
+    ///////// FIX: Clock only restarts after the threshold fires.
+    ///////// Previously the else branch restarted on every non-triggering
+    ///////// frame, so elapsed time could never reach TotalTimeToChangeToRestMode.
+    bool ChangeToRestModeOrNot()
+    {
+        if(CurrentTimeToChangeToRestMode.getElapsedTime().asSeconds() >= TotalTimeToChangeToRestMode)
         {
-            if (overlap.width > overlap.height)  // Vertical collision axis
-            {
-                float enemyCenterY = enemyBox.top + enemyBox.height / 2.0f;
-                float blockCenterY = blockBox.top  + blockBox.height / 2.0f;
+            CurrentTimeToChangeToRestMode.restart() ; // restart only after threshold reached
+            return (rand() % 2) == 1 ;
+        }
+        return false ;
+    }
 
-                if (enemyCenterY < blockCenterY)
+    bool CheckIfItIsOnLand(Block* b, const int SIZE)
+    {
+        bool onLand = false;
+
+        for (int st = 0; st < SIZE; st++)
+        {
+            sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
+            sf::FloatRect blockBox = b[st].getHitbox();
+            sf::FloatRect overlap;
+
+            if (enemyBox.intersects(blockBox, overlap))
+            {
+                if (overlap.width > overlap.height)  // Vertical collision axis
                 {
-                    // Enemy is above the block → landed on top
-                    y = blockBox.top - enemyBox.height;
-                    setVy(0);
-                    onLand = true;
+                    float enemyCenterY = enemyBox.top + enemyBox.height / 2.0f;
+                    float blockCenterY = blockBox.top  + blockBox.height / 2.0f;
+
+                    if (enemyCenterY < blockCenterY)
+                    {
+                        // Enemy is above the block → landed on top
+                        y = blockBox.top - enemyBox.height;
+                        setVy(0);
+                        onLand = true;
+                    }
+                    EnemySprite.setPosition(x, y);
                 }
-                EnemySprite.setPosition(x, y);
             }
         }
+        return onLand;
     }
-    return onLand;
-}
 
 
 
 public : 
 
-virtual  void CreateEnemy(float x , float y) 
-{
-    sf::Texture EnemyTex ; 
-    sf::IntRect area(50 , 30 , 97 ,162) ;
-    if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , area))
+    virtual void CreateEnemy(float x , float y) 
     {
-        std::cout << "Error in Loading the FlyingFoogaRed\n" ; 
-        exit(0) ; 
-    }
-    setEnemyTexture(EnemyTex) ;
-    EnemySprite.setScale(0.3 , 0.3) ;
-    setEnemyHitBoxSprite() ;
+        sf::Texture EnemyTex ; 
+        sf::IntRect area(50 , 30 , 97 ,162) ;
+        if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , area))
+        {
+            std::cout << "Error in Loading the FlyingFoogaRed\n" ; 
+            exit(0) ; 
+        }
+        setEnemyTexture(EnemyTex) ;
+        EnemySprite.setScale(0.3 , 0.3) ;
+        setEnemyHitBoxSprite() ;
 
-    ////////////////////////////////////////
-    ///// Loading Different Animation texture in the arrays 
-    TotalAnimationofRightMovement = 2;
-    TotalAnimationofleftMovement = 2;
-    TotalAnimationofJump = 2;
-    TotalAnimationofFalling = 2;
-    TotalAnimationofFlying = 2 ;
+        ////////////////////////////////////////
+        ///// Loading Different Animation texture in the arrays 
+        TotalAnimationofRightMovement = 2;
+        TotalAnimationofleftMovement = 2;
+        TotalAnimationofJump = 2;
+        TotalAnimationofFalling = 2;
+        TotalAnimationofFlying = 2 ;
 
-    EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
-    EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
-    EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
-    EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
-    FlyingTexture = new sf::Texture[TotalAnimationofFlying];
-
-
-    // Right Movement Textures _ areas
-    sf::IntRect area1(18 , 440 , 160 ,133) ;
-    sf::IntRect area2(215 , 436 , 166 , 126) ;
-
-    EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , area1);
-    EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , area2);
-
-    //  Left Movement Textures
-    EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", area1);
-    EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", area2);
-
-    // Jumping Up Textures arers
-    sf::IntRect jumpArea1(41 , 242 , 131 , 137) ;
-    sf::IntRect jumpArea2(230, 260 , 140  , 121) ; 
-
-    EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea1);
-    EnemySpriteJumpingUpTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea2);
-
-    // Falling Down Textures
-    EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea1);
-    EnemySpriteFallingDownTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea2);
+        EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
+        EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
+        EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
+        EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
+        FlyingTexture = new sf::Texture[TotalAnimationofFlying];
 
 
-    //// Default on Land / Rest Texture 
-    sf::IntRect areaLand(49,  31 ,97 , 160) ;
-    DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , areaLand) ;
+        // Right Movement Textures _ areas
+        sf::IntRect area1(18 , 440 , 160 ,133) ;
+        sf::IntRect area2(215 , 436 , 166 , 126) ;
+
+        EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , area1);
+        EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , area2);
+
+        //  Left Movement Textures
+        EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", area1);
+        EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", area2);
+
+        // Jumping Up Textures arers
+        sf::IntRect jumpArea1(41 , 242 , 131 , 137) ;
+        sf::IntRect jumpArea2(230, 260 , 140  , 121) ; 
+
+        EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea1);
+        EnemySpriteJumpingUpTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea2);
+
+        // Falling Down Textures
+        EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea1);
+        EnemySpriteFallingDownTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea2);
 
 
-    // Flying Texture set
-    sf::IntRect flyarea1(216 , 22 , 167 , 166) ; 
-    sf::IntRect flyarea2(430 , 23 , 143 , 156)  ;
+        //// Default on Land / Rest Texture 
+        sf::IntRect areaLand(49,  31 ,97 , 160) ;
+        DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , areaLand) ;
+
+
+        // Flying Texture set
+        sf::IntRect flyarea1(216 , 22 , 167 , 166) ; 
+        sf::IntRect flyarea2(430 , 23 , 143 , 156)  ;
     
-    FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , flyarea1) ; 
-    FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , flyarea2) ; 
+        FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , flyarea1) ; 
+        FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , flyarea2) ; 
 
 
 
-    /////////////////////////////////////////////
-    ///// Now Setting the Properties of the Enemy
-    setPos(x , y) ;
-    setVx(200) ;
-    setVy(200) ;
-    setCopyVx(200) ;
-    setCopyVy(200) ;
-}
-
-///////////////////////////////////////////////////////////////
-/////// Update for FlyingFoog — three mutually exclusive phases:
-/////// REST → AERIAL → NORMAL (with gravity/platforms)
-
-virtual void Update(sf::RenderWindow &mywindow , const float dt , Block *B , const int BLOCKSIZE) override
-{
-    ///////////////////////////////////////////////////////////
-    /////// PHASE 1 — REST MODE
-    /////// Enemy is stationary. Gravity and platforms are skipped
-    /////// entirely so nothing can push or pull it while resting.
-    if(isOnRestMode)
-    {
-        // Hold position — no movement whatsoever
-        setVx(0) ;
-        setVy(0) ;
-        EnemySprite.setPosition(x , y) ;
-
-        // After rest duration expires → switch to aerial mode
-        if(CurrentTimeofIsOnRestMode.getElapsedTime().asSeconds() >= isOnRestModeTime)
-        {
-            isOnRestMode    = false ;
-            ChangedToRestMode = false ;
-            isInAeialMode   = true ;
-            // Restore horizontal speed and launch upward to start aerial phase
-            setVx(CopyVx) ;
-            setVy(-CopyVy) ;
-            CurrentAreialTime.restart() ;
-        }
-
-        // Animation
-        if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
-        {
-            UpdateToRestMovementAnimation() ;
-            animationClock.restart() ;
-        }
-
-        checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;
-        return ; // Skip the rest of Update — rest is its own complete state
+        /////////////////////////////////////////////
+        ///// Now Setting the Properties of the Enemy
+        setPos(x , y) ;
+        setVx(200) ;
+        setVy(200) ;
+        originalSpeed = 200;
+        setCopyVx(200) ;
+        setCopyVy(200) ;
     }
 
-    ///////////////////////////////////////////////////////////
-    /////// PHASE 2 — AERIAL MODE
-    /////// Enemy flies freely. Gravity and platform checks are
-    /////// skipped so it moves through the air unaffected.
-    /////// Screen boundaries still apply so it can't leave the window.
-    if(isInAeialMode)
+    ///////////////////////////////////////////////////////////////
+    /////// update for FlyingFoog — three mutually exclusive phases:
+    /////// REST -> AERIAL -> NORMAL (with gravity/platforms)
+
+    virtual void update(const float dt , Block *B , const int BLOCKSIZE) override
     {
+        ///////////////////////////////////////////////////////////
+        /////// PHASE 1 — REST MODE
+        /////// Enemy is stationary. Gravity and platforms are skipped
+        /////// entirely so nothing can push or pull it while resting.
+        if(isOnRestMode)
+        {
+            // Hold position — no movement whatsoever
+            setVx(0) ;
+            setVy(0) ;
+            EnemySprite.setPosition(x , y) ;
+
+            // After rest duration expires → switch to aerial mode
+            if(CurrentTimeofIsOnRestMode.getElapsedTime().asSeconds() >= isOnRestModeTime)
+            {
+                isOnRestMode    = false ;
+                ChangedToRestMode = false ;
+                isInAeialMode   = true ;
+                // Restore horizontal speed and launch upward to start aerial phase
+                setVx(CopyVx) ;
+                setVy(-CopyVy) ;
+                CurrentAreialTime.restart() ;
+            }
+
+            // Animation
+            if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+            {
+                UpdateToRestMovementAnimation() ;
+                animationClock.restart() ;
+            }
+
+            /*checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;*/
+            return ; // Skip the rest of update — rest is its own complete state
+        }
+
+        ///////////////////////////////////////////////////////////
+        /////// PHASE 2 — AERIAL MODE
+        /////// Enemy flies freely. Gravity and platform checks are
+        /////// skipped so it moves through the air unaffected.
+        /////// Screen boundaries still apply so it can't leave the window.
+        if(isInAeialMode)
+        {
+            UpdateX(dt) ;
+            UpdateY(dt) ;
+            EnemySprite.setPosition(x , y) ;
+
+            UpdateDirection_X() ;
+            if(getVx() > 0) { isRight = true  ; isLeft = false ; }
+            else             { isLeft  = true  ; isRight = false ; }
+
+            // Screen boundaries bounce the enemy so it stays visible
+            CheckCollionsWithScreenX(600 , 600) ;
+            // For aerial Y: bounce off top/bottom instead of stopping
+            if(y + EnemySprite.getGlobalBounds().height > 600)
+            {
+                y = 600 - EnemySprite.getGlobalBounds().height ;
+                setVy(-abs(getVy())) ; // bounce up
+            }
+            else if(y < 0)
+            {
+                y = 0 ;
+                setVy(abs(getVy())) ; // bounce down
+            }
+            EnemySprite.setPosition(x , y) ;
+
+            // After aerial duration expires → fall back to normal mode
+            if(CurrentAreialTime.getElapsedTime().asSeconds() >= Areialtime && CheckIfItIsOnLand(B , BLOCKSIZE))
+            {
+                isInAeialMode = false ;
+                isFallingDown = true  ;
+                setVy(gravityfactor)  ;
+            }
+
+            // Animation
+            if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+            {
+                UpdateToFlyingAnimation() ;
+                animationClock.restart() ;
+            }
+
+            /*checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;*/
+            return ; // Skip the rest of update — aerial is its own complete state
+        }
+
+        ///////////////////////////////////////////////////////////
+        /////// PHASE 3 — NORMAL MODE (walking / jumping on platforms)
+        /////// Identical to Botom logic, plus a check at the end
+        /////// to decide whether to enter rest mode.
+
         UpdateX(dt) ;
         UpdateY(dt) ;
         EnemySprite.setPosition(x , y) ;
@@ -767,123 +823,82 @@ virtual void Update(sf::RenderWindow &mywindow , const float dt , Block *B , con
         if(getVx() > 0) { isRight = true  ; isLeft = false ; }
         else             { isLeft  = true  ; isRight = false ; }
 
-        // Screen boundaries bounce the enemy so it stays visible
-        CheckCollionsWithScreenX(mywindow.getSize().x , mywindow.getSize().y) ;
-        // For aerial Y: bounce off top/bottom instead of stopping
-        if(y + EnemySprite.getGlobalBounds().height > mywindow.getSize().y)
-        {
-            y = mywindow.getSize().y - EnemySprite.getGlobalBounds().height ;
-            setVy(-abs(getVy())) ; // bounce up
-        }
-        else if(y < 0)
-        {
-            y = 0 ;
-            setVy(abs(getVy())) ; // bounce down
-        }
-        EnemySprite.setPosition(x , y) ;
+        CheckCollionsWithScreenX(600, 600) ;
+        CheckCollionsWithScreenY(600, 600) ;
 
-        // After aerial duration expires → fall back to normal mode
-        if(CurrentAreialTime.getElapsedTime().asSeconds() >= Areialtime && CheckIfItIsOnLand(B , BLOCKSIZE))
+        if(!isJumping)
         {
-            isInAeialMode = false ;
-            isFallingDown = true  ;
-            setVy(gravityfactor)  ;
+            bool onLand = CheckCollosionsWithPlatforms(B , BLOCKSIZE) ;
+            if(!onLand)
+            {
+                isFallingDown = true ;
+                setVy(gravityfactor) ;
+            }
+            else
+            {
+                isFallingDown = false ;
+                setVy(0) ;
+            }
         }
 
-        // Animation
-        if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        EnemyWantsToJumporNot() ;
+
+        if(isJumping && float(JumpInterval.getElapsedTime().asSeconds()) < 0.3f)
         {
-            UpdateToFlyingAnimation() ;
-            animationClock.restart() ;
-        }
-
-        checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;
-        return ; // Skip the rest of Update — aerial is its own complete state
-    }
-
-    ///////////////////////////////////////////////////////////
-    /////// PHASE 3 — NORMAL MODE (walking / jumping on platforms)
-    /////// Identical to Botom logic, plus a check at the end
-    /////// to decide whether to enter rest mode.
-
-    UpdateX(dt) ;
-    UpdateY(dt) ;
-    EnemySprite.setPosition(x , y) ;
-
-    UpdateDirection_X() ;
-    if(getVx() > 0) { isRight = true  ; isLeft = false ; }
-    else             { isLeft  = true  ; isRight = false ; }
-
-    CheckCollionsWithScreenX(mywindow.getSize().x , mywindow.getSize().y) ;
-    CheckCollionsWithScreenY(mywindow.getSize().x , mywindow.getSize().y) ;
-
-    if(!isJumping)
-    {
-        bool onLand = CheckCollosionsWithPlatforms(mywindow , B , BLOCKSIZE) ;
-        if(!onLand)
-        {
-            isFallingDown = true ;
-            setVy(gravityfactor) ;
+            const int JumpFactorToSpeed = 1000 ;
+            setVy(-getVy() - JumpFactorToSpeed) ;
         }
         else
         {
-            isFallingDown = false ;
-            setVy(0) ;
+            isJumping = false ;
+            setVy(gravityfactor) ;
+        }
+
+        ///////////////////////////////////////////////////////////
+        /////// Check whether to enter rest mode only while
+        /////// in normal mode. ChangeToRestModeOrNot() now only
+        /////// restarts its clock after the threshold fires, so
+        /////// this check will actually trigger every ~10 seconds.
+        if(ChangeToRestModeOrNot())
+        {
+            isOnRestMode = true ;
+            ChangedToRestMode = true ;
+            CurrentTimeofIsOnRestMode.restart() ;
+        }
+
+        ///////////////////////////////////////////////////////////
+        /////// Simple animation change like botom
+        if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        {
+            if(isLeft)          
+                UpdateToLeftMovementAnimation() ;
+            else if(isRight)    
+                UpdateToRightMovementAnimation() ;
+            else if(isJumping)  
+                UpdateToJumpMovementAnimation() ;
+            else if(isFallingDown) 
+                UpdateToFallingMovementAnimation() ;
+
+            animationClock.restart() ;
         }
     }
 
-    EnemyWantsToJumporNot() ;
 
-    if(isJumping && float(JumpInterval.getElapsedTime().asSeconds()) < 0.3f)
+    virtual void draw(sf::RenderWindow &mywindow, bool debug) override
     {
-        const int JumpFactorToSpeed = 1000 ;
-        setVy(-getVy() - JumpFactorToSpeed) ;
+        mywindow.draw(Enemy::getEnemySprite()) ; 
+
+        if (debug)
+            EnemySprite.drawHitbox(mywindow, Color::Red);
+
     }
-    else
-    {
-        isJumping = false ;
-        setVy(gravityfactor) ;
-    }
-
-    ///////////////////////////////////////////////////////////
-    /////// Check whether to enter rest mode only while
-    /////// in normal mode. ChangeToRestModeOrNot() now only
-    /////// restarts its clock after the threshold fires, so
-    /////// this check will actually trigger every ~10 seconds.
-    if(ChangeToRestModeOrNot())
-    {
-        isOnRestMode      = true ;
-        ChangedToRestMode = true ;
-        CurrentTimeofIsOnRestMode.restart() ;
-    }
-
-    ///////////////////////////////////////////////////////////
-    /////// Simple animation change like botom
-    if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
-    {
-        if(isLeft)          UpdateToLeftMovementAnimation() ;
-        else if(isRight)    UpdateToRightMovementAnimation() ;
-        else if(isJumping)  UpdateToJumpMovementAnimation() ;
-        else if(isFallingDown) UpdateToFallingMovementAnimation() ;
-
-        animationClock.restart() ;
-    }
-
-    checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;
-}
-
-
-virtual void Draw(sf::RenderWindow &mywindow) override
-{
-    mywindow.draw(Enemy::getEnemySprite()) ; 
-}
 }; 
 
-#endif
-
-
-#ifndef TORNADO
-#define TORNADO
+//#endif
+//
+//
+//#ifndef TORNADO
+//#define TORNADO
 
 class Tornado :  public virtual FlyingFoogaFoog 
 {
@@ -1012,4 +1027,4 @@ virtual  void CreateEnemy(float x , float y)
 };
 
 
-#endif
+//#endif

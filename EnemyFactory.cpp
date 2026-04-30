@@ -43,4 +43,57 @@ void Enemy::setEnemyHitBoxSprite() // Just Call it To change the current Set Tex
     
     sf::FloatRect bounds = EnemySprite.getLocalBounds();
     EnemySprite.setHitbox(bounds);
+    EnemySprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+}
+
+void Enemy::applySnow(float amount)
+{
+    if (!isFullyCoated)
+    {
+        snowAccumulated += amount;
+        if (snowAccumulated >= health)
+        {
+
+            snowAccumulated = health;
+            isFullyCoated = true;
+            Vx = 0;
+            Vy = 0;
+            shakeTimer.restart();
+        }
+    }
+}
+
+void Enemy::updateCoatedState()
+{
+    if (isFullyCoated)
+    {
+        if (shakeTimer.getElapsedTime().asSeconds() >= 5)
+        {
+            shakeOffSnow();
+        }
+    }
+    else if (snowAccumulated > 0)
+    {
+        float slowFactor = 1.0 - (snowAccumulated / health);
+        float currentSpeed = originalSpeed * slowFactor;
+
+        if (Vx > 0)
+        {
+            Vx = currentSpeed;
+        }
+        else if (Vx < 0)
+        {
+            Vx = -currentSpeed;
+        }
+    }
+}
+
+void Enemy::shakeOffSnow()
+{
+    snowAccumulated = 0;
+    isFullyCoated = false;
+    if (originalSpeed > 0)
+        Vx = originalSpeed;
+    else
+        Vx = -originalSpeed;
 }
