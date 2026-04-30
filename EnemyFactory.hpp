@@ -3,6 +3,7 @@
 #include <cstring>
 #include <SFML/Graphics.hpp>
 #include "Hitbox.hpp"
+#include "hitbox.cpp"
 #include "Block.hpp"
 
 
