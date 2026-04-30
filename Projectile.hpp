@@ -74,4 +74,8 @@ public:
     {
         snowAmount = amount;
     }
+    void setMaxDistance(float n)
+    {
+        maxDistance = n ;
+    }
 };

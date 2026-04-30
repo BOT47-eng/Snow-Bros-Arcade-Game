@@ -40,6 +40,7 @@ private:
     bool wantsShoot;
     bool invincible;
     bool isShooting;
+    bool isBallonMode ; 
 
     const FloatRect playerHitbox = { 0, 0, 60, 72 };
     const IntRect idlePlayerFrames = { IntRect(19, 3, 57, 72) };
@@ -62,6 +63,7 @@ private:
     static const float INVINCIBLE_TIME;
 
 public:
+    Player() ;
     Player(int index, PlayerStats stats = PlayerStats());
     void setTexture(const Texture& texture, IntRect rect);
     void setHitboxRect(FloatRect localRect);
@@ -136,6 +138,7 @@ public:
     { 
         return index; 
     }
+    bool getBallonMode() const {return isBallonMode ; }
     
     //This returns shoot flag and resets it
     bool consumeShoot() 
@@ -160,6 +163,10 @@ public:
         onGround = v; 
     }
     void setDirectionRight(bool faceRight);
+    void setBallonMode(bool v)
+    {
+        isBallonMode = v ; 
+    }
 
     //For snowballs
     void setTextureSnowball(const Texture& texture);
