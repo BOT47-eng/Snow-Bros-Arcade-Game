@@ -310,28 +310,33 @@ void GameUnit::drawMainMenu()
             {
                 if (event.mouseButton.button == Mouse::Button::Left)
                 {
+                    //New game
                     if (playOptions[0].getGlobalBounds().contains(Vector2f(mousePos)))
                     {
                         if (loginPlayer[0].isLoggedIn() || loginPlayer[1].isLoggedIn())
                         {
-                            cout << "LevelManager" << endl;
+                            levelManager.startGame(0, &window, &fontHeader, &fontNormal, players, loginPlayer[0].isLoggedIn(), loginPlayer[1].isLoggedIn());
                         }
                     }
+                    //Continue game
                     else if (playOptions[1].getGlobalBounds().contains(Vector2f(mousePos)))
                     {
                         if (loginPlayer[0].isLoggedIn() || loginPlayer[1].isLoggedIn())
                         {
-                            cout << "LevelManager" << endl;
+                            levelManager.startGame(1, &window, &fontHeader, &fontNormal, players, loginPlayer[0].isLoggedIn(), loginPlayer[1].isLoggedIn());
                         }
                     }
+                    //Guest mode
                     else if (playOptions[2].getGlobalBounds().contains(Vector2f(mousePos)))
                     {
-                        cout << "LevelManager" << endl;
+                        levelManager.startGame(2, &window, &fontHeader, &fontNormal, players, loginPlayer[0].isLoggedIn(), loginPlayer[1].isLoggedIn());
                     }
+                    //Quit game
                     else if (playOptions[3].getGlobalBounds().contains(Vector2f(mousePos)))
                     {
                         window.close();
                     }
+                    //Login player 1
                     else if (loginOptions[0].getGlobalBounds().contains(Vector2f(mousePos)))
                     {
                         if (!loginPlayer[0].isLoggedIn())
@@ -339,6 +344,7 @@ void GameUnit::drawMainMenu()
                         else
                             loginPlayer[0].logout();
                     }
+                    //Login player 2
                     else if (loginOptions[1].getGlobalBounds().contains(Vector2f(mousePos)))
                     {
                         if (!loginPlayer[1].isLoggedIn())
@@ -346,10 +352,11 @@ void GameUnit::drawMainMenu()
                         else
                             loginPlayer[1].logout();
                     }
+                    //Leaderboard
                     else if (leaderboardContainer.getGlobalBounds().contains(Vector2f(mousePos)))
                     {
-                       leader->loadFromFile() ; 
-                       leader->drawLeaderboard = true;
+                        leaderboardObj->loadFromFile() ;
+                        leaderboardObj->drawLeaderboard = true;
                     }
                 }
             }
@@ -427,13 +434,13 @@ void GameUnit::drawMainMenu()
         window.draw(horizontalLine);
 
         
-        while(leader->drawLeaderboard == true)
+        while(leaderboardObj->drawLeaderboard == true)
         {
-            leader->draw(window);
+            leaderboardObj->draw(window);
         }
         window.display();
     }
 
-    if(leader != nullptr)
-        delete leader; 
+    if(leaderboardObj != nullptr)
+        delete leaderboardObj;
 }
