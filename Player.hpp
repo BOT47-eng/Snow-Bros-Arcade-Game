@@ -63,11 +63,7 @@ private:
     static const float INVINCIBLE_TIME;
 
 public:
-<<<<<<< HEAD
     Player() ;
-=======
-    Player() ; 
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
     Player(int index, PlayerStats stats = PlayerStats());
     void setTexture(const Texture& texture, IntRect rect);
     void setHitboxRect(FloatRect localRect);
@@ -142,11 +138,7 @@ public:
     { 
         return index; 
     }
-<<<<<<< HEAD
     bool getBallonMode() const {return isBallonMode ; }
-=======
-    bool getBallonMode() const {return isBallonMode ;}
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
     
     //This returns shoot flag and resets it
     bool consumeShoot() 
@@ -171,16 +163,9 @@ public:
         onGround = v; 
     }
     void setDirectionRight(bool faceRight);
-<<<<<<< HEAD
     void setBallonMode(bool v)
     {
         isBallonMode = v ; 
-=======
-    
-    void setBallonMode(bool v)
-    {
-        isBallonMode = v ;
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
     }
 
     //For snowballs

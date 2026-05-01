@@ -5,11 +5,7 @@
 using namespace std ;
 using namespace sf;
 
-<<<<<<< HEAD
 #pragma once
-=======
-
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
 class LEADERBOARD
 {
 private :  
@@ -22,22 +18,15 @@ sf::Font font;
 
 public : 
 
-<<<<<<< HEAD
 bool drawLeaderboard ;
 sf::Texture GoBackTexture ;
 sf::Sprite GobackSprite ;
 
-=======
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
 LEADERBOARD()
 {
     /////////////////////////////////////
     /// Just Loading the background Image
-<<<<<<< HEAD
     if(!tex.loadFromFile("Resources/SnowBrosAssets/Images/LeaderBoard_Background.jpg"))
-=======
-    if(!tex.loadFromFile("Resources/SnowBrosAssets/Images/LeaderBoard_Background.png"))
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
     {
         cout << "Error in loading the tex for leaderboard background\n" ; 
         exit(0) ;
@@ -47,26 +36,20 @@ LEADERBOARD()
         cout << "Error in loading the font for leaderboard background\n" ; 
         exit(0) ;
     }
-<<<<<<< HEAD
     if(!GoBackTexture.loadFromFile("Resources/SnowBrosAssets/Images/ReturnButtonforLeaderboard.jpg" , {668 ,  792 , 110 ,114}))
     {
         cout << "Error in loadingt the return button sprite in Leaderboard.hpp\n" ;
         exit(0) ;
     }
-=======
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
     Vector2f texSize = {float(tex.getSize().x)  , float(tex.getSize().y)} ; 
     Vector2f windowSize = {600 , 600} ; 
     float ScaleX = (float) windowSize.x / texSize.x;
     float ScaleY = (float) windowSize.y / texSize.y; 
     background.setTexture(tex) ;
     background.setScale(ScaleX , ScaleY) ; 
-<<<<<<< HEAD
     GobackSprite.setTexture(GoBackTexture) ;
     GobackSprite.setScale(0.4 , 0.4); 
     GobackSprite.setPosition(0, 0) ; 
-=======
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
     /////////////////////////////////////
     /////////////////////////////////////
     
@@ -74,10 +57,7 @@ LEADERBOARD()
     view = new View({ 600 / 2, 600 / 2 }, { 600, 600 }) ;
     playerNames = nullptr ;  
     scores = nullptr ;
-<<<<<<< HEAD
     drawLeaderboard = false ;
-=======
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
 }
 ~LEADERBOARD()
 {
@@ -195,7 +175,6 @@ void LEADERBOARD::draw(sf::RenderWindow &window)
     sf::Event event;
     const int size = countNoOfPlayers();
 
-<<<<<<< HEAD
     sf::Text title("TOP PLAYER RANKING", font, 80);
     title.setFillColor(sf::Color::Red);
     title.setPosition(100, 0);
@@ -204,13 +183,10 @@ void LEADERBOARD::draw(sf::RenderWindow &window)
     labels.setFillColor(sf::Color::Blue);
     labels.setPosition(50, 45);
 
-=======
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
     while (window.pollEvent(event))
     {
         if (event.type == sf::Event::MouseWheelScrolled)
         {
-<<<<<<< HEAD
             // To Prevent from going down too much
             if(!(view->getCenter().y - 300 <= 0)) // Mdipoint - 300 to get the pos of top of center 
             {
@@ -239,31 +215,13 @@ void LEADERBOARD::draw(sf::RenderWindow &window)
     window.setView(window.getDefaultView()) ;
     window.draw(background)  ;
     window.draw(GobackSprite) ;
-=======
-            view->move({ 0, -event.mouseWheelScroll.delta * 20.f });
-        }
-    }
-    window.setView(window.getDefaultView()) ;
-    window.draw(background)  ;
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
 
     window.setView(*view);
     // Now i can draw everything under this view 
 
 
-<<<<<<< HEAD
     
     window.draw(title);
-=======
-    sf::Text title("TOP PLAYER RANKING", font, 80);
-    title.setFillColor(sf::Color::Red);
-    title.setPosition(100, 0);
-    window.draw(title);
-
-    sf::Text labels("RANK    NAME            SCORE", font, 60);
-    labels.setFillColor(sf::Color::Blue);
-    labels.setPosition(50, 45);
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
     window.draw(labels);
 
 
@@ -294,10 +252,7 @@ void LEADERBOARD::draw(sf::RenderWindow &window)
         window.draw(txtScore);
     }
 
-<<<<<<< HEAD
     window.display() ; 
-=======
->>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
 
 }
 
