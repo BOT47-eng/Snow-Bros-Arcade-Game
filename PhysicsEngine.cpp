@@ -421,6 +421,15 @@ void PhysicsEngine::enforceEnemyFloorBoundary(Enemy* enemy) const
     {
         float halfHeight = enemyBox.height / 2.0f;
         enemy->setPos(enemy->getPosX(), FLOOR_Y - halfHeight);
-        enemy->setVy(0);
+        
+        if (enemy->getIsFlying())
+        {
+            float bounceVelocity = max(abs(enemy->getVy()), 150.0f);
+            enemy->setVy(-bounceVelocity);
+        }
+        else
+        {
+            enemy->setVy(0);
+        }
     }
 }

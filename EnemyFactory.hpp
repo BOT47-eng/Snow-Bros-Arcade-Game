@@ -26,6 +26,7 @@ protected:
     float Vx ;
     float Vy ;
     bool isBoss;
+    bool isFlying;
 
     float CopyVx ;  // To use incase the actual value is 0
     float CopyVy ; 
@@ -105,6 +106,7 @@ public:
     int getSnowballKillCount() const { return snowballKillCount; }
     bool getSnowballOnGround() const { return snowballOnGround; }
     int getSnowballCreatorPlayer() const { return snowballCreatorPlayer; }
+    bool getIsFlying() const { return isFlying; }
 
     void applySnow(float amount, int playerID = 0);
     void updateCoatedState();
@@ -118,7 +120,7 @@ public:
     void setSnowballPushDirection(float dir) { snowballPushDirection = dir; }
     void incrementSnowballKillCount() { snowballKillCount++; }
 
-    Enemy() : health(0), x(0), y(0), Vx(0), Vy(0), CopyVx(0), CopyVy(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), snowballCreatorPlayer(0), currentSnowballAnim(nullptr), isBoss(false)
+    Enemy() : health(0), x(0), y(0), Vx(0), Vy(0), CopyVx(0), CopyVy(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), snowballCreatorPlayer(0), currentSnowballAnim(nullptr), isBoss(false), isFlying(false)
     {
         if (!snowballTexture.loadFromFile("SnowBrosAssets/Images/Nick.png"))
         {
@@ -127,7 +129,7 @@ public:
 
     }
 
-    Enemy(int h, float x, float y, float dx, float dy) : health(h), x(x), y(y), Vx(dx), Vy(dy), snowAccumulated(0), isFullyCoated(false), originalSpeed(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), snowballCreatorPlayer(0), currentSnowballAnim(nullptr)
+    Enemy(int h, float x, float y, float dx, float dy) : health(h), x(x), y(y), Vx(dx), Vy(dy), snowAccumulated(0), isFullyCoated(false), originalSpeed(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), snowballCreatorPlayer(0), currentSnowballAnim(nullptr), isFlying(false)
     {
         if (!snowballTexture.loadFromFile("SnowBrosAssets/Images/Nick.png"))
         {
@@ -437,6 +439,7 @@ public:
                         y = blockBox.top - enemyBox.height / 2.0f;
                         setVy(0);
                         OnLand = true;
+                        
                     }
                     else
                     {
@@ -677,30 +680,29 @@ public :
         bool onLand = false;
         float halfHeight = EnemySprite.getGlobalBounds().height / 2.0f;
         float floorY = 560.0f;
+        bool timeToLand = ChangeToRestModeOrNot();
 
-        if (!isInAeialMode)
+        for (int st = 0; st < SIZE; st++)
         {
-            for (int st = 0; st < SIZE; st++)
+            sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
+            sf::FloatRect blockBox = b[st].getHitbox();
+            sf::FloatRect overlap;
+
+            if (enemyBox.intersects(blockBox, overlap))
             {
-                sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
-                sf::FloatRect blockBox = b[st].getHitbox();
-                sf::FloatRect overlap;
-
-                if (enemyBox.intersects(blockBox, overlap))
+                if (overlap.width > overlap.height)
                 {
-                    if (overlap.width > overlap.height)
-                    {
-                        float enemyCenterY = enemyBox.top + enemyBox.height / 2.0f;
-                        float blockCenterY = blockBox.top + blockBox.height / 2.0f;
+                    float enemyCenterY = enemyBox.top + enemyBox.height / 2.0f;
+                    float blockCenterY = blockBox.top + blockBox.height / 2.0f;
 
-                        if (enemyCenterY < blockCenterY)
-                        {
-                            y = blockBox.top - enemyBox.height / 2.0f;
-                            setVy(0);
-                            onLand = true;
-                        }
-                        EnemySprite.setPosition(x, y);
+                    if (enemyCenterY < blockCenterY) 
+                    {
+                        y = blockBox.top - enemyBox.height / 2.0f;
+                        setVy(0);
+                        onLand = true;
+                        
                     }
+                    EnemySprite.setPosition(x, y);
                 }
             }
         }
@@ -814,6 +816,7 @@ public :
             // After rest duration expires → switch to aerial mode
             if(CurrentTimeofIsOnRestMode.getElapsedTime().asSeconds() >= isOnRestModeTime)
             {
+                isFlying = true;
                 isOnRestMode    = false ;
                 ChangedToRestMode = false ;
                 isInAeialMode   = true ;
@@ -867,6 +870,7 @@ public :
             // After aerial duration expires → fall back to normal mode
             if(CurrentAreialTime.getElapsedTime().asSeconds() >= Areialtime && CheckIfItIsOnLand(B , BLOCKSIZE))
             {
+                isFlying = false;
                 isInAeialMode = false ;
                 isFallingDown = true  ;
                 setVy(gravityfactor)  ;
