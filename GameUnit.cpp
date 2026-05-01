@@ -208,7 +208,6 @@ void GameUnit::drawTesting()
 
 void GameUnit::drawMainMenu()
 {
-
     Clock clock;
     float dt = 0;
 
@@ -256,7 +255,7 @@ void GameUnit::drawMainMenu()
     loginOptions[1].setPosition(Vector2f(310, 550));
 
     RectangleShape leaderboardContainer(Vector2f(40, 40));
-    leaderboardContainer.setTexture(&leaderBoardButtonTex) ;
+    leaderboardContainer.setFillColor(Color::Red);
     leaderboardContainer.setPosition(Vector2f(550, 10));
 
     string loginLabels[2] = { "", "" };
@@ -348,8 +347,10 @@ void GameUnit::drawMainMenu()
                     }
                     else if (leaderboardContainer.getGlobalBounds().contains(Vector2f(mousePos)))
                     {
-                       leader->loadFromFile() ; 
-                       leader->drawLeaderboard = true;
+                        if (leaderboardContainer.getFillColor() == Color::Green)
+                            leaderboardContainer.setFillColor(Color::Red);
+                        else
+                            leaderboardContainer.setFillColor(Color::Green);
                     }
                 }
             }
@@ -426,14 +427,6 @@ void GameUnit::drawMainMenu()
         window.draw(verticalLine);
         window.draw(horizontalLine);
 
-        
-        while(leader->drawLeaderboard == true)
-        {
-            leader->draw(window);
-        }
         window.display();
     }
-
-    if(leader != nullptr)
-        delete leader; 
 }

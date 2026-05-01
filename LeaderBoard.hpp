@@ -5,7 +5,7 @@
 using namespace std ;
 using namespace sf;
 
-#pragma once
+
 class LEADERBOARD
 {
 private :  
@@ -17,10 +17,6 @@ sf::Sprite background ;
 sf::Font font;
 
 public : 
-
-bool drawLeaderboard ;
-sf::Texture GoBackTexture ;
-sf::Sprite GobackSprite ;
 
 LEADERBOARD()
 {
@@ -36,20 +32,12 @@ LEADERBOARD()
         cout << "Error in loading the font for leaderboard background\n" ; 
         exit(0) ;
     }
-    if(!GoBackTexture.loadFromFile("Resources/SnowBrosAssets/Images/ReturnButtonforLeaderboard.jpg" , {668 ,  792 , 110 ,114}))
-    {
-        cout << "Error in loadingt the return button sprite in Leaderboard.hpp\n" ;
-        exit(0) ;
-    }
     Vector2f texSize = {float(tex.getSize().x)  , float(tex.getSize().y)} ; 
     Vector2f windowSize = {600 , 600} ; 
     float ScaleX = (float) windowSize.x / texSize.x;
     float ScaleY = (float) windowSize.y / texSize.y; 
     background.setTexture(tex) ;
     background.setScale(ScaleX , ScaleY) ; 
-    GobackSprite.setTexture(GoBackTexture) ;
-    GobackSprite.setScale(0.4 , 0.4); 
-    GobackSprite.setPosition(0, 0) ; 
     /////////////////////////////////////
     /////////////////////////////////////
     
@@ -57,7 +45,6 @@ LEADERBOARD()
     view = new View({ 600 / 2, 600 / 2 }, { 600, 600 }) ;
     playerNames = nullptr ;  
     scores = nullptr ;
-    drawLeaderboard = false ;
 }
 ~LEADERBOARD()
 {
@@ -175,53 +162,28 @@ void LEADERBOARD::draw(sf::RenderWindow &window)
     sf::Event event;
     const int size = countNoOfPlayers();
 
-    sf::Text title("TOP PLAYER RANKING", font, 80);
-    title.setFillColor(sf::Color::Red);
-    title.setPosition(100, 0);
-
-    sf::Text labels("RANK    NAME            SCORE", font, 60);
-    labels.setFillColor(sf::Color::Blue);
-    labels.setPosition(50, 45);
-
     while (window.pollEvent(event))
     {
         if (event.type == sf::Event::MouseWheelScrolled)
         {
-            // To Prevent from going down too much
-            if(!(view->getCenter().y - 300 <= 0)) // Mdipoint - 300 to get the pos of top of center 
-            {
-                view->move({ 0, -event.mouseWheelScroll.delta * 20.f });
-            }
-            else 
-            {
-                view->move({0 ,  10});
-            }
+            view->move({ 0, -event.mouseWheelScroll.delta * 20.f });
         }
     }
-    //////// Adding the check weather userwants to go back or not
-    if(sf::Event::MouseButtonPressed && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-    {
-        Vector2f pos = {float(sf::Mouse::getPosition(window).x) , float(sf::Mouse::getPosition(window).y)} ;
-        if(GobackSprite.getGlobalBounds().contains(pos))
-        {
-            // Set back to default view of main menu
-            View view({0 , 0 , 600 , 600}) ;
-            window.setView(view);
-            drawLeaderboard = false ;
-            return ;
-        }
-    }
-
     window.setView(window.getDefaultView()) ;
     window.draw(background)  ;
-    window.draw(GobackSprite) ;
 
     window.setView(*view);
     // Now i can draw everything under this view 
 
 
-    
+    sf::Text title("TOP PLAYER RANKING", font, 80);
+    title.setFillColor(sf::Color::Red);
+    title.setPosition(100, 0);
     window.draw(title);
+
+    sf::Text labels("RANK    NAME            SCORE", font, 60);
+    labels.setFillColor(sf::Color::Blue);
+    labels.setPosition(50, 45);
     window.draw(labels);
 
 
@@ -252,7 +214,6 @@ void LEADERBOARD::draw(sf::RenderWindow &window)
         window.draw(txtScore);
     }
 
-    window.display() ; 
 
 }
 
