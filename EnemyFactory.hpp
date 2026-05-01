@@ -3,9 +3,9 @@
 #include <cstring>
 #include <SFML/Graphics.hpp>
 #include "Hitbox.hpp"
-#include "hitbox.cpp"
 #include "Block.hpp"
 #include "AnimationComponent.hpp"
+
 
 //#ifndef ENEMYFACTORY 
 //#define ENEMYFACTORY 
@@ -34,6 +34,8 @@ protected:
     ///// Different Sprite Animation 
     sf::Texture snowballTexture;
     sf::Texture EnemySpriteTexture ; 
+    sf::Texture botomSpriteTexture;
+    sf::Texture flyingFroogaSpriteTexture;
     HitboxSprite EnemySprite;
 
     ///////////////////////////
@@ -55,6 +57,7 @@ protected:
     int snowballKillCount;
     bool snowballOnGround;
     float snowballPushDirection;
+    int snowballCreatorPlayer;
     AnimationComponent animSnowballRoll;
     AnimationComponent animSnowballBreakout;
     AnimationComponent* currentSnowballAnim;
@@ -101,8 +104,9 @@ public:
     float getSnowballVelocityY() const { return snowballVelocityY; }
     int getSnowballKillCount() const { return snowballKillCount; }
     bool getSnowballOnGround() const { return snowballOnGround; }
+    int getSnowballCreatorPlayer() const { return snowballCreatorPlayer; }
 
-    void applySnow(float amount);
+    void applySnow(float amount, int playerID = 0);
     void updateCoatedState();
     void shakeOffSnow();
     void convertToSnowball();
@@ -114,15 +118,16 @@ public:
     void setSnowballPushDirection(float dir) { snowballPushDirection = dir; }
     void incrementSnowballKillCount() { snowballKillCount++; }
 
-    Enemy() : health(0), x(0), y(0), Vx(0), Vy(0), CopyVx(0), CopyVy(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), currentSnowballAnim(nullptr)
+    Enemy() : health(0), x(0), y(0), Vx(0), Vy(0), CopyVx(0), CopyVy(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), snowballCreatorPlayer(0), currentSnowballAnim(nullptr), isBoss(false)
     {
         if (!snowballTexture.loadFromFile("SnowBrosAssets/Images/Nick.png"))
         {
             std::cout << "Error loading snowball texture\n";
         }
+
     }
 
-    Enemy(int h, float x, float y, float dx, float dy) : health(h), x(x), y(y), Vx(dx), Vy(dy), snowAccumulated(0), isFullyCoated(false), originalSpeed(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), currentSnowballAnim(nullptr)
+    Enemy(int h, float x, float y, float dx, float dy) : health(h), x(x), y(y), Vx(dx), Vy(dy), snowAccumulated(0), isFullyCoated(false), originalSpeed(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), snowballCreatorPlayer(0), currentSnowballAnim(nullptr)
     {
         if (!snowballTexture.loadFromFile("SnowBrosAssets/Images/Nick.png"))
         {
@@ -398,53 +403,61 @@ public:
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     //// Return True if It is on land else it return false in which case we have add the gravity factor
-    bool CheckCollosionsWithPlatforms(Block *b, const int SIZE)
+    bool CheckCollosionsWithPlatforms(Block* b, const int SIZE)
     {
-        bool OnLand = false ;
+        bool OnLand = false;
+        float halfHeight = EnemySprite.getGlobalBounds().height / 2.0f;
+        float floorY = 560.0f;
 
-        for(int st = 0; st < SIZE; st++)
+        for (int st = 0; st < SIZE; st++)
         {
             sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
             sf::FloatRect blockBox = b[st].getHitbox();
-            sf::FloatRect overlap; 
+            sf::FloatRect overlap;
 
-            // If they touch, calculate the overlap area
-            if (enemyBox.intersects(blockBox, overlap)) 
+            if (enemyBox.intersects(blockBox, overlap))
             {
-                // Calculates the horizontal area i.e THE SIDES
-                if (overlap.width < overlap.height) 
+                if (overlap.width < overlap.height)
                 {
-                    if (enemyBox.left < blockBox.left) 
+                    if (enemyBox.left < blockBox.left)
                     {
-                        x = blockBox.left - enemyBox.width/ 2.0; 
-                        setVx(-abs(getVx()));               
+                        x = blockBox.left - enemyBox.width / 2.0;
+                        setVx(-abs(getVx()));
                     }
-                    else 
+                    else
                     {
-                        x = blockBox.left + blockBox.width + enemyBox.width / 2.0; 
-                        setVx(abs(getVx()));             
+                        x = blockBox.left + blockBox.width + enemyBox.width / 2.0;
+                        setVx(abs(getVx()));
                     }
                 }
-                else // Calculates the vertical area  i.e THE TOP
+                else
                 {
-                    if (enemyBox.top < blockBox.top) 
+                    if (enemyBox.top < blockBox.top)
                     {
                         y = blockBox.top - enemyBox.height / 2.0f;
-                        setVy(0);             
-                        OnLand = true ;
+                        setVy(0);
+                        OnLand = true;
                     }
-                    else 
+                    else
                     {
                         y = blockBox.top + blockBox.height + enemyBox.height / 2.0f;
-                        setVy(0); // Stops upward momentum immediately
+                        setVy(0);
                     }
                 }
-            
-                // CRITICAL: update the sprite's position immediately so it doesn't get stuck
+
                 EnemySprite.setPosition(x, y);
             }
         }
-        return OnLand ;
+
+        if (y + halfHeight >= floorY)
+        {
+            y = floorY - halfHeight;
+            setVy(0);
+            OnLand = true;
+        }
+
+        EnemySprite.setPosition(x, y);
+        return OnLand;
     }
 
     void EnemyWantsToJumporNot()
@@ -662,34 +675,46 @@ public :
     bool CheckIfItIsOnLand(Block* b, const int SIZE)
     {
         bool onLand = false;
+        float halfHeight = EnemySprite.getGlobalBounds().height / 2.0f;
+        float floorY = 560.0f;
 
-        for (int st = 0; st < SIZE; st++)
+        if (!isInAeialMode)
         {
-            sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
-            sf::FloatRect blockBox = b[st].getHitbox();
-            sf::FloatRect overlap;
-
-            if (enemyBox.intersects(blockBox, overlap))
+            for (int st = 0; st < SIZE; st++)
             {
-                if (overlap.width > overlap.height)  // Vertical collision axis
-                {
-                    float enemyCenterY = enemyBox.top + enemyBox.height / 2.0f;
-                    float blockCenterY = blockBox.top  + blockBox.height / 2.0f;
+                sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
+                sf::FloatRect blockBox = b[st].getHitbox();
+                sf::FloatRect overlap;
 
-                    if (enemyCenterY < blockCenterY)
+                if (enemyBox.intersects(blockBox, overlap))
+                {
+                    if (overlap.width > overlap.height)
                     {
-                        // Enemy is above the block → landed on top
-                        y = blockBox.top - enemyBox.height;
-                        setVy(0);
-                        onLand = true;
+                        float enemyCenterY = enemyBox.top + enemyBox.height / 2.0f;
+                        float blockCenterY = blockBox.top + blockBox.height / 2.0f;
+
+                        if (enemyCenterY < blockCenterY)
+                        {
+                            y = blockBox.top - enemyBox.height / 2.0f;
+                            setVy(0);
+                            onLand = true;
+                        }
+                        EnemySprite.setPosition(x, y);
                     }
-                    EnemySprite.setPosition(x, y);
                 }
             }
         }
+
+        if (y + halfHeight >= floorY)
+        {
+            y = floorY - halfHeight;
+            setVy(0);
+            onLand = true;
+        }
+
+        EnemySprite.setPosition(x, y);
         return onLand;
     }
-
 
 
 public : 

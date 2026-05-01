@@ -13,17 +13,20 @@ private:
     void checkPlatforms(Player& player, float dt) const;
     void checkFloor(Player& player) const;
     void wrapScreen(Player& player) const;
-    void checkSnowballCollisions(Player& player, Enemy** enemies, int enemyCount) const;
+    void checkSnowballCollisions(Player& player, Enemy** enemies, int enemyCount, int playerID) const;
     void checkEnemyPlayerCollisions(Player& player, Enemy** enemies, int enemyCount) const;
     void handleSnowballPhysics(Enemy* snowball, Block* blocks, int blockCount, float dt) const;
     void handleSnowballBoundary(Enemy* snowball) const;
-    void checkSnowballEnemyCollisions(Player& player, Enemy* snowball, Enemy** enemies, int enemyCount) const;
+    void checkSnowballEnemyCollisions(Player& p1, Player& p2, Enemy* snowball, Enemy** enemies, int enemyCount) const;
+    void adjustSnowballPosition(Enemy* snowball, Block* blocks, int blockCount) const;
+    void enforceEnemyFloorBoundary(Enemy* enemy) const;
 
     Block* blocks[MAX_PLATFORMS];
     int blockCount;
 
     static const float GRAVITY;
     static const float TERMINAL_VELOCITY;
+    static const float FLOOR_Y;
 
 public:
     PhysicsEngine();

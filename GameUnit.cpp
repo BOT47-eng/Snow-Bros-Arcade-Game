@@ -95,7 +95,7 @@ void GameUnit::drawTesting()
 
     const int BLOCK_COUNT = 11;
     Block blocks[BLOCK_COUNT] = {
-        Block(-200.f, 560.f, 1000.f, 40.f),
+        Block(-200.f, 560.f, 1000.f, 100.f),
         Block(0.f, 460.f, 160.f, 16.f),
         Block(500.f, 460.f, 160.f, 16.f),
         Block(100.f, 360.f, 96.f, 16.f),

@@ -47,7 +47,7 @@ void Enemy::setEnemyHitBoxSprite() // Just Call it To change the current Set Tex
     EnemySprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
 }
 
-void Enemy::applySnow(float amount)
+void Enemy::applySnow(float amount, int playerID)
 {
     if (!isFullyCoated)
     {
@@ -56,6 +56,7 @@ void Enemy::applySnow(float amount)
         {
             snowAccumulated = health;
             isFullyCoated = true;
+            snowballCreatorPlayer = playerID;
             if (!isBoss)
             {
                 convertToSnowball();
@@ -118,7 +119,7 @@ void Enemy::convertToSnowball()
     snowballKillCount = 0;
     snowballVelocityX = 0;
     snowballVelocityY = 0;
-    snowballOnGround = true;
+    snowballOnGround = false;
     Vx = 0;
     Vy = 0;
 
@@ -127,11 +128,17 @@ void Enemy::convertToSnowball()
     currentSnowballAnim = &animSnowballRoll;
 
     EnemySprite.setTexture(snowballTexture, true);
+
+    float targetSize = 100.0f;
+    float scaleX = targetSize / 230.0f;
+    float scaleY = targetSize / 278.0f;
+    EnemySprite.setScale(scaleX, scaleY);
+
     FloatRect hitbox;
     hitbox.width = 230;
-    hitbox.height = 270;
+    hitbox.height = 278;
+    EnemySprite.setOrigin(Vector2f(hitbox.width / 2.0, hitbox.height / 2.0));
     EnemySprite.setHitbox(hitbox);
-    EnemySprite.setOrigin(hitbox.width / 2.0f, hitbox.height / 2.0f);
     EnemySprite.setTextureRect(animSnowballRoll.getCurrentFrame());
 }
 
@@ -164,19 +171,19 @@ void Enemy::updateSnowballState(float dt)
     if (snowballVelocityX != 0)
     {
         x += snowballVelocityX * dt;
-        snowballVelocityY += 980.0f * dt;
-
-        if (snowballVelocityY > 800.0f)
-            snowballVelocityY = 800.0f;
-
-        y += snowballVelocityY * dt;
-
-        EnemySprite.setPosition(x, y);
     }
+
+    snowballVelocityY += 980.0f * dt;
+    if (snowballVelocityY > 800.0f)
+        snowballVelocityY = 800.0f;
+
+    y += snowballVelocityY * dt;
+    EnemySprite.setPosition(x, y);
 
     animSnowballRoll.update(dt);
     EnemySprite.setTextureRect(animSnowballRoll.getCurrentFrame());
 }
+
 
 void Enemy::breakOutOfSnowball()
 {
@@ -187,7 +194,7 @@ void Enemy::breakOutOfSnowball()
     snowballStaticTimer = 0;
     snowballVelocityX = 0;
     snowballVelocityY = 0;
-
+  
     setEnemyHitBoxSprite();
 
     if (snowballPushDirection != 0)

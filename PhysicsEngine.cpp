@@ -4,6 +4,7 @@
 
 const float PhysicsEngine::GRAVITY = 980.f;
 const float PhysicsEngine::TERMINAL_VELOCITY = 800.f;
+const float PhysicsEngine::FLOOR_Y = 560.f;
 
 PhysicsEngine::PhysicsEngine() : blockCount(0)
 {
@@ -89,10 +90,9 @@ void PhysicsEngine::checkPlatforms(Player& player, float dt) const
 
 void PhysicsEngine::checkFloor(Player& player) const
 {
-    float floorY = GameUnit::HEIGHT - 8;
     FloatRect playerHitbox = player.getHitbox();
-    if (playerHitbox.top + playerHitbox.height >= floorY)
-        player.landPush(floorY);
+    if (playerHitbox.top + playerHitbox.height >= FLOOR_Y)
+        player.landPush(FLOOR_Y);
 }
 
 void PhysicsEngine::wrapScreen(Player& player) const
@@ -188,9 +188,12 @@ void PhysicsEngine::handleSnowballBoundary(Enemy* snowball) const
     }
 }
 
-void PhysicsEngine::checkSnowballEnemyCollisions(Player& player, Enemy* snowball, Enemy** enemies, int enemyCount) const
+void PhysicsEngine::checkSnowballEnemyCollisions(Player& p1, Player& p2, Enemy* snowball, Enemy** enemies, int enemyCount) const
 {
     if (!snowball || !snowball->getIsSnowball())
+        return;
+
+    if (snowball->getSnowballVelocityX() == 0)
         return;
 
     FloatRect snowballBox = snowball->getEnemyHitBox();
@@ -208,7 +211,11 @@ void PhysicsEngine::checkSnowballEnemyCollisions(Player& player, Enemy* snowball
 
         int killCount = snowball->getSnowballKillCount();
         int points = static_cast<int>(enemies[i]->getScore() * std::pow(1.10, killCount));
-        player.addScore(points);
+
+        if (snowball->getSnowballCreatorPlayer() == 0)
+            p1.addScore(points);
+        else
+            p2.addScore(points);
 
         snowball->incrementSnowballKillCount();
         enemies[i]->sethealth(0);
@@ -233,12 +240,13 @@ void PhysicsEngine::update(Player& player, Enemy** enemies, int enemyCount, floa
             enemies[i]->updateSnowballState(dt);
             handleSnowballPhysics(enemies[i], arr, blockCount, dt);
             handleSnowballBoundary(enemies[i]);
-            checkSnowballEnemyCollisions(player, enemies[i], enemies, enemyCount);
+            checkSnowballEnemyCollisions(player, player, enemies[i], enemies, enemyCount);
         }
         else
         {
             enemies[i]->update(dt, arr, blockCount);
             enemies[i]->updateCoatedState();
+            enforceEnemyFloorBoundary(enemies[i]);
         }
 
         if (enemies[i]->getHealth() <= -1)
@@ -247,9 +255,8 @@ void PhysicsEngine::update(Player& player, Enemy** enemies, int enemyCount, floa
             delete enemies[i];
             enemies[i] = nullptr;
         }
-
     }
-    checkSnowballCollisions(player, enemies, enemyCount);
+    checkSnowballCollisions(player, enemies, enemyCount, 0);
     checkEnemyPlayerCollisions(player, enemies, enemyCount);
     delete[] arr;
 }
@@ -270,33 +277,36 @@ void PhysicsEngine::update(Player& p1, Player& p2, Enemy** enemies, int enemyCou
             enemies[i]->updateSnowballState(dt);
             handleSnowballPhysics(enemies[i], arr, blockCount, dt);
             handleSnowballBoundary(enemies[i]);
-            checkSnowballEnemyCollisions(p1, enemies[i], enemies, enemyCount);
-            checkSnowballEnemyCollisions(p2, enemies[i], enemies, enemyCount);
+            checkSnowballEnemyCollisions(p1, p2, enemies[i], enemies, enemyCount);
         }
         else
         {
             enemies[i]->update(dt, arr, blockCount);
             enemies[i]->updateCoatedState();
+            enforceEnemyFloorBoundary(enemies[i]);
         }
 
         if (enemies[i]->getHealth() <= -1)
         {
-            p1.addScore(enemies[i]->getScore());
+            int creatorPlayer = enemies[i]->getSnowballCreatorPlayer();
+            if (creatorPlayer == 0)
+                p1.addScore(enemies[i]->getScore());
+            else
+                p2.addScore(enemies[i]->getScore());
             delete enemies[i];
             enemies[i] = nullptr;
         }
-
     }
 
-    checkSnowballCollisions(p1, enemies, enemyCount);
-    checkSnowballCollisions(p2, enemies, enemyCount);
+    checkSnowballCollisions(p1, enemies, enemyCount, 0);
+    checkSnowballCollisions(p2, enemies, enemyCount, 1);
 
     checkEnemyPlayerCollisions(p1, enemies, enemyCount);
     checkEnemyPlayerCollisions(p2, enemies, enemyCount);
     delete[] arr;
 }
 
-void PhysicsEngine::checkSnowballCollisions(Player& player, Enemy** enemies, int enemyCount) const
+void PhysicsEngine::checkSnowballCollisions(Player& player, Enemy** enemies, int enemyCount, int playerID) const
 {
     for (int i = 0; i < Player::MAX_BALLS; i++)
     {
@@ -331,10 +341,13 @@ void PhysicsEngine::checkSnowballCollisions(Player& player, Enemy** enemies, int
                 }
                 else
                 {
-                    enemies[j]->applySnow(ball.getSnowAmount());
+                    enemies[j]->applySnow(ball.getSnowAmount(), playerID);
                     ball.setActive(false);
                     if (enemies[j]->getIsSnowball())
-                        handleSnowballPhysics(enemies[j], *blocks, blockCount, 0.05);
+                    {
+                        adjustSnowballPosition(enemies[j], *blocks, blockCount);
+                        //handleSnowballPhysics(enemies[j], *blocks, blockCount, 0.05);
+                    }
                 }
             }
         }
@@ -359,5 +372,46 @@ void PhysicsEngine::checkEnemyPlayerCollisions(Player& player, Enemy** enemies, 
             player.takeDamage();
             break;
         }
+    }
+}
+
+void PhysicsEngine::adjustSnowballPosition(Enemy* snowball, Block* blocks, int blockCount) const
+{
+    if (!snowball || !snowball->getIsSnowball())
+        return;
+
+    FloatRect snowballBox = snowball->getEnemyHitBox();
+    float adjustedY = snowball->getPosY();
+    bool foundOverlap = false;
+
+    for (int i = 0; i < blockCount; i++)
+    {
+        FloatRect blockBox = blocks[i].getHitbox();
+        if (snowballBox.intersects(blockBox))
+        {
+            adjustedY = blockBox.top - snowballBox.height / 2.0f;
+            foundOverlap = true;
+            break;
+        }
+    }
+
+    if (foundOverlap)
+    {
+        snowball->setPos(snowball->getPosX(), adjustedY);
+        snowball->setSnowballVelocityY(0);
+    }
+}
+
+void PhysicsEngine::enforceEnemyFloorBoundary(Enemy* enemy) const
+{
+    if (!enemy)
+        return;
+
+    FloatRect enemyBox = enemy->getEnemyHitBox();
+    if (enemyBox.top + enemyBox.height >= FLOOR_Y)
+    {
+        float halfHeight = enemyBox.height / 2.0f;
+        enemy->setPos(enemy->getPosX(), FLOOR_Y - halfHeight);
+        enemy->setVy(0);
     }
 }
