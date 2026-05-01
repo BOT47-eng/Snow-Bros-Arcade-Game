@@ -3,8 +3,8 @@
 #include <cstring>
 #include <SFML/Graphics.hpp>
 #include "Hitbox.hpp"
-#include "hitbox.cpp"
 #include "Block.hpp"
+#include "AnimationComponent.hpp"
 
 
 //#ifndef ENEMYFACTORY 
@@ -20,21 +20,21 @@ protected:
     ///////////////////////
     //// Basic Properties
     int health ; 
+    int healthOriginal;
     float x;
     float y; 
     float Vx ;
     float Vy ;
+    bool isBoss;
 
     float CopyVx ;  // To use incase the actual value is 0
     float CopyVy ; 
 
     ////////////////////////////////
     ///// Different Sprite Animation 
+    sf::Texture snowballTexture;
     sf::Texture EnemySpriteTexture ; 
     HitboxSprite EnemySprite;
-
-
-
 
     ///////////////////////////
     ///// All Other Necessary Functions for an Enemy Class 
@@ -46,6 +46,21 @@ protected:
     bool isFullyCoated;
     sf::Clock shakeTimer;
     float originalSpeed;
+
+    bool isSnowball;
+    bool isSnowballBreakingOut;
+    float snowballVelocityX;
+    float snowballVelocityY;
+    float snowballStaticTimer;
+    int snowballKillCount;
+    bool snowballOnGround;
+    float snowballPushDirection;
+    AnimationComponent animSnowballRoll;
+    AnimationComponent animSnowballBreakout;
+    AnimationComponent* currentSnowballAnim;
+
+    IntRect frames[4] = { sf::IntRect(92, 3584, 230, 278), sf::IntRect(391, 3588, 238, 278), sf::IntRect(694, 3582, 234, 278), sf::IntRect(1001, 3580, 237, 278) };
+    IntRect breakoutFrames[4] = { sf::IntRect(102, 3896, 210, 264), sf::IntRect(379, 3887, 249, 274), sf::IntRect(691, 3889, 249, 274), sf::IntRect(980, 3885, 271, 288) };
 
 public:
     /////////////////////////////
@@ -77,17 +92,43 @@ public:
     float getVy() const {return Vy;}
     HitboxSprite getEnemySprite() const {return EnemySprite ; }
     FloatRect getEnemyHitBox() const {return EnemySprite.getGlobalHitbox(); }
+
     float getSnowAccumulated() const { return snowAccumulated; }
     bool getIsFullyCoated() const { return isFullyCoated; }
+    bool getIsSnowball() const { return isSnowball; }
+    bool getIsSnowballBreakingOut() const { return isSnowballBreakingOut; }
+    float getSnowballVelocityX() const { return snowballVelocityX; }
+    float getSnowballVelocityY() const { return snowballVelocityY; }
+    int getSnowballKillCount() const { return snowballKillCount; }
+    bool getSnowballOnGround() const { return snowballOnGround; }
 
     void applySnow(float amount);
     void updateCoatedState();
     void shakeOffSnow();
+    void convertToSnowball();
+    void updateSnowballState(float dt);
+    void breakOutOfSnowball();
+    void setSnowballVelocityX(float vx) { snowballVelocityX = vx; }
+    void setSnowballVelocityY(float vy) { snowballVelocityY = vy; }
+    void setSnowballOnGround(bool onGround) { snowballOnGround = onGround; }
+    void setSnowballPushDirection(float dir) { snowballPushDirection = dir; }
+    void incrementSnowballKillCount() { snowballKillCount++; }
 
-    Enemy(): health(0) , x(0) ,  y(0) , Vx(0) , Vy(0) , CopyVx(0) , CopyVy(0) 
-    {} 
-    Enemy(int h , float x , float y  , float dx  , float dy) : health(h) , x(x) , y(y) , Vx(dx)  , Vy(dy), snowAccumulated(0), isFullyCoated(false), originalSpeed(0)
-    {}
+    Enemy() : health(0), x(0), y(0), Vx(0), Vy(0), CopyVx(0), CopyVy(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), currentSnowballAnim(nullptr)
+    {
+        if (!snowballTexture.loadFromFile("SnowBrosAssets/Images/Nick.png"))
+        {
+            std::cout << "Error loading snowball texture\n";
+        }
+    }
+
+    Enemy(int h, float x, float y, float dx, float dy) : health(h), x(x), y(y), Vx(dx), Vy(dy), snowAccumulated(0), isFullyCoated(false), originalSpeed(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), currentSnowballAnim(nullptr)
+    {
+        if (!snowballTexture.loadFromFile("SnowBrosAssets/Images/Nick.png"))
+        {
+            std::cout << "Error loading snowball texture\n";
+        }
+    }
 
 
     virtual ~Enemy()
@@ -101,6 +142,7 @@ public:
     virtual void CreateEnemy(float x , float y) = 0 ;
     virtual void update(const float dt, Block* B, const int BLOCKSIZE) = 0;
     virtual void draw(sf::RenderWindow &mywindow, bool debug) = 0 ;
+    virtual int getScore() = 0;
 }; 
 //#endif
 
@@ -123,8 +165,6 @@ protected :
     sf::Clock timeToChangeDirection ; 
     sf::Clock timeToJump ; 
     sf::Clock  JumpInterval ; // To Keep track of the Jump time and bring it back to land
-
-
 
     //////////////////////////////
     ///// Adding the Different animation sprite 
@@ -176,6 +216,7 @@ public:
     
         animationSpeed = 0.15f ; 
         animationClock.restart() ; 
+        isBoss = false;
     } 
     ///////////////////////////
     //////// Destructors 
@@ -293,6 +334,7 @@ public:
         /////////////////////////////////////////////
         ///// Now Setting the Properties of the Enemy
         sethealth(2);
+        healthOriginal = 2;
         setPos(x , y) ;
         setVx(200) ;  /// TEST TO CHANGE LATER
         setVy(200) ;  // TEST TO CHANGE LATER 
@@ -420,7 +462,6 @@ public:
 
     virtual void update(const float dt, Block* B, const int BLOCKSIZE) override
     {
-
         //////////////////////////////////////////
         /// update the Position  of the sprite 
         UpdateX(dt) ; // it will always be moving in x-direction
@@ -515,6 +556,10 @@ public:
         }
     }
 
+    virtual int getScore()
+    {
+        return 100 + rand() % 401;
+    }
 }; 
 //#endif
 //
@@ -550,7 +595,7 @@ protected :
 
 
     int TotalAnimationofFlying ;
-
+   
     int CurrentIndexofAnimationofFlying;
 
 
@@ -572,7 +617,9 @@ public :
         FlyingTexture = nullptr ;
 
         sethealth(2);
+        healthOriginal = 2;
         originalSpeed = 200;
+        isBoss = false;
     }
     ~FlyingFoogaFoog() 
     {
@@ -806,7 +853,7 @@ public :
                 UpdateToFlyingAnimation() ;
                 animationClock.restart() ;
             }
-
+            
             /*checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;*/
             return ; // Skip the rest of update — aerial is its own complete state
         }
@@ -893,6 +940,12 @@ public :
             EnemySprite.drawHitbox(mywindow, Color::Red);
 
     }
+
+    virtual int getScore()
+    {
+        return 200 + rand() % 601;
+    }
+    
 }; 
 
 //#endif
@@ -923,6 +976,7 @@ Tornado()
 {
     TotalTimeForThrowKnife = 5 ; 
     EnemyKnifeThrowingTexture  = nullptr ; 
+    isBoss = false;
 }
 
 virtual ~Tornado()
@@ -1024,6 +1078,10 @@ virtual  void CreateEnemy(float x , float y)
     setCopyVy(200) ;
 }
 
+    virtual int getScore()
+    {
+        return 300 + rand() % 901;
+    }
 
 };
 

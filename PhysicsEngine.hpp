@@ -15,6 +15,9 @@ private:
     void wrapScreen(Player& player) const;
     void checkSnowballCollisions(Player& player, Enemy** enemies, int enemyCount) const;
     void checkEnemyPlayerCollisions(Player& player, Enemy** enemies, int enemyCount) const;
+    void handleSnowballPhysics(Enemy* snowball, Block* blocks, int blockCount, float dt) const;
+    void handleSnowballBoundary(Enemy* snowball) const;
+    void checkSnowballEnemyCollisions(Player& player, Enemy* snowball, Enemy** enemies, int enemyCount) const;
 
     Block* blocks[MAX_PLATFORMS];
     int blockCount;

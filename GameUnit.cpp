@@ -82,22 +82,30 @@ void GameUnit::drawTesting()
     Player p2(1);
     p2.setPosition(Vector2f(440.f, 480.f));
 
-    Enemy* pinkEnemy = new FlyingFoogaFoog;
-    pinkEnemy->CreateEnemy(300.f, 50.f);
+    Enemy* enemy1 = new FlyingFoogaFoog;
+    enemy1->CreateEnemy(200.f, 200.f);
+
+    Enemy* enemy2 = new FlyingFoogaFoog;
+    enemy2->CreateEnemy(400.f, 250.f);
+
+    Enemy* enemy3 = new Botom;
+    enemy3->CreateEnemy(300.f, 100.f);
+
+    Enemy* enemies[3] = { enemy1, enemy2, enemy3 };
 
     const int BLOCK_COUNT = 11;
     Block blocks[BLOCK_COUNT] = {
-        Block(0.f, 560.f, 800.f, 40.f),   // ground floor
-        Block(0.f, 460.f, 160.f, 16.f),   // low-left
-        Block(500.f, 460.f, 160.f, 16.f),   // low-right
-        Block(100.f, 360.f,  96.f, 16.f),   // mid-left
-        Block(300.f, 360.f,  80.f, 16.f),   // mid-centre
-        Block(504.f, 360.f,  96.f, 16.f),   // mid-right
-        Block(64.f, 260.f, 100.f, 16.f),   // upper-left
-        Block(256.f, 260.f, 288.f, 16.f),   // upper-centre
-        Block(608.f, 260.f, 128.f, 16.f),   // upper-right
-        Block(160.f, 160.f, 160.f, 16.f),   // top-left
-        Block(480.f, 160.f, 160.f, 16.f),   // top-right
+        Block(-200.f, 560.f, 1000.f, 40.f),
+        Block(0.f, 460.f, 160.f, 16.f),
+        Block(500.f, 460.f, 160.f, 16.f),
+        Block(100.f, 360.f, 96.f, 16.f),
+        Block(300.f, 360.f, 80.f, 16.f),
+        Block(504.f, 360.f, 96.f, 16.f),
+        Block(64.f, 260.f, 100.f, 16.f),
+        Block(256.f, 260.f, 288.f, 16.f),
+        Block(608.f, 260.f, 128.f, 16.f),
+        Block(160.f, 160.f, 160.f, 16.f),
+        Block(480.f, 160.f, 160.f, 16.f),
     };
 
     PhysicsEngine physics;
@@ -127,7 +135,6 @@ void GameUnit::drawTesting()
     {
         float dt = clock.restart().asSeconds();
 
-        //Minimum requirement
         if (dt > 0.05f)
             dt = 0.05f;
 
@@ -149,11 +156,10 @@ void GameUnit::drawTesting()
         p1.handleInput(input, dt);
         p2.handleInput(input, dt);
 
-        physics.update(p1, p2, &pinkEnemy, 1, dt);
+        physics.update(p1, p2, enemies, 3, dt);
 
         p1.update(dt);
         p2.update(dt);
-        //pinkEnemy.update(window, dt, blocks, BLOCK_COUNT);
 
         window.clear();
         window.draw(bg);
@@ -164,8 +170,11 @@ void GameUnit::drawTesting()
         p1.draw(window, debugOn);
         p2.draw(window, debugOn);
 
-        if (pinkEnemy)
-            pinkEnemy->draw(window, debugOn);
+        for (int i = 0; i < 3; i++)
+        {
+            if (enemies[i])
+                enemies[i]->draw(window, debugOn);
+        }
 
         if (fontOk)
         {
@@ -185,6 +194,15 @@ void GameUnit::drawTesting()
         }
 
         window.display();
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (enemies[i])
+        {
+            delete enemies[i];
+            enemies[i] = nullptr;
+        }
     }
 }
 
