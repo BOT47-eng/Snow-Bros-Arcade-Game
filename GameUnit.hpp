@@ -7,7 +7,7 @@
 #include "Player.hpp"
 #include "PhysicsEngine.hpp"
 #include "LoginManager.hpp"
-#include "EnemyFactory.hpp"
+#include "LeaderBoard.hpp"
 
 class GameUnit {
 public:
@@ -23,8 +23,12 @@ private:
 
 	PlayerInfo players[2];
 	LoginManager loginPlayer[2];
-	//Leaderboard leaderboard;
+	LEADERBOARD *leader ;
 	//Database manageSaves;
+
+	/////////////////////////////
+	// For MainMenu LeaderBoard Image
+	sf::Texture leaderBoardButtonTex ;
 public:
 	GameUnit() : isGameActive(false), levelMenu(false), leaderboard(false), loginMenu(false)
 	{
@@ -32,11 +36,16 @@ public:
 		window.setFramerateLimit(60);
 		fontHeader.loadFromFile("SnowBrosAssets/Fonts/header-font.ttf");
 		fontNormal.loadFromFile("SnowBrosAssets/Fonts/normal-font.ttf");
+		leaderBoardButtonTex.loadFromFile("Resources/SnowBrosAssets/Images/LeaderBoardButtonImage.jpg") ;
 		loginPlayer[0].setFonts(fontHeader, fontNormal);
 		loginPlayer[1].setFonts(fontHeader, fontNormal);
 
 		loggedIn[0] = false;
 		loggedIn[1] = false;
+
+		leader = new LEADERBOARD;
+    	leader->drawLeaderboard = false; 
+
 	}
 
 	void launchGame();
@@ -48,6 +57,7 @@ public:
 
 	~GameUnit()
 	{
+		delete leader ;
 		if (window.isOpen())
 			window.close();
 	}
