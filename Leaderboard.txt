@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Ahmed 100
 Ali 20 
 Saad 30
@@ -8,3 +9,48 @@ Ahmed 100
 Ahmed 100
 Ahmed 100
 Ahmed 100
+=======
+AA 2
+AAA 2
+AA 0
+Ahmed 10
+WoW -10
+Ahli -20
+WHY 10
+Meow 1Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+Daniyal 1000
+>>>>>>> 93e5ed3 (Made the LeaderBoard class and Shop Class(little bit implementation left) and following are the changes i have made : 1. Added the Default Constructor  header for player  in .hpp and .cpp file)
