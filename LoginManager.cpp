@@ -414,7 +414,7 @@ string LoginManager::getTimestamp() {
     char buffer[50];
 
     //This automatically adds has \n at the end 
-    ctime_s(buffer, sizeof(buffer), &timestamp);
+   ctime_r(buffer, sizeof(buffer), &timestamp);
 
     string temp = buffer;
 
