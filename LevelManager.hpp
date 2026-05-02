@@ -8,6 +8,7 @@
 #include "InputManager.hpp"
 #include "EnemyFactory.hpp"
 #include "PlayerInfo.hpp"
+#include "Shop.hpp"
 
 using namespace sf;
 using namespace std;
@@ -43,11 +44,13 @@ private:
 	bool player1Active;
 	bool player2Active;
 	bool isSinglePlayer;
+	Player p1;
+	Player p2;
+	Shop* shop;
 
 	void drawLevelSelect(int gameMode);
-	void drawLevel(int levelIndex);
 	void drawGameOver(int p1Score, int p2Score, bool p1Alive, bool p2Alive);
-	void drawShop(Player& p1, Player& p2, bool singlePlayer);
+	void drawShop(Player& player, bool singlePlayer);
 	int drawPauseMenu(Player& p1, Player& p2, bool singlePlayer);
 	bool runLevel(int levelIndex, Player& p1, Player& p2);
 	Enemy* createEnemy(const string& type, float x, float y);

@@ -1,6 +1,6 @@
 #include "LevelManager.hpp"
 
-LevelManager::LevelManager() : levels(nullptr), levelCount(0), levelUnlocked(nullptr), levelCompleted(nullptr), window(nullptr), fontHeader(nullptr), fontNormal(nullptr), players(nullptr), player1Active(false), player2Active(false), isSinglePlayer(false)
+LevelManager::LevelManager() : levels(nullptr), levelCount(0), levelUnlocked(nullptr), levelCompleted(nullptr), window(nullptr), fontHeader(nullptr), fontNormal(nullptr), players(nullptr), player1Active(false), player2Active(false), isSinglePlayer(false), p1(0), p2(1), shop(nullptr)
 {}
 
 LevelManager::~LevelManager()
@@ -137,9 +137,10 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 		return false;
 
 	const int RESUME = 0;
-	const int Shop = 1;
-	const int RETURN_MENU = 2;
-	const int QUIT_GAME = 3;
+	const int SHOP_1 = 1;
+	const int SHOP_2 = 2;
+	const int RETURN_MENU = 3;
+	const int QUIT_GAME = 4;
 	bool enemiesAlive = false;
 
 	LevelData& level = levels[levelIndex];
@@ -169,7 +170,6 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 	hudText.setFillColor(Color::White);
 
 	bool debugOn = false;
-	bool levelWon = false;
 	bool paused = false;
 
 	while (window->isOpen()) 
@@ -219,9 +219,14 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 			{
 				paused = false;
 			}
-			else if (menuChoice == Shop) 
+			else if (menuChoice == SHOP_1) 
 			{
-				drawShop(p1, p2, isSinglePlayer);
+				drawShop(p1, isSinglePlayer);
+				paused = true;
+			}
+			else if (menuChoice == SHOP_2)
+			{
+				drawShop(p2, isSinglePlayer);
 				paused = true;
 			}
 			else if (menuChoice == RETURN_MENU) 
@@ -434,7 +439,7 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 	}
 	delete[] blockArray;
 	delete[] enemies;
-	return levelWon;
+	return enemiesAlive;
 }
 
 void LevelManager::drawLevelSelect(int gameMode)
@@ -473,9 +478,6 @@ void LevelManager::drawLevelSelect(int gameMode)
 						if (levelBox.getGlobalBounds().contains(Vector2f(mousePos))) {
 							if (levelUnlocked[i]) 
 							{
-								Player p1(0);
-								Player p2(1);
-
 								if (isSinglePlayer) {
 									if (player1Active) {
 										p1.setPosition(Vector2f(300.f, 480.f));
@@ -572,25 +574,49 @@ int LevelManager::drawPauseMenu(Player& p1, Player& p2, bool singlePlayer)
 	const float START_Y = 150.f;
 	const float SPACING = 70.f;
 	const int RESUME = 0;
-	const int Shop = 1;
-	const int RETURN_MENU = 2;
-	const int QUIT_GAME = 3;
+	const int SHOP = 1;
+	const int SHOP_P2 = 2;
+	const int RETURN_MENU = 3;
+	const int QUIT_GAME = 4;
 
-	RectangleShape buttons[4];
-	for (int i = 0; i < 4; i++) {
+	int buttonCount = 5;
+	
+	if (singlePlayer) 
+		buttonCount = 4;
+
+	RectangleShape buttons[5];
+	for (int i = 0; i < buttonCount; i++) 
+	{
 		buttons[i].setSize(Vector2f(BUTTON_WIDTH, BUTTON_HEIGHT));
 		buttons[i].setFillColor(Color::Yellow);
 		buttons[i].setPosition(Vector2f(START_X, START_Y + i * SPACING));
 	}
 
-	string buttonLabels[4] = { "Resume", "Shop", "Main Menu", "Quit Game" };
-	Text buttonTexts[4];
-	for (int i = 0; i < 4; i++) {
+	string buttonLabels[5];
+	if (singlePlayer) 
+	{
+		buttonLabels[0] = "Resume";
+		buttonLabels[1] = "Shop";
+		buttonLabels[2] = "Main Menu";
+		buttonLabels[3] = "Quit Game";
+	}
+	else 
+	{
+		buttonLabels[0] = "Resume";
+		buttonLabels[1] = "Shop P1";
+		buttonLabels[2] = "Shop P2";
+		buttonLabels[3] = "Main Menu";
+		buttonLabels[4] = "Quit Game";
+	}
+
+	Text buttonTexts[5];
+	for (int i = 0; i < buttonCount; i++) 
+	{
 		buttonTexts[i].setString(buttonLabels[i]);
 		buttonTexts[i].setFont(*fontNormal);
-		buttonTexts[i].setCharacterSize(50);
+		buttonTexts[i].setCharacterSize(40);
 		buttonTexts[i].setFillColor(Color::Black);
-		buttonTexts[i].setPosition(Vector2f(START_X + 20.f, START_Y + i * SPACING - 20.f));
+		buttonTexts[i].setPosition(Vector2f(START_X + 20.f, START_Y + i * SPACING - 10.f));
 	}
 
 	while (window->isOpen()) {
@@ -601,31 +627,71 @@ int LevelManager::drawPauseMenu(Player& p1, Player& p2, bool singlePlayer)
 		Vector2i mousePos = Mouse::getPosition(*window);
 
 		Event event;
-		while (window->pollEvent(event)) {
-			if (event.type == Event::Closed) {
+		while (window->pollEvent(event)) 
+		{
+			if (event.type == Event::Closed) 
+			{
 				window->close();
 				return QUIT_GAME;
 			}
 
-			if (event.type == Event::MouseButtonPressed) {
-				if (event.mouseButton.button == Mouse::Button::Left) {
-					for (int i = 0; i < 4; i++) {
-						if (buttons[i].getGlobalBounds().contains(Vector2f(mousePos))) {
-							return i;
+			if (event.type == Event::MouseButtonPressed) 
+			{
+				if (event.mouseButton.button == Mouse::Button::Left) 
+				{
+					for (int i = 0; i < buttonCount; i++) 
+					{
+						if (buttons[i].getGlobalBounds().contains(Vector2f(mousePos))) 
+						{
+							if (singlePlayer) 
+							{
+								if (i == RESUME)
+									return RESUME;
+								else if (i == SHOP) 
+								{
+									if (player1Active)
+										drawShop(p1, true);
+									else
+										drawShop(p2, true);
+									return RESUME;
+								}
+								else if (i == 2)
+									return RETURN_MENU;
+								else if (i == 3)
+									return QUIT_GAME;
+							}
+							else 
+							{
+								if (i == RESUME)
+									return RESUME;
+								else if (i == SHOP)
+									drawShop(p1, false);
+								else if (i == SHOP_P2)
+									drawShop(p2, false);
+								else if (i == 3)
+									return RETURN_MENU;
+								else if (i == 4)
+									return QUIT_GAME;
+								return RESUME;
+							}
 						}
 					}
 				}
 			}
 
-			if (event.type == Event::KeyPressed) {
-				if (event.key.code == Keyboard::Escape || event.key.code == Keyboard::P) {
+			if (event.type == Event::KeyPressed) 
+			{
+				if (event.key.code == Keyboard::Escape || event.key.code == Keyboard::P) 
+				{
 					return RESUME;
 				}
 			}
 		}
 
-		for (int i = 0; i < 4; i++) {
-			if (buttons[i].getGlobalBounds().contains(Vector2f(mousePos))) {
+		for (int i = 0; i < buttonCount; i++) 
+		{
+			if (buttons[i].getGlobalBounds().contains(Vector2f(mousePos))) 
+			{
 				buttonTexts[i].setFillColor(Color::Red);
 			}
 			else {
@@ -644,7 +710,8 @@ int LevelManager::drawPauseMenu(Player& p1, Player& p2, bool singlePlayer)
 		pauseTitle.setPosition(Vector2f(200.f, 50.f));
 		window->draw(pauseTitle);
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < buttonCount; i++) 
+		{
 			window->draw(buttons[i]);
 			window->draw(buttonTexts[i]);
 		}
@@ -655,13 +722,16 @@ int LevelManager::drawPauseMenu(Player& p1, Player& p2, bool singlePlayer)
 	return QUIT_GAME;
 }
 
-void LevelManager::drawShop(Player& p1, Player& p2, bool singlePlayer)
+void LevelManager::drawShop(Player& player, bool singlePlayer)
 {
 	Clock clock;
 
+	if (shop == nullptr)
+		shop = new Shop();
+
 	RectangleShape exitButton(Vector2f(80.f, 40.f));
 	exitButton.setFillColor(Color::Yellow);
-	exitButton.setPosition(Vector2f(10.f, 10.f));
+	exitButton.setPosition(Vector2f(10.f, 15.f));
 
 	while (window->isOpen()) {
 		float dt = clock.restart().asSeconds();
@@ -671,22 +741,29 @@ void LevelManager::drawShop(Player& p1, Player& p2, bool singlePlayer)
 		Vector2i mousePos = Mouse::getPosition(*window);
 
 		Event event;
-		while (window->pollEvent(event)) {
-			if (event.type == Event::Closed) {
+		while (window->pollEvent(event)) 
+		{
+			if (event.type == Event::Closed) 
+			{
 				window->close();
 				return;
 			}
 
-			if (event.type == Event::MouseButtonPressed) {
-				if (event.mouseButton.button == Mouse::Button::Left) {
-					if (exitButton.getGlobalBounds().contains(Vector2f(mousePos))) {
+			if (event.type == Event::MouseButtonPressed) 
+			{
+				if (event.mouseButton.button == Mouse::Button::Left) 
+				{
+					if (exitButton.getGlobalBounds().contains(Vector2f(mousePos))) 
+					{
 						return;
 					}
 				}
 			}
 
-			if (event.type == Event::KeyPressed) {
-				if (event.key.code == Keyboard::Escape) {
+			if (event.type == Event::KeyPressed)
+			{
+				if (event.key.code == Keyboard::Escape) 
+				{
 					return;
 				}
 			}
@@ -694,44 +771,14 @@ void LevelManager::drawShop(Player& p1, Player& p2, bool singlePlayer)
 
 		window->clear();
 
-		RectangleShape background(Vector2f(600.f, 600.f));
-		background.setFillColor(Color::Black);
-		window->draw(background);
-
-		Text shopTitle("SHOP", *fontHeader, 40);
-		shopTitle.setFillColor(Color::Yellow);
-		shopTitle.setPosition(Vector2f(240.f, 20.f));
-		window->draw(shopTitle);
+		shop->draw(*window, player);
 
 		window->draw(exitButton);
 
-		Text exitText("Exit", *fontNormal, 18);
+		Text exitText("Exit", *fontNormal, 50);
 		exitText.setFillColor(Color::Black);
-		exitText.setPosition(Vector2f(25.f, 15.f));
+		exitText.setPosition(Vector2f(25.f, -12.f));
 		window->draw(exitText);
-
-		Text shopContent("Shop functionality coming soon!", *fontNormal, 24);
-		shopContent.setFillColor(Color::White);
-		shopContent.setPosition(Vector2f(120.f, 250.f));
-		window->draw(shopContent);
-
-		if (singlePlayer) {
-			Text playerText("Single Player Shop", *fontNormal, 20);
-			playerText.setFillColor(Color::Cyan);
-			playerText.setPosition(Vector2f(180.f, 100.f));
-			window->draw(playerText);
-		}
-		else {
-			Text player1Text("Player 1 Shop", *fontNormal, 18);
-			player1Text.setFillColor(Color::Cyan);
-			player1Text.setPosition(Vector2f(80.f, 100.f));
-			window->draw(player1Text);
-
-			Text player2Text("Player 2 Shop", *fontNormal, 18);
-			player2Text.setFillColor(Color::Magenta);
-			player2Text.setPosition(Vector2f(380.f, 100.f));
-			window->draw(player2Text);
-		}
 
 		window->display();
 	}
