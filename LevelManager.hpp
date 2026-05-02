@@ -50,7 +50,7 @@ private:
 
 	void drawLevelSelect(int gameMode);
 	void drawGameOver(int p1Score, int p2Score, bool p1Alive, bool p2Alive);
-	void drawShop(Player& player, bool singlePlayer);
+	void drawShop(Player& player);
 	int drawPauseMenu(Player& p1, Player& p2, bool singlePlayer);
 	bool runLevel(int levelIndex, Player& p1, Player& p2);
 	Enemy* createEnemy(const string& type, float x, float y);
