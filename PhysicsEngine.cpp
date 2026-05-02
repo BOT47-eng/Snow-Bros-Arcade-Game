@@ -212,17 +212,17 @@ void PhysicsEngine::checkSnowballEnemyCollisions(Player& p1, Player& p2, Enemy* 
         int killCount = snowball->getSnowballKillCount();
         int points = static_cast<int>(enemies[i]->getScore() * std::pow(1.10, killCount));
 
-        int extraLife = rand() % 20;
+        int extraLife = (rand() % 6 + 1) + (rand() % 6 + 1);
 
         if (snowball->getSnowballCreatorPlayer() == 0)
         {
-            if (extraLife == 10)
+            if (extraLife == 7)
                 p1.addLife();
             p1.addScore(points);
         }
         else
         {
-            if (extraLife == 10)
+            if (extraLife == 7)
                 p2.addLife();
             p2.addScore(points);
         }

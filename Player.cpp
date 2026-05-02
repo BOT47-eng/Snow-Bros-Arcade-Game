@@ -5,7 +5,7 @@ const float Player::INVINCIBLE_TIME = 1.5f;
 
 Player::Player(){}
 
-Player::Player(int index, PlayerStats stats) : stats(stats), index(index), velocityX(0), velocityY(0), onGround(false), wantsShoot(false), lives(2), gems(0), score(0), invincible(false), invincibleTimer(0), currentAnim(&animIdle), isShooting(false), snowballTimer(0), cooldown(0), snowballCooldown(0.3f) , isBallonMode(false)
+Player::Player(int index, PlayerStats stats) : stats(stats), index(index), velocityX(0), velocityY(0), onGround(false), wantsShoot(false), lives(2), gems(0), score(0), invincible(false), invincibleTimer(0), currentAnim(&animIdle), isShooting(false), snowballTimer(0), cooldown(0), snowballCooldown(0.3f), isBalloonMode(false), balloonTimer(15.f)
 {
     if (index == 0)
         facingRight = true;
@@ -14,15 +14,20 @@ Player::Player(int index, PlayerStats stats) : stats(stats), index(index), veloc
 
     if (index == 0)
     {
-        playerTexture.loadFromFile("SnowBrosAssets/Images/Player_Blue.png");
+        playerTexture.loadFromFile("Resources/SnowBrosAssets/Images/Player_Blue.png");
         setDirectionRight(true);
         loadSpritesheetSnowball(playerTexture, &snowballFrames, 1);
     }
     else
     {
-        playerTexture.loadFromFile("SnowBrosAssets/Images/Player_Red.png");
+        playerTexture.loadFromFile("Resources/SnowBrosAssets/Images/Player_Red.png");
         snowballFrames.left = 557;
         loadSpritesheetSnowball(playerTexture, &snowballFrames, 1);
+    }
+
+    for (int i = 0; i < 5; i++)
+    {
+        shopItems[i] = false;
     }
 
     loadSpritesheet(playerTexture, &idlePlayerFrames, 1, walkPlayerFrames, 3, jumpPlayerFrames, 6, &shootPlayerFrames, 1, playerHitbox);
@@ -339,4 +344,70 @@ void Player::updateSnowballs(float dt)
             return;
         }
     }
+}
+
+void Player::applyExtraLife() {
+    lives++;
+    shopItems[0] = true;
+}
+
+void Player::applySnowballPower() {
+    hasSnowballPower = true;
+    shopItems[1] = true;
+}
+
+void Player::applyDistanceIncrease() {
+    hasDistanceIncrease = true;
+    for (int i = 0; i < MAX_BALLS; i++)
+        snowballs[i].setMaxDistance(600);
+    shopItems[2] = true;
+}
+
+void Player::applySpeedBoost() 
+{
+    speedBoostTimer = 30.f;
+    snowballCooldown = 0.1f;
+    stats.walkSpeed *= 1.5f;
+    shopItems[3] = true;
+}
+
+void Player::applyBalloonMode() 
+{
+    balloonTimer = 10.f;
+    isBalloonMode = true;
+    shopItems[4] = true;
+}
+
+void Player::resetSnowballPower() 
+{
+    hasSnowballPower = false;
+}
+
+void Player::resetDistanceIncrease() 
+{
+    hasDistanceIncrease = false;
+    for (int i = 0; i < MAX_BALLS; i++)
+        snowballs[i].setMaxDistance(150);
+}
+
+void Player::resetSpeedBoost() 
+{
+    snowballCooldown = 0.3f;
+    speedBoostTimer = 0;
+    stats.walkSpeed /= 1.5f;
+}
+
+void Player::resetBalloonMode() 
+{
+    balloonTimer = 0;
+    isBalloonMode = false;
+}
+
+void Player::resetLevelPowerups() 
+{
+    resetSnowballPower();
+    resetDistanceIncrease();
+    resetSpeedBoost();
+    resetBalloonMode();
+    resetAllShopItems();
 }

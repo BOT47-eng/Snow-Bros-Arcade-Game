@@ -12,6 +12,9 @@ class Leaderboard
 private :  
     string *playerNames; 
     int *scores;
+    int* levels;
+    string* dates;
+
     sf::View *view ;
     sf::Texture tex ;
     sf::Sprite background ; 
@@ -54,28 +57,30 @@ public :
         /////////////////////////////////////
         /////////////////////////////////////
     
-
+        playerNames = nullptr;
+        scores = nullptr;
+        levels = nullptr;
+        dates = nullptr;
         view = new View({ 600 / 2, 600 / 2 }, { 600, 600 }) ;
-        playerNames = nullptr ;  
-        scores = nullptr ;
         drawLeaderboard = false ;
     }
     ~Leaderboard()
     {
-        if(playerNames != nullptr)
-        {
-            delete [] playerNames ;
-        }
-        if(scores != nullptr)
-        {
-            delete [] scores ; 
-        }
+        if (playerNames)
+            delete[] playerNames;
+        if (scores)
+            delete[] scores;
+        if (levels)
+            delete[] levels;
+        if (dates)
+            delete[] dates;
+
         delete view ;
     }
 
     void sortRanking() ;
     int countNoOfPlayers() ; 
-    void saveToFile(string name, int scores) ; 
+    void saveToFile(string name, int scores, int levelReached, string date) ;
     void loadFromFile() ; 
     void draw(sf::RenderWindow &window) ;
 };

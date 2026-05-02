@@ -9,6 +9,8 @@
 #include "EnemyFactory.hpp"
 #include "PlayerInfo.hpp"
 #include "Shop.hpp"
+#include "PlayerDatabase.hpp"
+#include "LeaderBoard.hpp"
 
 using namespace sf;
 using namespace std;
@@ -47,6 +49,10 @@ private:
 	Player p1;
 	Player p2;
 	Shop* shop;
+	PlayerDatabaseManager saveManager;
+	PlayerSaveData p1SaveData;
+	PlayerSaveData p2SaveData;
+	Leaderboard* leaderboard;
 
 	void drawLevelSelect(int gameMode);
 	void drawGameOver(int p1Score, int p2Score, bool p1Alive, bool p2Alive);
@@ -54,9 +60,13 @@ private:
 	int drawPauseMenu(Player& p1, Player& p2, bool singlePlayer);
 	bool runLevel(int levelIndex, Player& p1, Player& p2);
 	Enemy* createEnemy(const string& type, float x, float y);
+	void savePlayerProgress(Player& p1, Player& p2, int levelIndex);
+	void loadPlayerProgress(const string& username, Player& player, bool isPlayer1);
+	void applyPersistentEffects(Player& player, const PlayerSaveData& saveData);
+	void resetLevelState(Player& p1, Player& p2);
 
 public:
-	LevelManager();
+	LevelManager(Leaderboard* ld);
 	~LevelManager();
 
 	bool loadLevelConfig(const string& filepath);
@@ -65,4 +75,5 @@ public:
 	bool isLevelUnlocked(int levelIndex);
 	bool isLevelCompleted(int levelIndex);
 	void setLevelCompleted(int levelIndex);
+
 };

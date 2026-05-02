@@ -1,6 +1,6 @@
 #include "LevelManager.hpp"
 
-LevelManager::LevelManager() : levels(nullptr), levelCount(0), levelUnlocked(nullptr), levelCompleted(nullptr), window(nullptr), fontHeader(nullptr), fontNormal(nullptr), players(nullptr), player1Active(false), player2Active(false), isSinglePlayer(false), p1(0), p2(1), shop(nullptr)
+LevelManager::LevelManager(Leaderboard* ld) : levels(nullptr), levelCount(0), levelUnlocked(nullptr), levelCompleted(nullptr), window(nullptr), fontHeader(nullptr), fontNormal(nullptr), players(nullptr), player1Active(false), player2Active(false), isSinglePlayer(false), p1(0), p2(1), shop(nullptr), leaderboard(ld)
 {}
 
 LevelManager::~LevelManager()
@@ -20,6 +20,8 @@ LevelManager::~LevelManager()
 		delete[] levelUnlocked;
 	if (levelCompleted)
 		delete[] levelCompleted;
+	if (players)
+		delete[] players;
 }
 
 bool LevelManager::loadLevelConfig(const string& filepath)
@@ -43,7 +45,7 @@ bool LevelManager::loadLevelConfig(const string& filepath)
 	if (!player1Active && !player2Active)
 	{
 		for (int i = 1; i < levelCount; i++)
-			levelUnlocked[i] = false;
+			levelUnlocked[i] = true;
 	}
 	else
 	{
@@ -65,7 +67,7 @@ bool LevelManager::loadLevelConfig(const string& filepath)
 		}
 
 		if (!(file >> levels[i].blockCount)) {
-			cout << "Error: Could not read blockCount for level " << levels[i].levelNumber << endl;
+			cout << "Could not read blockCount for level " << levels[i].levelNumber << endl;
 			return false;
 		}
 
@@ -339,6 +341,8 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 		if ((!p1Alive && !p2Alive) || !enemiesAlive) 
 		{
 			drawGameOver(p1.getScore(), p2.getScore(), p1Alive, p2Alive);
+			
+
 			for (int i = 0; i < level.blockCount; i++) 
 			{
 				blockArray[i].~Block();
@@ -353,7 +357,16 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 			}
 
 			if (p1Alive || p2Alive)
+			{
 				setLevelCompleted(levelIndex);
+			}
+
+			resetLevelState(p1, p2);
+
+			if (player1Active || player2Active)
+			{
+				savePlayerProgress(p1, p2, levelIndex + 1);
+			}
 
 			delete[] blockArray;
 			delete[] enemies;
@@ -825,6 +838,8 @@ void LevelManager::drawShop(Player& player)
 				{
 					if (exitButton.getGlobalBounds().contains(Vector2f(mousePos))) 
 					{
+						if (player1Active || player2Active)
+							savePlayerProgress(p1, p2, p1SaveData.current_level);
 						return;
 					}
 				}
@@ -858,7 +873,8 @@ void LevelManager::drawGameOver(int p1Score, int p2Score, bool p1Alive, bool p2A
 {
 	Clock clock;
 
-	while (window->isOpen()) {
+	while (window->isOpen()) 
+	{
 		float dt = clock.restart().asSeconds();
 		if (dt < 0.05f)
 			dt = 0.05f;
@@ -866,24 +882,35 @@ void LevelManager::drawGameOver(int p1Score, int p2Score, bool p1Alive, bool p2A
 		Vector2i mousePos = Mouse::getPosition(*window);
 
 		Event event;
-		while (window->pollEvent(event)) {
-			if (event.type == Event::Closed) {
+		while (window->pollEvent(event)) 
+		{
+			if (event.type == Event::Closed) 
+			{
 				window->close();
 				return;
 			}
 
-			if (event.type == Event::MouseButtonPressed) {
-				if (event.mouseButton.button == Mouse::Button::Left) {
+			if (event.type == Event::MouseButtonPressed) 
+			{
+				if (event.mouseButton.button == Mouse::Button::Left) 
+				{
 					RectangleShape retryButton(Vector2f(100.f, 40.f));
 					retryButton.setPosition(Vector2f(150.f, 300.f));
 
 					RectangleShape quitButton(Vector2f(100.f, 40.f));
 					quitButton.setPosition(Vector2f(350.f, 300.f));
 
-					if (retryButton.getGlobalBounds().contains(Vector2f(mousePos))) {
+					if (retryButton.getGlobalBounds().contains(Vector2f(mousePos))) 
+					{
+						if (!(p1Alive || p2Alive))
+						{
+							p1.setLives(2);
+							p2.setLives(2);
+						}
 						return;
 					}
-					if (quitButton.getGlobalBounds().contains(Vector2f(mousePos))) {
+					if (quitButton.getGlobalBounds().contains(Vector2f(mousePos))) 
+					{
 						return;
 					}
 				}
@@ -954,10 +981,210 @@ void LevelManager::startGame(int gameMode, RenderWindow* window, Font* fHeader, 
 	player1Active = p1Login;
 	player2Active = p2Login;
 
+	players = new PlayerInfo[2];
+
+	players[0] = playerInfo[0];
+	players[1] = playerInfo[1];
+
 	if ((p1Login && !p2Login) || (!p1Login && p2Login))
 		isSinglePlayer = true;
 	else
 		isSinglePlayer = false;
 
+	if (p1Login) 
+	{
+		p1SaveData.username = players[0].username;
+		if (gameMode == 1 && saveManager.playerSaveExists(players[0].username)) 
+		{
+			loadPlayerProgress(players[0].username, p1, true);
+			cout << p1SaveData.current_level << endl;
+			for (int i = 0; i < levelCount; i++)
+			{
+				if (i < p1SaveData.current_level - 1)
+					levelCompleted[i] = true;
+				else
+					levelCompleted[i] = false;
+
+				if (i < p1SaveData.current_level)
+					levelUnlocked[i] = true;
+				else
+					levelUnlocked[i] = false;
+			}
+		}
+		else 
+		{
+			p1.setLives(2);
+			p1SaveData.username = players[0].username;
+			p1SaveData.current_level = 1;
+			p1SaveData.current_score = 0;
+			p1SaveData.lives_remaining = 2;
+			p1SaveData.gem_count = 0;
+			p1SaveData.high_score = 0;
+			for (int i = 0; i < 5; i++)
+				p1SaveData.shop_items[i] = false;
+			for (int i = 0; i < levelCount; i++)
+			{
+				levelCompleted[i] = false;
+				if (i > 0)
+					levelUnlocked[i] = false;
+			}
+			if (gameMode == 0)
+				saveManager.savePlayerProgress(p1SaveData);
+		}
+	}
+
+	if (p2Login) 
+	{
+		p2SaveData.username = players[1].username;
+		if (gameMode == 1 && saveManager.playerSaveExists(players[1].username)) 
+		{
+			loadPlayerProgress(players[1].username, p2, false);
+			if (p1Login)
+			{
+				if (p1SaveData.current_level < p2SaveData.current_level)
+				{
+					for (int i = 0; i < levelCount; i++)
+					{
+						if (i < p2SaveData.current_level - 1)
+							levelCompleted[i] = true;
+						else
+							levelCompleted[i] = false;
+
+						if (i < p2SaveData.current_level)
+							levelUnlocked[i] = true;
+						else
+							levelUnlocked[i] = false;
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < levelCount; i++)
+				{
+					if (i < p2SaveData.current_level - 1)
+						levelCompleted[i] = true;
+					else
+						levelCompleted[i] = false;
+
+					if (i < p2SaveData.current_level)
+						levelUnlocked[i] = true;
+					else
+						levelUnlocked[i] = false;
+				}
+			}
+		}
+		else 
+		{
+			p2.setLives(2);
+			p2SaveData.username = players[1].username;
+			p2SaveData.current_level = 1;
+			p2SaveData.current_score = 0;
+			p2SaveData.lives_remaining = 2;
+			p2SaveData.gem_count = 0;
+			p2SaveData.high_score = 0;
+			for (int i = 0; i < 5; i++)
+				p2SaveData.shop_items[i] = false;
+			for (int i = 0; i < levelCount; i++)
+			{
+				levelCompleted[i] = false;
+				if (i > 0)
+					levelUnlocked[i] = false;
+			}
+			if (gameMode == 0)
+				saveManager.savePlayerProgress(p2SaveData);
+		}
+	}
+
 	drawLevelSelect(gameMode);
+}
+
+void LevelManager::loadPlayerProgress(const string& username, Player& player, bool isPlayer1) 
+{
+	if (!saveManager.playerSaveExists(username)) 
+	{
+		cout << "No save file found for player: " << username << endl;
+		return;
+	}
+
+	PlayerSaveData saveData;
+	if (!saveManager.loadPlayerProgress(username, saveData)) 
+	{
+		cout << "Failed to load player progress for: " << username << endl;
+		return;
+	}
+
+	player.addGems(saveData.gem_count - player.getGems());
+	player.addScore(saveData.current_score - player.getScore());
+	player.setLives(saveData.lives_remaining);
+
+	if (isPlayer1)
+		p1SaveData = saveData;
+	else
+		p2SaveData = saveData;
+
+	applyPersistentEffects(player, saveData);
+}
+
+void LevelManager::savePlayerProgress(Player& p1, Player& p2, int levelIndex)
+{
+	if (player1Active) 
+	{
+		p1SaveData.username = players[0].username;
+
+		if (levelIndex > p1SaveData.current_level)
+			p1SaveData.current_level = levelIndex;
+
+		p1SaveData.current_score = p1.getScore();
+		p1SaveData.lives_remaining = p1.getLives();
+		p1SaveData.gem_count = p1.getGems();
+
+		if (p1.getScore() > p1SaveData.high_score)
+			p1SaveData.high_score = p1.getScore();
+
+		for (int i = 0; i < 5; i++)
+			p1SaveData.shop_items[i] = p1.getShopItem(i);
+
+		saveManager.savePlayerProgress(p1SaveData, leaderboard);
+	}
+
+	if (player2Active) 
+	{
+		p2SaveData.username = players[1].username;
+
+		if (levelIndex > p2SaveData.current_level)
+			p2SaveData.current_level = levelIndex;
+
+		p2SaveData.current_score = p2.getScore();
+		p2SaveData.lives_remaining = p2.getLives();
+		p2SaveData.gem_count = p2.getGems();
+
+		if (p2.getScore() > p2SaveData.high_score)
+			p2SaveData.high_score = p2.getScore();
+
+		for (int i = 0; i < 5; i++)
+			p2SaveData.shop_items[i] = p2.getShopItem(i);
+
+		saveManager.savePlayerProgress(p2SaveData, leaderboard);
+	}
+}
+
+void LevelManager::resetLevelState(Player& p1, Player& p2) 
+{
+	p1.resetLevelPowerups();
+	p2.resetLevelPowerups();
+}
+
+void LevelManager::applyPersistentEffects(Player& player, const PlayerSaveData& saveData) 
+{
+	player.setPosition(Vector2f(300, 300));
+
+	if (saveData.shop_items[1]) 
+	{
+		player.applySnowballPower();
+	}
+
+	if (saveData.shop_items[2]) 
+	{
+		player.applyDistanceIncrease();
+	}
 }

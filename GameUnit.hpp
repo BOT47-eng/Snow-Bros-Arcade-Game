@@ -24,7 +24,7 @@ private:
 
 	PlayerInfo players[2];
 	LoginManager loginPlayer[2];
-	Leaderboard *leaderboardObj;
+	Leaderboard leaderboardObj;
 	LevelManager levelManager;
 	//Database manageSaves;
 
@@ -33,12 +33,12 @@ private:
 	Texture leaderBoardButtonTex;
 
 public:
-	GameUnit() : isGameActive(false), levelMenu(false), loginMenu(false)
+	GameUnit() : isGameActive(false), levelMenu(false), loginMenu(false), levelManager(&leaderboardObj)
 	{
 		window.create(VideoMode({ 600,600 }), "SnowBros 25I-3014 25I-3039", Style::Close);
 		window.setFramerateLimit(60);
-		fontHeader.loadFromFile("SnowBrosAssets/Fonts/header-font.ttf");
-		fontNormal.loadFromFile("SnowBrosAssets/Fonts/normal-font.ttf");
+		fontHeader.loadFromFile("Resources/SnowBrosAssets/Fonts/header-font.ttf");
+		fontNormal.loadFromFile("Resources/SnowBrosAssets/Fonts/normal-font.ttf");
 		leaderBoardButtonTex.loadFromFile("Resources/SnowBrosAssets/Images/LeaderBoardButtonImage.jpg") ;
 		loginPlayer[0].setFonts(fontHeader, fontNormal);
 		loginPlayer[1].setFonts(fontHeader, fontNormal);
@@ -46,8 +46,7 @@ public:
 		loggedIn[0] = false;
 		loggedIn[1] = false;
 
-		leaderboardObj = new Leaderboard;
-		leaderboardObj->drawLeaderboard = false;
+		leaderboardObj.drawLeaderboard = false;
 
 		if (!levelManager.loadLevelConfig("Resources/SnowBrosAssets/Levels/LevelConfig.txt"))
 			cout << "Could not Open Level Config File!" << endl;
@@ -60,7 +59,6 @@ public:
 
 	~GameUnit()
 	{
-		delete leaderboardObj;
 		if (window.isOpen())
 			window.close();
 	}

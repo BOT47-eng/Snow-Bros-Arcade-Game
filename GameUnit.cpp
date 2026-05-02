@@ -18,8 +18,12 @@ void GameUnit::drawLoginMenu(int loginIndex)
     Clock clock;
     float dt = 0;
 
-    while (window.isOpen()) {
+    RectangleShape exitButton(Vector2f(80.f, 40.f));
+    exitButton.setFillColor(Color::Yellow);
+    exitButton.setPosition(Vector2f(505.f, 15.f));
 
+    while (window.isOpen()) {
+        Vector2i mousePos = Mouse::getPosition(window);
         dt = clock.restart().asSeconds();
 
         if (dt < 0.05)
@@ -32,9 +36,16 @@ void GameUnit::drawLoginMenu(int loginIndex)
                 window.close();
             }
 
+            if (event.type == Event::MouseButtonPressed)
+            {
+                if (exitButton.getGlobalBounds().contains(Vector2f(mousePos)))
+                    return;
+            }
+
             if (!loginPlayer[loginIndex].isLoggedIn()) {
                 loginPlayer[loginIndex].handleInput(event, window);
             }
+
         }
 
         window.clear();
@@ -51,6 +62,12 @@ void GameUnit::drawLoginMenu(int loginIndex)
 
         window.draw(playerText);
 
+        window.draw(exitButton);
+        Text exitText("Exit", fontNormal, 50);
+        exitText.setFillColor(Color::Black);
+        exitText.setPosition(Vector2f(525.f, -10.f));
+        window.draw(exitText);
+
         if (!loginPlayer[loginIndex].isLoggedIn())
         {
             loginPlayer[loginIndex].draw(window);
@@ -60,11 +77,13 @@ void GameUnit::drawLoginMenu(int loginIndex)
             if (loginIndex == 0)
             {
                 loginPlayer[1].setOtherPlayer(loginPlayer[0].getCurrentUser());
+                players[0] = loginPlayer[0].getCurrentUser();
                 cout << "Login Player 1 Successful!" << endl;
             }
             else
             {
                 loginPlayer[0].setOtherPlayer(loginPlayer[1].getCurrentUser());
+                players[1] = loginPlayer[1].getCurrentUser();
                 cout << "Login Player 2 Successful!" << endl;
             }
 
@@ -114,7 +133,7 @@ void GameUnit::drawTesting()
 
     InputManager input;
 
-    bool fontOk = fontHeader.loadFromFile("SnowBrosAssets/Fonts/header-font.ttf");
+    bool fontOk = fontHeader.loadFromFile("Resources/SnowBrosAssets/Fonts/header-font.ttf");
 
     Text hudText;
     if (fontOk)
@@ -218,7 +237,7 @@ void GameUnit::drawMainMenu()
     Text gameCredits("25I-3014 and 25I-3039", fontHeader, 16);
     gameCredits.setPosition(Vector2f(10, 65));
 
-    RectangleShape horizontalLine, verticalLine;
+    /*RectangleShape horizontalLine, verticalLine;
 
     verticalLine.setSize(Vector2f(1, 600));
     verticalLine.setFillColor(Color::White);
@@ -227,7 +246,7 @@ void GameUnit::drawMainMenu()
     horizontalLine.setSize(Vector2f(1, 600));
     horizontalLine.setFillColor(Color::White);
     horizontalLine.setPosition(Vector2f(0, 300));
-    horizontalLine.setRotation(-90);
+    horizontalLine.setRotation(-90);*/
 
     //New Game, Continue Game, Guest Mode, Quit Game
     const int noOfOptions = 4;
@@ -355,8 +374,8 @@ void GameUnit::drawMainMenu()
                     //Leaderboard
                     else if (leaderboardContainer.getGlobalBounds().contains(Vector2f(mousePos)))
                     {
-                        leaderboardObj->loadFromFile() ;
-                        leaderboardObj->drawLeaderboard = true;
+                        leaderboardObj.loadFromFile();
+                        leaderboardObj.drawLeaderboard = true;
                     }
                 }
             }
@@ -430,17 +449,15 @@ void GameUnit::drawMainMenu()
         window.draw(gameCredits);
         window.draw(leaderboardContainer);
 
-        window.draw(verticalLine);
-        window.draw(horizontalLine);
+        /*window.draw(verticalLine);
+        window.draw(horizontalLine);*/
 
         
-        while(leaderboardObj->drawLeaderboard == true)
+        while(leaderboardObj.drawLeaderboard == true)
         {
-            leaderboardObj->draw(window);
+            leaderboardObj.draw(window);
         }
         window.display();
     }
 
-    if(leaderboardObj != nullptr)
-        delete leaderboardObj;
 }

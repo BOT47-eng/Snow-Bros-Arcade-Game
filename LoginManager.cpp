@@ -29,11 +29,9 @@ long long LoginManager::hash(const string& password)
 
 bool LoginManager::verifyCredentials(string username, string password) 
 {
-    ifstream inFile("Data/users.txt");
+    ifstream inFile("Resources/users.txt");
     PlayerInfo temp;
     long long inputHash = hash(password);
-
-    cout << "Dash" << endl;
 
     while (getline(inFile, temp.username))
     { 
@@ -58,7 +56,7 @@ bool LoginManager::verifyCredentials(string username, string password)
 
 void LoginManager::saveUserToFile(PlayerInfo player)
 {
-    ofstream outFile("Data/users.txt", ios::app);
+    ofstream outFile("Resources/users.txt", ios::app);
     if (outFile.is_open()) 
     {
         //player.created has \n from ctime_s function
@@ -430,7 +428,7 @@ void LoginManager::setOtherPlayer(PlayerInfo other)
 
 bool LoginManager::usernameExists(const string& username)
 {
-    ifstream inFile("Data/users.txt");
+    ifstream inFile("Resources/users.txt");
     if (!inFile.is_open())
         return false;
 

@@ -5,11 +5,10 @@
 #include "AnimationComponent.hpp"
 #include "Projectile.hpp"
 
-//These stats can be loaded from config file
 struct PlayerStats
 {
     float walkSpeed = 200.f;
-    float jumpHeight = -520.f;  
+    float jumpHeight = -520.f;
 };
 
 //Player 1 is 0 index, Player 2 is 1 index
@@ -35,12 +34,17 @@ private:
     float invincibleTimer;
     float snowballTimer;
     float snowballCooldown;
+    bool shopItems[5];
     bool onGround;
     bool facingRight;
     bool wantsShoot;
     bool invincible;
     bool isShooting;
-    bool isBallonMode ; 
+    bool isBalloonMode;
+    bool hasSnowballPower;
+    bool hasDistanceIncrease;
+    float speedBoostTimer;
+    float balloonTimer;
 
     const FloatRect playerHitbox = { 0, 0, 60, 72 };
     const IntRect idlePlayerFrames = { IntRect(19, 3, 57, 72) };
@@ -63,7 +67,7 @@ private:
     static const float INVINCIBLE_TIME;
 
 public:
-    Player() ;
+    Player();
     Player(int index, PlayerStats stats = PlayerStats());
     void setTexture(const Texture& texture, IntRect rect);
     void setHitboxRect(FloatRect localRect);
@@ -137,9 +141,8 @@ public:
     int getIndex() const 
     { 
         return index; 
-    }
-    bool getBallonMode() const {return isBallonMode ; }
-    
+    } 
+
     //This returns shoot flag and resets it
     bool consumeShoot() 
     { 
@@ -165,18 +168,61 @@ public:
     void setDirectionRight(bool faceRight);
     void setBallonMode(bool v)
     {
-        isBallonMode = v ; 
+        isBalloonMode = v ; 
     }
 
     //For snowballs
     void setTextureSnowball(const Texture& texture);
     void loadSpritesheetSnowball(const Texture& texture, const IntRect* frames, int count, float duration = 0.05);
     void updateSnowballs(float dt);
-
     Snowball& getBall(int i)
     {
         return snowballs[i];
     }
+
+    //For power-ups and shop items
+    void applyExtraLife();
+    void applySnowballPower();
+    void applyDistanceIncrease();
+    void applySpeedBoost();
+    void applyBalloonMode();
+    void resetSnowballPower();
+    void resetDistanceIncrease();
+    void resetSpeedBoost();
+    void resetBalloonMode();
+    void resetLevelPowerups();
+    bool hasSnowballPowerActive() const { return hasSnowballPower; }
+    bool hasDistanceIncreaseActive() const { return hasDistanceIncrease; }
+    int getShopItem(int index) const
+    {
+        if (index >= 0 && index <= 4)
+            return shopItems[index];
+        return 0;
+    }
+    void setShopItem(int index)
+    {
+        if (index >= 0 && index <= 4)
+        {
+            shopItems[index] = true;
+        }
+    }
+    void resetShopItem(int index)
+    {
+        if (index >= 0 && index <= 4)
+        {
+            shopItems[index] = false;
+        }
+    }
+    void resetAllShopItems()
+    {
+        for (int i = 0; i < 5; i++)
+            shopItems[i] = false;
+    }
+    bool getBalloonMode() const
+    {
+        return isBalloonMode;
+    }
+    void setLives(int n) { lives = n; };
 
     PlayerStats stats;
 };

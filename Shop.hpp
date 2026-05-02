@@ -85,6 +85,8 @@ public:
     void update(sf::RenderWindow &window , Player& p) ;
     void draw(sf::RenderWindow &window, Player &p) ; 
     string getPurchaseState() { return PurchaseState; }
+    void resetPurchaseState() { PurchaseState = ""; }
+
 }; 
 
 #endif

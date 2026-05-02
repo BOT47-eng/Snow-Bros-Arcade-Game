@@ -101,75 +101,102 @@ Shop::Shop()
 
 void Shop::getExtraLife(Player& P)
 {
-    if (P.getGems() >= 50)
+    if (!P.getShopItem(0)) 
     {
-        P.addGems(-50); //deducts 
-        P.addLife();
-        PurchaseState = "Successful";
+        if (P.getGems() >= 50) 
+        {
+            P.addGems(-50);
+            P.applyExtraLife();
+            PurchaseState = "Successful";
+        }
+        else 
+        {
+            PurchaseState = "Failed Not Enough Gems";
+        }
     }
-    else
+    else 
     {
-        PurchaseState = "Failed Not Enough Gems";
+        PurchaseState = "Already Purchased This Level";
     }
-    return;
 }
 void Shop::getSpeedBoost(Player& P)
 {
-    if (P.getGems() >= 20)
+    if (!P.getShopItem(3)) 
     {
-        P.addGems(-20); // deducts 
-        // Doubling the velocity  of x only 
-        P.setVelocityX(P.getVelocityX() * 2);
-        PurchaseState = "Successful";
+        if (P.getGems() >= 20) 
+        {
+            P.addGems(-20);
+            P.applySpeedBoost();
+            PurchaseState = "Successful";
+        }
+        else 
+        {
+            PurchaseState = "Failed Not Enough Gems";
+        }
     }
-    else
-    {
-        PurchaseState = "Failed Not Enough Gems";
+    else {
+        PurchaseState = "Already Purchased This Level";
     }
 }
 void Shop::getSnowBall(Player& P)
 {
-    if (P.getGems() >= 25)
+    if (!P.getShopItem(1)) 
     {
-        P.addGems(-25); // deducts 
-        // TODO THE CHANGE TO PLAYER SNOWBALL
-
-        PurchaseState = "Successful";
+        if (P.getGems() >= 30) 
+        {
+            P.addGems(-30);
+            P.applySnowballPower();
+            PurchaseState = "Successful";
+        }
+        else 
+        {
+            PurchaseState = "Failed Not Enough Gems";
+        }
     }
-    else
+    else 
     {
-        PurchaseState = "Failed Not Enough Gems";
+        PurchaseState = "Already Purchased This Level";
     }
 }
 void Shop::getDistanceIncrese(Player& P)
 {
-    if (P.getGems() >= 25)
+    if (!P.getShopItem(2)) 
     {
-        P.addGems(-25); // deducts 
-        for (int st = 0; st <= P.MAX_BALLS - 1; st++)
+        if (P.getGems() >= 25) 
         {
-            P.getBall(st).setMaxDistance(600);
+            P.addGems(-25);
+            P.applyDistanceIncrease();
+            PurchaseState = "Successful";
         }
-        PurchaseState = "Successful";
+        else 
+        {
+            PurchaseState = "Failed Not Enough Gems";
+        }
     }
-    else
+    else 
     {
-        PurchaseState = "Failed Not Enough Gems";
+        PurchaseState = "Already Purchased This Level";
     }
 
 }
 void Shop::getBallonMode(Player& P)
 {
-    if (P.getGems() >= 35)
+    if (!P.getShopItem(4)) 
     {
-        P.addGems(-35); // deducts 
-        P.setBallonMode(true);
-
-        PurchaseState = "Successful";
+        if (P.getGems() >= 35) 
+        {
+            P.addGems(-35);
+            P.applyBalloonMode();
+            PurchaseState = "Successful";
+        }
+        else 
+        {
+            PurchaseState = "Failed Not Enough Gems";
+        }
     }
     else
     {
-        PurchaseState = "Failed Not Enough Gems";
+        PurchaseState = "Already Purchased This Level";
     }
 }
 
