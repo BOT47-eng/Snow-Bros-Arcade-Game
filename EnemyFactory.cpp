@@ -129,7 +129,7 @@ void Enemy::convertToSnowball()
 
     EnemySprite.setTexture(snowballTexture, true);
 
-    float targetSize = 100.0f;
+    float targetSize = 75.0f;
     float scaleX = targetSize / 230.0f;
     float scaleY = targetSize / 278.0f;
     EnemySprite.setScale(scaleX, scaleY);
