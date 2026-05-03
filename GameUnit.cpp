@@ -93,137 +93,137 @@ void GameUnit::drawLoginMenu(int loginIndex)
     }
 }
 
-void GameUnit::drawTesting()
-{
-    Player p1(0);
-    p1.setPosition(Vector2f(120.f, 480.f));
-
-    Player p2(1);
-    p2.setPosition(Vector2f(440.f, 480.f));
-
-    Enemy* enemy1 = new FlyingFoogaFoog;
-    enemy1->CreateEnemy(200.f, 200.f);
-
-    Enemy* enemy2 = new FlyingFoogaFoog;
-    enemy2->CreateEnemy(400.f, 250.f);
-
-    Enemy* enemy3 = new Botom;
-    enemy3->CreateEnemy(300.f, 100.f);
-
-    Enemy* enemies[3] = { enemy1, enemy2, enemy3 };
-
-    const int BLOCK_COUNT = 11;
-    Block blocks[BLOCK_COUNT] = {
-        Block(-200.f, 560.f, 1000.f, 40.f),
-        Block(0.f, 460.f, 160.f, 16.f),
-        Block(500.f, 460.f, 160.f, 16.f),
-        Block(100.f, 360.f, 96.f, 16.f),
-        Block(300.f, 360.f, 80.f, 16.f),
-        Block(504.f, 360.f, 96.f, 16.f),
-        Block(64.f, 260.f, 100.f, 16.f),
-        Block(256.f, 260.f, 288.f, 16.f),
-        Block(608.f, 260.f, 128.f, 16.f),
-        Block(160.f, 160.f, 160.f, 16.f),
-        Block(480.f, 160.f, 160.f, 16.f),
-    };
-
-    PhysicsEngine physics;
-    for (int i = 0; i < BLOCK_COUNT; i++)
-        physics.addPlatform(&blocks[i]);
-
-    InputManager input;
-
-    bool fontOk = fontHeader.loadFromFile("Resources/SnowBrosAssets/Fonts/header-font.ttf");
-
-    Text hudText;
-    if (fontOk)
-    {
-        hudText.setFont(fontHeader);
-        hudText.setCharacterSize(16);
-        hudText.setFillColor(Color::White);
-    }
-
-    bool debugOn = false;
-
-    RectangleShape bg(Vector2f(WIDTH, HEIGHT));
-    bg.setFillColor(Color::Black);
-
-    Clock clock;
-
-    while (window.isOpen())
-    {
-        float dt = clock.restart().asSeconds();
-
-        if (dt > 0.05f)
-            dt = 0.05f;
-
-        input.resetInput();
-
-        Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == Event::Closed)
-                window.close();
-            input.handleEvent(event);
-        }
-
-        if (input.debug())
-            debugOn = !debugOn;
-        if (input.gamePause())
-            window.close();
-
-        p1.handleInput(input, dt);
-        p2.handleInput(input, dt);
-
-        physics.update(p1, p2, enemies, 3, dt);
-
-        p1.update(dt);
-        p2.update(dt);
-
-        window.clear();
-        window.draw(bg);
-
-        for (int i = 0; i < BLOCK_COUNT; i++)
-            blocks[i].draw(window, debugOn);
-
-        p1.draw(window, debugOn);
-        p2.draw(window, debugOn);
-
-        for (int i = 0; i < 3; i++)
-        {
-            if (enemies[i])
-                enemies[i]->draw(window, debugOn);
-        }
-
-        if (fontOk)
-        {
-            hudText.setString(players[0].username + "  Lives:" + to_string(p1.getLives()) +
-                "  Score:" + to_string(p1.getScore()));
-            hudText.setPosition(8.f, 4.f);
-            window.draw(hudText);
-
-            hudText.setString(players[1].username + "  Lives:" + to_string(p2.getLives()) +
-                "  Score:" + to_string(p2.getScore()));
-            hudText.setPosition(8.f, 24.f);
-            window.draw(hudText);
-
-            hudText.setString("F1/H: hitboxes    ESC/P: quit");
-            hudText.setPosition(8.f, HEIGHT - 24.f);
-            window.draw(hudText);
-        }
-
-        window.display();
-    }
-
-    for (int i = 0; i < 3; i++)
-    {
-        if (enemies[i])
-        {
-            delete enemies[i];
-            enemies[i] = nullptr;
-        }
-    }
-}
+//void GameUnit::drawTesting()
+//{
+//    Player p1(0);
+//    p1.setPosition(Vector2f(120.f, 480.f));
+//
+//    Player p2(1);
+//    p2.setPosition(Vector2f(440.f, 480.f));
+//
+//    Enemy* enemy1 = new FlyingFoogaFoog;
+//    enemy1->CreateEnemy(200.f, 200.f);
+//
+//    Enemy* enemy2 = new FlyingFoogaFoog;
+//    enemy2->CreateEnemy(400.f, 250.f);
+//
+//    Enemy* enemy3 = new Botom;
+//    enemy3->CreateEnemy(300.f, 100.f);
+//
+//    Enemy* enemies[3] = { enemy1, enemy2, enemy3 };
+//
+//    const int BLOCK_COUNT = 11;
+//    Block blocks[BLOCK_COUNT] = {
+//        Block(-200.f, 560.f, 1000.f, 40.f),
+//        Block(0.f, 460.f, 160.f, 16.f),
+//        Block(500.f, 460.f, 160.f, 16.f),
+//        Block(100.f, 360.f, 96.f, 16.f),
+//        Block(300.f, 360.f, 80.f, 16.f),
+//        Block(504.f, 360.f, 96.f, 16.f),
+//        Block(64.f, 260.f, 100.f, 16.f),
+//        Block(256.f, 260.f, 288.f, 16.f),
+//        Block(608.f, 260.f, 128.f, 16.f),
+//        Block(160.f, 160.f, 160.f, 16.f),
+//        Block(480.f, 160.f, 160.f, 16.f),
+//    };
+//
+//    PhysicsEngine physics;
+//    for (int i = 0; i < BLOCK_COUNT; i++)
+//        physics.addPlatform(&blocks[i]);
+//
+//    InputManager input;
+//
+//    bool fontOk = fontHeader.loadFromFile("Resources/SnowBrosAssets/Fonts/header-font.ttf");
+//
+//    Text hudText;
+//    if (fontOk)
+//    {
+//        hudText.setFont(fontHeader);
+//        hudText.setCharacterSize(16);
+//        hudText.setFillColor(Color::White);
+//    }
+//
+//    bool debugOn = false;
+//
+//    RectangleShape bg(Vector2f(WIDTH, HEIGHT));
+//    bg.setFillColor(Color::Black);
+//
+//    Clock clock;
+//
+//    while (window.isOpen())
+//    {
+//        float dt = clock.restart().asSeconds();
+//
+//        if (dt > 0.05f)
+//            dt = 0.05f;
+//
+//        input.resetInput();
+//
+//        Event event;
+//        while (window.pollEvent(event))
+//        {
+//            if (event.type == Event::Closed)
+//                window.close();
+//            input.handleEvent(event);
+//        }
+//
+//        if (input.debug())
+//            debugOn = !debugOn;
+//        if (input.gamePause())
+//            window.close();
+//
+//        p1.handleInput(input, dt);
+//        p2.handleInput(input, dt);
+//
+//        physics.update(p1, p2, enemies, 3, dt, window, fontNormal);
+//
+//        p1.update(dt);
+//        p2.update(dt);
+//
+//        window.clear();
+//        window.draw(bg);
+//
+//        for (int i = 0; i < BLOCK_COUNT; i++)
+//            blocks[i].draw(window, debugOn);
+//
+//        p1.draw(window, debugOn);
+//        p2.draw(window, debugOn);
+//
+//        for (int i = 0; i < 3; i++)
+//        {
+//            if (enemies[i])
+//                enemies[i]->draw(window, debugOn);
+//        }
+//
+//        if (fontOk)
+//        {
+//            hudText.setString(players[0].username + "  Lives:" + to_string(p1.getLives()) +
+//                "  Score:" + to_string(p1.getScore()));
+//            hudText.setPosition(8.f, 4.f);
+//            window.draw(hudText);
+//
+//            hudText.setString(players[1].username + "  Lives:" + to_string(p2.getLives()) +
+//                "  Score:" + to_string(p2.getScore()));
+//            hudText.setPosition(8.f, 24.f);
+//            window.draw(hudText);
+//
+//            hudText.setString("F1/H: hitboxes    ESC/P: quit");
+//            hudText.setPosition(8.f, HEIGHT - 24.f);
+//            window.draw(hudText);
+//        }
+//
+//        window.display();
+//    }
+//
+//    for (int i = 0; i < 3; i++)
+//    {
+//        if (enemies[i])
+//        {
+//            delete enemies[i];
+//            enemies[i] = nullptr;
+//        }
+//    }
+//}
 
 void GameUnit::drawMainMenu()
 {

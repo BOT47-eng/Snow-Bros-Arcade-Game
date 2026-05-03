@@ -11,6 +11,7 @@
 #include "Shop.hpp"
 #include "PlayerDatabase.hpp"
 #include "LeaderBoard.hpp"
+#include "PowerupMenu.hpp"
 
 struct BlockData {
 	float x, y, width, height;
@@ -50,8 +51,14 @@ private:
 	PlayerSaveData p1SaveData;
 	PlayerSaveData p2SaveData;
 	Leaderboard* leaderboard;
-	sf::Sprite* backgrounds;
+	sf::Sprite backgrounds;
 	sf::Texture backgroundSpriteSheet;
+	bool isBonusRainLevel;
+	int collectedCashCount;
+	int totalCashCount;
+	bool starConsumed;
+	int starLevel;
+	bool bonusOccured[2];
 
 	void drawLevelSelect(int gameMode);
 	void drawGameOver(int p1Score, int p2Score, bool p1Alive, bool p2Alive);
@@ -63,6 +70,8 @@ private:
 	void loadPlayerProgress(const std::string& username, Player& player, bool isPlayer1);
 	void applyPersistentEffects(Player& player, const PlayerSaveData& saveData);
 	void resetLevelState(Player& p1, Player& p2);
+	bool checkIsBonusRainLevel(int levelIndex);
+	void setupBonusRain(PhysicsEngine& physics, Player& p1, Player& p2);
 
 public:
 	LevelManager(Leaderboard* ld);

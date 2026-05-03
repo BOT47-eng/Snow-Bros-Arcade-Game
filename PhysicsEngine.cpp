@@ -9,10 +9,12 @@ const float PhysicsEngine::GRAVITY = 980.f;
 const float PhysicsEngine::TERMINAL_VELOCITY = 800.f;
 const float PhysicsEngine::FLOOR_Y = 560.f;
 
-PhysicsEngine::PhysicsEngine() : blockCount(0)
+PhysicsEngine::PhysicsEngine() : blockCount(0), collectibleCount(0)
 {
     for (int i = 0; i < MAX_PLATFORMS; i++)
         blocks[i] = nullptr;
+    for (int i = 0; i < MAX_COLLECTIBLES; i++)
+        collectibles[i] = nullptr;
 }
 
 void PhysicsEngine::addPlatform(Block* block)
@@ -28,7 +30,7 @@ void PhysicsEngine::clearPlatforms()
     blockCount = 0;
 }
 
-void PhysicsEngine::update(Player& player, float dt)
+void PhysicsEngine::update(Player& player, float dt, RenderWindow* window, Font* font)
 {
     if (!player.isAlive()) 
         return;
@@ -66,12 +68,13 @@ void PhysicsEngine::update(Player& player, float dt)
     }
     checkFloor(player);
     wrapScreen(player);
+    checkCollectiblePlayerCollisions(player, window, font);
 }
 
-void PhysicsEngine::update(Player& p1, Player& p2, float dt)
+void PhysicsEngine::update(Player& p1, Player& p2, float dt, RenderWindow* window, Font* font)
 {
-    update(p1, dt);
-    update(p2, dt);
+    update(p1, dt, window, font);
+    update(p2, dt, window, font);
 }
 
 void PhysicsEngine::applyGravity(Player& player, float dt) const
@@ -254,12 +257,22 @@ void PhysicsEngine::checkSnowballEnemyCollisions(Player& p1, Player& p2, Enemy* 
             if (extraLife == 7)
                 p1.addLife();
             p1.addScore(points);
+
+            if (points / 25 == 200)
+                p1.addGems(points / 25); 
+            else if (points / 20 == 500 )
+                p1.addGems(points / 20);
         }
         else
         {
             if (extraLife == 7)
                 p2.addLife();
             p2.addScore(points);
+
+            if (points / 25 == 200)
+                p2.addGems(points / 25);
+            else if (points / 20 == 500)
+                p2.addGems(points / 20);
         }
 
         snowball->incrementSnowballKillCount();
@@ -270,11 +283,11 @@ void PhysicsEngine::checkSnowballEnemyCollisions(Player& p1, Player& p2, Enemy* 
     }
 }
 
-void PhysicsEngine::update(Player& player, Enemy** enemies, int enemyCount, float dt)
+void PhysicsEngine::update(Player& player, Enemy** enemies, int enemyCount, float dt, RenderWindow* window, Font* font)
 {
     //Block* arr = createBlockArray();
 
-    update(player, dt);
+    update(player, dt, window, font);
     for (int i = 0; i < enemyCount; i++)
     {
         if (!enemies[i])
@@ -296,7 +309,21 @@ void PhysicsEngine::update(Player& player, Enemy** enemies, int enemyCount, floa
 
         if (enemies[i]->getHealth() <= -1)
         {
-            player.addScore(enemies[i]->getScore());
+            int points = enemies[i]->getScore();
+            if (points / 25 == 200)
+                player.addGems(points / 25);
+            else if (points / 20 == 500)
+                player.addGems(points / 20);
+            player.addScore(points);
+
+            int gemChance = rand() % 100;
+            if (gemChance < 30)
+            {
+                Collectible* gemDrop = new Collectible();
+                gemDrop->CreateGems(enemies[i]->getPosX(), enemies[i]->getPosY());
+                addCollectible(gemDrop);
+            }
+
             delete enemies[i];
             enemies[i] = nullptr;
         }
@@ -304,14 +331,19 @@ void PhysicsEngine::update(Player& player, Enemy** enemies, int enemyCount, floa
     checkSnowballCollisions(player, enemies, enemyCount, 0);
     checkEnemyPlayerCollisions(player, enemies, enemyCount);
     checkMinionPlayerCollisions(player, enemies, enemyCount);
+    checkCollectiblePlayerCollisions(player, window, font);
     //delete[] arr;
 }
 
-void PhysicsEngine::update(Player& p1, Player& p2, Enemy** enemies, int enemyCount, float dt)
+void PhysicsEngine::update(Player& p1, Player& p2, Enemy** enemies, int enemyCount, float dt, RenderWindow* window, Font* font)
 {
     //Block* arr = createBlockArray();
-    update(p1, dt);
-    update(p2, dt);
+    update(p1, p2, dt, window, font);
+
+    for (int i = 0; i < collectibleCount; i++)
+    {
+        collectibles[i]->update(dt);
+    }
 
     for (int i = 0; i < enemyCount; i++)
     {
@@ -335,10 +367,34 @@ void PhysicsEngine::update(Player& p1, Player& p2, Enemy** enemies, int enemyCou
         if (enemies[i]->getHealth() <= -1)
         {
             int creatorPlayer = enemies[i]->getSnowballCreatorPlayer();
+
+            int points = enemies[i]->getScore();
+
             if (creatorPlayer == 0)
-                p1.addScore(enemies[i]->getScore());
+            {
+                p1.addScore(points);
+                if (points / 25 == 200)
+                    p1.addGems(points / 25);
+                else if (points / 20 == 500)
+                    p1.addGems(points / 20);
+            }
             else
-                p2.addScore(enemies[i]->getScore());
+            {
+                p2.addScore(points);
+                if (points / 25 == 200)
+                    p2.addGems(points / 25);
+                else if (points / 20 == 500)
+                    p2.addGems(points / 20);
+            }
+
+            int gemChance = rand() % 100;
+            if (gemChance < 35)
+            {
+                Collectible* gemDrop = new Collectible();
+                gemDrop->CreateGems(enemies[i]->getPosX(), enemies[i]->getPosY());
+                addCollectible(gemDrop);
+            }
+
             delete enemies[i];
             enemies[i] = nullptr;
         }
@@ -352,6 +408,9 @@ void PhysicsEngine::update(Player& p1, Player& p2, Enemy** enemies, int enemyCou
 
     checkMinionPlayerCollisions(p1, enemies, enemyCount);
     checkMinionPlayerCollisions(p2, enemies, enemyCount);
+
+    checkCollectiblePlayerCollisions(p1, window, font);
+    checkCollectiblePlayerCollisions(p2, window, font);
     //delete[] arr;
 }
 
@@ -506,6 +565,44 @@ void PhysicsEngine::checkMinionPlayerCollisions(Player& player, Enemy** enemies,
                 player.takeDamage();
                 return;
             }
+        }
+    }
+}
+
+void PhysicsEngine::addCollectible(Collectible* collectible)
+{
+    if (collectibleCount < MAX_COLLECTIBLES)
+        collectibles[collectibleCount++] = collectible;
+}
+
+void PhysicsEngine::clearCollectibles()
+{
+    for (int i = 0; i < MAX_COLLECTIBLES; i++)
+        collectibles[i] = nullptr;
+    collectibleCount = 0;
+}
+
+Collectible* PhysicsEngine::getCollectible(int index)
+{
+    if (index >= 0 && index < collectibleCount)
+        return collectibles[index];
+    return nullptr;
+}
+
+int PhysicsEngine::getCollectibleCount() const
+{
+    return collectibleCount;
+}
+
+void PhysicsEngine::checkCollectiblePlayerCollisions(Player& player, RenderWindow* window, Font* font) const
+{
+    for (int i = 0; i < collectibleCount; i++)
+    {
+        if (!collectibles[i]) 
+            continue;
+        if (collectibles[i]->checkPlayerCollision(player, window, font))
+        {
+            collectibles[i]->deactivate();
         }
     }
 }

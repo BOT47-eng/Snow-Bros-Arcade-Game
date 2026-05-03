@@ -3,10 +3,19 @@
 using namespace sf;
 using namespace std;
 
-LevelManager::LevelManager(Leaderboard* ld) : levels(nullptr), levelCount(0), levelUnlocked(nullptr), levelCompleted(nullptr), window(nullptr), fontHeader(nullptr), fontNormal(nullptr), players(nullptr), player1Active(false), player2Active(false), isSinglePlayer(false), p1(0), p2(1), shop(nullptr), leaderboard(ld), backgrounds(nullptr)
+LevelManager::LevelManager(Leaderboard* ld) : levels(nullptr), levelCount(0), levelUnlocked(nullptr), levelCompleted(nullptr), window(nullptr), fontHeader(nullptr), fontNormal(nullptr), players(nullptr), player1Active(false), player2Active(false), isSinglePlayer(false), p1(0), p2(1), shop(nullptr), leaderboard(ld), starConsumed(false)
 {
+	starLevel = rand() % 10;
+	if (starLevel == 4 || starLevel == 9)
+		starLevel--;
+
 	if (!backgroundSpriteSheet.loadFromFile("Resources/Levels/backgrounds.png"))
 		cout << "Couldn't load backgrounds;" << endl;
+	else
+		backgrounds.setTexture(backgroundSpriteSheet);
+
+	bonusOccured[0] = false;
+	bonusOccured[1] = false;
 }
 
 LevelManager::~LevelManager()
@@ -28,8 +37,6 @@ LevelManager::~LevelManager()
 		delete[] levelCompleted;
 	if (players)
 		delete[] players;
-	if (backgrounds)
-		delete[] backgrounds;
 }
 
 bool LevelManager::loadLevelConfig(const string& filepath)
@@ -45,7 +52,6 @@ bool LevelManager::loadLevelConfig(const string& filepath)
 	if (levelCount <= 0)
 		return false;
 
-	backgrounds = new Sprite[levelCount];
 	levels = new LevelData[levelCount];
 	levelUnlocked = new bool[levelCount];
 	levelCompleted = new bool[levelCount];
@@ -167,6 +173,8 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 	if (levelIndex < 0 || levelIndex >= levelCount)
 		return false;
 
+	backgrounds.setTextureRect(IntRect(0, 0 + levelIndex * 600, 600, 600));
+
 	const int RESUME = 0;
 	const int SHOP_1 = 1;
 	const int SHOP_2 = 2;
@@ -184,10 +192,33 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 		physics.addPlatform(&blockArray[i]);
 	}
 
-	Enemy** enemies = new Enemy*[level.enemyCount];
-	for (int i = 0; i < level.enemyCount; i++) 
+	isBonusRainLevel = false;
+	Enemy** enemies = nullptr;
+	Collectible* star = nullptr;
+
+	int actualEnemyCount = levels[levelIndex].enemyCount;
+	if (checkIsBonusRainLevel(levelIndex))
 	{
-		enemies[i] = createEnemy(level.enemies[i].type, level.enemies[i].x, level.enemies[i].y);
+		setupBonusRain(physics, p1, p2);
+		actualEnemyCount = 0;
+		enemies = new Enemy*[1];
+		enemies[0] = nullptr;
+	}
+	else
+	{
+		enemies = new Enemy*[actualEnemyCount];
+		for (int i = 0; i < actualEnemyCount; i++)
+		{
+			enemies[i] = createEnemy(level.enemies[i].type, level.enemies[i].x, level.enemies[i].y);
+		}
+	}
+
+	if (starLevel == levelIndex && !starConsumed)
+	{
+		star = new Collectible();
+		star->CreateSushi(300, 150);
+		physics.addCollectible(star);
+		starConsumed = true;
 	}
 
 	InputManager input;
@@ -226,13 +257,14 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 				{
 					blockArray[i].~Block();
 				}
-				for (int i = 0; i < level.enemyCount; i++) 
+				for (int i = 0; i < actualEnemyCount; i++)
 				{
 					if (enemies[i]) {
 						delete enemies[i];
 						enemies[i] = nullptr;
 					}
 				}
+				physics.clearCollectibles();
 				delete[] blockArray;
 				delete[] enemies;
 				return false;
@@ -271,13 +303,14 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 				{
 					blockArray[i].~Block();
 				}
-				for (int i = 0; i < level.enemyCount; i++) 
+				for (int i = 0; i < actualEnemyCount; i++)
 				{
 					if (enemies[i]) {
 						delete enemies[i];
 						enemies[i] = nullptr;
 					}
 				}
+				physics.clearCollectibles();
 				delete[] blockArray;
 				delete[] enemies;
 				return false;
@@ -288,7 +321,7 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 				{
 					blockArray[i].~Block();
 				}
-				for (int i = 0; i < level.enemyCount; i++) 
+				for (int i = 0; i < actualEnemyCount; i++) 
 				{
 					if (enemies[i]) 
 					{
@@ -322,13 +355,13 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 		if (isSinglePlayer) 
 		{
 			if (player1Active)
-				physics.update(p1, enemies, level.enemyCount, dt);
+				physics.update(p1, enemies, actualEnemyCount, dt, window, fontNormal);
 			else
-				physics.update(p2, enemies, level.enemyCount, dt);
+				physics.update(p2, enemies, actualEnemyCount, dt, window, fontNormal);
 		}
 		else 
 		{
-			physics.update(p1, p2, enemies, level.enemyCount, dt);
+			physics.update(p1, p2, enemies, actualEnemyCount, dt, window, fontNormal);
 		}
 
 		if (isSinglePlayer)
@@ -366,10 +399,26 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 			p2Alive = p2.getLives() > 0;
 		}
 
-		for (int i = 0; i < level.enemyCount; i++)
+		if (isBonusRainLevel)
 		{
-			if (enemies[i])
-				enemiesAlive = true;
+			enemiesAlive = false;
+			for (int i = 0; i < physics.getCollectibleCount(); i++)
+			{
+				Collectible* col = physics.getCollectible(i);
+				if (col && col->getIsMoney())
+				{
+					enemiesAlive = true;
+					break;
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < actualEnemyCount; i++)
+			{
+				if (enemies[i])
+					enemiesAlive = true;
+			}
 		}
 
 		if ((!p1Alive && !p2Alive) || !enemiesAlive) 
@@ -380,7 +429,7 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 			{
 				blockArray[i].~Block();
 			}
-			for (int i = 0; i < level.enemyCount; i++) 
+			for (int i = 0; i < actualEnemyCount; i++) 
 			{
 				if (enemies[i]) 
 				{
@@ -388,6 +437,8 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 					enemies[i] = nullptr;
 				}
 			}
+
+			physics.clearCollectibles();
 
 			if (p1Alive || p2Alive)
 			{
@@ -407,10 +458,17 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 		}
 
 		window->clear();
-		window->draw(bg);
+		window->draw(backgrounds);
 
 		for (int i = 0; i < level.blockCount; i++)
 			blockArray[i].draw(*window, debugOn);
+
+		for (int i = 0; i < physics.getCollectibleCount(); i++)
+		{
+			Collectible* col = physics.getCollectible(i);
+			if (col)
+				col->draw(*window, debugOn);
+		}
 
 		if (isSinglePlayer)
 		{
@@ -425,7 +483,7 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 			p2.draw(*window, debugOn);
 		}	
 
-		for (int i = 0; i < level.enemyCount; i++) 
+		for (int i = 0; i < actualEnemyCount; i++)
 		{
 			if (enemies[i])
 				enemies[i]->draw(*window, debugOn);
@@ -490,7 +548,7 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 	for (int i = 0; i < level.blockCount; i++) {
 		blockArray[i].~Block();
 	}
-	for (int i = 0; i < level.enemyCount; i++) {
+	for (int i = 0; i < actualEnemyCount; i++) {
 		if (enemies[i]) {
 			delete enemies[i];
 			enemies[i] = nullptr;
@@ -1243,5 +1301,41 @@ void LevelManager::applyPersistentEffects(Player& player, const PlayerSaveData& 
 	if (saveData.shop_items[4])
 	{
 		player.applyBalloonMode(30.f);
+	}
+}
+
+bool LevelManager::checkIsBonusRainLevel(int levelIndex)
+{
+	if (levels[levelIndex].isBossLevel)
+		return false;
+	int levelNum = levels[levelIndex].levelNumber;
+	
+	if (levelNum == 4 && !bonusOccured[0])
+	{
+		bonusOccured[0] = true;
+		return true;
+	}
+	
+	if (levelNum == 9 && !bonusOccured[1])
+	{
+		bonusOccured[1] = true;
+		return true;
+	}
+	
+	return false;
+}
+
+void LevelManager::setupBonusRain(PhysicsEngine& physics, Player& p1, Player& p2)
+{
+	isBonusRainLevel = true;
+	collectedCashCount = 0;
+	totalCashCount = 10;
+	for (int i = 0; i < totalCashCount; i++)
+	{
+		float randomX = rand() % 500 + 50;
+		float randomY = rand() % 300 + 50;
+		Collectible* cash = new Collectible();
+		cash->CreateMoney(randomX, randomY);
+		physics.addCollectible(cash);
 	}
 }

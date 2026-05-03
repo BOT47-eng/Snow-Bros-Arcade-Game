@@ -55,7 +55,7 @@ public:
 	void launchGame();
 	void drawMainMenu();
 	void drawLoginMenu(int loginIndex);
-	void drawTesting();
+	//void drawTesting();
 
 	~GameUnit()
 	{
