@@ -33,6 +33,9 @@ Player::Player(int index, PlayerStats stats) : stats(stats), index(index), veloc
         shopItems[i] = false;
     }
 
+    //applyBalloonMode(10.f);
+    gems = 1000;
+
     loadSpritesheet(playerTexture, &idlePlayerFrames, 1, walkPlayerFrames, 3, jumpPlayerFrames, 6, &shootPlayerFrames, 1, playerHitbox);
 }
 
@@ -140,6 +143,20 @@ void Player::update(float dt)
 {
     if (!isAlive()) 
         return;
+
+    if (speedBoostTimer > 0) 
+    {
+        speedBoostTimer -= dt;
+        if (speedBoostTimer <= 0)
+            resetSpeedBoost();
+    }
+
+    if (balloonTimer > 0) 
+    {
+        balloonTimer -= dt;
+        if (balloonTimer <= 0)
+            resetBalloonMode();
+    }
 
     if (snowballTimer > 0)
     {
@@ -273,6 +290,9 @@ void Player::loadSpritesheet(const Texture& texture, const IntRect* idleFrames, 
     else
         animShoot.loadSprite(idleFrames, idleCount, frameDuration, true);
 
+    animBalloon.loadSprite(balloonFrames, 4, frameDuration, false);
+    animBalloonMovement.loadSprite(&balloonFramesMovement, 1, frameDuration, false);
+
     currentAnim = &animIdle;
     sprite.setTextureRect(currentAnim->getCurrentFrame());
 }
@@ -281,6 +301,10 @@ void Player::updateAnimation(float dt)
 {
     selectAnimation();
     currentAnim->update(dt);
+    if (isBalloonMode)
+        sprite.setHitbox(FloatRect(0, 0, currentAnim->getCurrentFrame().width, currentAnim->getCurrentFrame().height));
+    else
+        sprite.setHitbox(FloatRect(0, 0, 60, 72));
     sprite.setTextureRect(currentAnim->getCurrentFrame());
 }
 
@@ -288,7 +312,11 @@ void Player::selectAnimation()
 {
     AnimationComponent* next = nullptr;
 
-    if (!onGround && velocityY < 0.f)
+    if (isBalloonMode && velocityX != 0)
+        next = &animBalloonMovement;
+    else if (isBalloonMode)
+        next = &animBalloon;
+    else if (!onGround && velocityY < 0.f)
         next = &animJump;
     else if (onGround && isShooting)
         next = &animShoot;
@@ -356,6 +384,8 @@ void Player::applyExtraLife() {
 
 void Player::applySnowballPower() {
     hasSnowballPower = true;
+    for (int i = 0; i < MAX_BALLS; i++)
+        snowballs[i].setSnowAmount(3);
     shopItems[1] = true;
 }
 
@@ -370,13 +400,13 @@ void Player::applySpeedBoost()
 {
     speedBoostTimer = 30.f;
     snowballCooldown = 0.1f;
-    stats.walkSpeed *= 1.5f;
+    stats.walkSpeed = 300.f;
     shopItems[3] = true;
 }
 
-void Player::applyBalloonMode() 
+void Player::applyBalloonMode(float time) 
 {
-    balloonTimer = 10.f;
+    balloonTimer = time;
     isBalloonMode = true;
     shopItems[4] = true;
 }
@@ -384,6 +414,8 @@ void Player::applyBalloonMode()
 void Player::resetSnowballPower() 
 {
     hasSnowballPower = false;
+    for (int i = 0; i < MAX_BALLS; i++)
+        snowballs[i].setSnowAmount(1);
 }
 
 void Player::resetDistanceIncrease() 
@@ -397,13 +429,14 @@ void Player::resetSpeedBoost()
 {
     snowballCooldown = 0.3f;
     speedBoostTimer = 0;
-    stats.walkSpeed /= 1.5f;
+    stats.walkSpeed = 200.f;
 }
 
 void Player::resetBalloonMode() 
 {
     balloonTimer = 0;
     isBalloonMode = false;
+    velocityY = 0;
 }
 
 void Player::resetLevelPowerups() 

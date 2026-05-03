@@ -35,9 +35,35 @@ void PhysicsEngine::update(Player& player, float dt)
 
     player.setOnGround(false);
 
-    applyGravity(player, dt);
-    player.applyVelocity(dt);
-    checkPlatforms(player, dt);
+    if (!player.getBalloonMode())
+    {
+        applyGravity(player, dt);
+        player.applyVelocity(dt);
+
+        checkPlatforms(player, dt);
+    }
+    else
+    {
+        float currentVy = player.getVelocityY();
+        if (currentVy == 0.f)
+        {
+            currentVy = -100.f;
+        }
+
+        FloatRect playerBox = player.getHitbox();
+
+        if (playerBox.top <= 0.f)
+        {
+            currentVy = 100.f; 
+        }
+        else if (playerBox.top + playerBox.height >= FLOOR_Y)
+        {
+            currentVy = -100.f; 
+        }
+
+        player.setVelocityY(currentVy);
+        player.applyVelocity(dt);
+    }
     checkFloor(player);
     wrapScreen(player);
 }
@@ -87,15 +113,21 @@ void PhysicsEngine::checkPlatforms(Player& player, float dt) const
 
         if (Vy >= 0 && wasAbove)
             player.landPush(blockHitbox.top);
-        
     }
+       
 }
 
 void PhysicsEngine::checkFloor(Player& player) const
 {
     FloatRect playerHitbox = player.getHitbox();
-    if (playerHitbox.top + playerHitbox.height >= FLOOR_Y)
+    if (!player.getBalloonMode() && playerHitbox.top + playerHitbox.height >= FLOOR_Y)
         player.landPush(FLOOR_Y);
+    else if (playerHitbox.top + playerHitbox.height >= FLOOR_Y)
+        player.setVelocityY(-player.getVelocityY());
+
+    if (playerHitbox.top <= 0 && player.getBalloonMode())
+        player.setVelocityY(-player.getVelocityY());
+
 }
 
 void PhysicsEngine::wrapScreen(Player& player) const
@@ -374,6 +406,9 @@ void PhysicsEngine::checkEnemyPlayerCollisions(Player& player, Enemy** enemies, 
     for (int i = 0; i < enemyCount; i++)
     {
         if (!enemies[i])
+            continue;
+
+        if (player.getBalloonMode() && !enemies[i]->getIsFlying())
             continue;
 
         if (enemies[i]->getHealth() <= 0 || enemies[i]->getIsFullyCoated() || enemies[i]->getIsSnowball())

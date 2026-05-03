@@ -78,13 +78,13 @@ void GameUnit::drawLoginMenu(int loginIndex)
             {
                 loginPlayer[1].setOtherPlayer(loginPlayer[0].getCurrentUser());
                 players[0] = loginPlayer[0].getCurrentUser();
-                cout << "Login Player 1 Successful!" << endl;
+                std::cout << "Login Player 1 Successful!" << std::endl;
             }
             else
             {
                 loginPlayer[0].setOtherPlayer(loginPlayer[1].getCurrentUser());
                 players[1] = loginPlayer[1].getCurrentUser();
-                cout << "Login Player 2 Successful!" << endl;
+                std::cout << "Login Player 2 Successful!" << std::endl;
             }
 
             return;

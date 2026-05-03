@@ -16,11 +16,11 @@ public:
 	static const float WIDTH;
 	static const float HEIGHT;
 private:
-	RenderWindow window;
+	sf::RenderWindow window;
 	bool isGameActive;
 	bool levelMenu;
 	bool loginMenu, loggedIn[2];
-	Font fontHeader, fontNormal;
+	sf::Font fontHeader, fontNormal;
 
 	PlayerInfo players[2];
 	LoginManager loginPlayer[2];
@@ -30,12 +30,12 @@ private:
 
 	/////////////////////////////////
 	// For MainMenu LeaderBoard Image
-	Texture leaderBoardButtonTex;
+	sf::Texture leaderBoardButtonTex;
 
 public:
 	GameUnit() : isGameActive(false), levelMenu(false), loginMenu(false), levelManager(&leaderboardObj)
 	{
-		window.create(VideoMode({ 600,600 }), "SnowBros 25I-3014 25I-3039", Style::Close);
+		window.create(sf::VideoMode({ 600,600 }), "SnowBros 25I-3014 25I-3039", sf::Style::Close);
 		window.setFramerateLimit(60);
 		fontHeader.loadFromFile("Resources/SnowBrosAssets/Fonts/header-font.ttf");
 		fontNormal.loadFromFile("Resources/SnowBrosAssets/Fonts/normal-font.ttf");
@@ -48,8 +48,8 @@ public:
 
 		leaderboardObj.drawLeaderboard = false;
 
-		if (!levelManager.loadLevelConfig("Resources/SnowBrosAssets/Levels/LevelConfig.txt"))
-			cout << "Could not Open Level Config File!" << endl;
+		if (!levelManager.loadLevelConfig("Resources/Levels/LevelConfig.txt"))
+			std::cout << "Could not Open Level Config File!" << std::endl;
 	}
 
 	void launchGame();

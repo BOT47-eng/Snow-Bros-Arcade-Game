@@ -114,12 +114,12 @@ void Shop::getExtraLife(Player& P)
         }
         else 
         {
-            PurchaseState = "Failed Not Enough Gems";
+            PurchaseState = "Not Enough Gems";
         }
     }
     else 
     {
-        PurchaseState = "Already Purchased This Level";
+        PurchaseState = "Already Purchased";
     }
 }
 void Shop::getSpeedBoost(Player& P)
@@ -134,11 +134,11 @@ void Shop::getSpeedBoost(Player& P)
         }
         else 
         {
-            PurchaseState = "Failed Not Enough Gems";
+            PurchaseState = "Not Enough Gems";
         }
     }
     else {
-        PurchaseState = "Already Purchased This Level";
+        PurchaseState = "Already Purchased";
     }
 }
 void Shop::getSnowBall(Player& P)
@@ -153,12 +153,12 @@ void Shop::getSnowBall(Player& P)
         }
         else 
         {
-            PurchaseState = "Failed Not Enough Gems";
+            PurchaseState = "Not Enough Gems";
         }
     }
     else 
     {
-        PurchaseState = "Already Purchased This Level";
+        PurchaseState = "Already Purchased";
     }
 }
 void Shop::getDistanceIncrese(Player& P)
@@ -173,12 +173,12 @@ void Shop::getDistanceIncrese(Player& P)
         }
         else 
         {
-            PurchaseState = "Failed Not Enough Gems";
+            PurchaseState = "Not Enough Gems";
         }
     }
     else 
     {
-        PurchaseState = "Already Purchased This Level";
+        PurchaseState = "Already Purchased";
     }
 
 }
@@ -189,41 +189,42 @@ void Shop::getBallonMode(Player& P)
         if (P.getGems() >= 35) 
         {
             P.addGems(-35);
-            P.applyBalloonMode();
+            P.applyBalloonMode(30.f);
             PurchaseState = "Successful";
         }
         else 
         {
-            PurchaseState = "Failed Not Enough Gems";
+            PurchaseState = "Not Enough Gems";
         }
     }
     else
     {
-        PurchaseState = "Already Purchased This Level";
+        PurchaseState = "Already Purchased";
     }
 }
 
 // INSIDE UPDATE AFTER PLAYER CHOSES THE VALUE GETVALUE AND CHANGE THE PLAYER ATTRIBUTES  AND SET CHOSEN TO FALSE
-void Shop::update(sf::RenderWindow& window, Player& p)
+void Shop::update(RenderWindow& window, Player& p)
 {
-    Vector2i pos = sf::Mouse::getPosition(window);
-    if (itemsSprite[0].getGlobalBounds().contains(float(pos.x), float(pos.y)) && isMouseClicked())
+    bool clicked = isMouseClicked();
+    Vector2i pos = Mouse::getPosition(window);
+    if (itemsSprite[0].getGlobalBounds().contains(float(pos.x), float(pos.y)) && clicked)
     {
         getExtraLife(p);
     }
-    else if (itemsSprite[1].getGlobalBounds().contains(float(pos.x), float(pos.y)) && isMouseClicked())
+    else if (itemsSprite[1].getGlobalBounds().contains(float(pos.x), float(pos.y)) && clicked)
     {
         getSpeedBoost(p);
     }
-    else if (itemsSprite[2].getGlobalBounds().contains(float(pos.x), float(pos.y)) && isMouseClicked())
+    else if (itemsSprite[2].getGlobalBounds().contains(float(pos.x), float(pos.y)) && clicked)
     {
         getSnowBall(p);
     }
-    else if (itemsSprite[3].getGlobalBounds().contains(float(pos.x), float(pos.y)) && isMouseClicked())
+    else if (itemsSprite[3].getGlobalBounds().contains(float(pos.x), float(pos.y)) && clicked)
     {
         getDistanceIncrese(p);
     }
-    else if (itemsSprite[4].getGlobalBounds().contains(float(pos.x), float(pos.y)) && isMouseClicked())
+    else if (itemsSprite[4].getGlobalBounds().contains(float(pos.x), float(pos.y)) && clicked)
     {
         getBallonMode(p);
     }
@@ -233,6 +234,7 @@ void Shop::update(sf::RenderWindow& window, Player& p)
 void Shop::draw(sf::RenderWindow& window, Player& p)
 {
     update(window, p);
+
     window.draw(background);
     for (int st = 0; st <= TOTAL_ITEMS - 1; st++)
     {

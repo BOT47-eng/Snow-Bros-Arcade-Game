@@ -365,7 +365,6 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 		{
 			drawGameOver(p1.getScore(), p2.getScore(), p1Alive, p2Alive);
 			
-
 			for (int i = 0; i < level.blockCount; i++) 
 			{
 				blockArray[i].~Block();
@@ -703,7 +702,7 @@ int LevelManager::drawPauseMenu(Player& p1, Player& p2, bool singlePlayer)
 	{
 		buttonLabels[0] = "Resume";
 		buttonLabels[1] = "Shop";
-		buttonLabels[2] = "Main Menu";
+		buttonLabels[2] = "Level Menu";
 		buttonLabels[3] = "Quit Game";
 	}
 	else 
@@ -865,6 +864,7 @@ void LevelManager::drawShop(Player& player)
 							savePlayerProgress(p1, p2, p1SaveData.current_level);
 						return;
 					}
+
 				}
 			}
 
@@ -1209,5 +1209,15 @@ void LevelManager::applyPersistentEffects(Player& player, const PlayerSaveData& 
 	if (saveData.shop_items[2]) 
 	{
 		player.applyDistanceIncrease();
+	}
+
+	if (saveData.shop_items[3])
+	{
+		player.applySpeedBoost();
+	}
+
+	if (saveData.shop_items[4])
+	{
+		player.applyBalloonMode(30.f);
 	}
 }

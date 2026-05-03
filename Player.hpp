@@ -29,11 +29,15 @@ private:
     int lives;
     int gems;
     int score;
+
     float velocityX;
     float velocityY;
     float invincibleTimer;
     float snowballTimer;
     float snowballCooldown;
+    float speedBoostTimer;
+    float balloonTimer;
+
     bool shopItems[5];
     bool onGround;
     bool facingRight;
@@ -43,14 +47,15 @@ private:
     bool isBalloonMode;
     bool hasSnowballPower;
     bool hasDistanceIncrease;
-    float speedBoostTimer;
-    float balloonTimer;
 
     const sf::FloatRect playerHitbox = { 0, 0, 60, 72 };
     const sf::IntRect idlePlayerFrames = { sf::IntRect(19, 3, 57, 72) };
     const sf::IntRect walkPlayerFrames[3] = { sf::IntRect(100, 3, 45, 72), sf::IntRect(185 , 3, 52, 73), sf::IntRect(269, 1, 49, 74) };
     const sf::IntRect jumpPlayerFrames[6] = { sf::IntRect(9, 83, 60, 75), sf::IntRect(95, 83, 60, 65), sf::IntRect(180, 83, 60, 65), sf::IntRect(263, 85, 60, 75), sf::IntRect(351, 88, 60, 70), sf::IntRect(433, 86, 68, 68) };
     const sf::IntRect shootPlayerFrames = { sf::IntRect(252, 172, 72, 72) };
+    const sf::IntRect balloonFrames[4] = {sf::IntRect(8, 694, 70, 100), sf::IntRect(83, 676, 84, 114), sf::IntRect( 423, 673, 117, 125), sf::IntRect(542, 673, 127, 123)};
+    //const sf::IntRect balloonFramesMovement[2] = {sf::IntRect(173, 673, 112, 123), sf::IntRect(293, 674, 120, 125)};
+    const sf::IntRect balloonFramesMovement = { sf::IntRect(289, 673, 127, 125) };
     sf::IntRect snowballFrames = { sf::IntRect(514, 1022, 22, 33) };
 
     HitboxSprite sprite;
@@ -62,6 +67,8 @@ private:
     AnimationComponent animWalk;
     AnimationComponent animJump;
     AnimationComponent animShoot;
+    AnimationComponent animBalloon;
+    AnimationComponent animBalloonMovement;
     AnimationComponent* currentAnim;
 
     static const float INVINCIBLE_TIME;
@@ -185,7 +192,7 @@ public:
     void applySnowballPower();
     void applyDistanceIncrease();
     void applySpeedBoost();
-    void applyBalloonMode();
+    void applyBalloonMode(float time);
     void resetSnowballPower();
     void resetDistanceIncrease();
     void resetSpeedBoost();

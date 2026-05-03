@@ -14,22 +14,13 @@
 
 static bool isMouseClicked()
 {
-    bool isPressed = false;
-    bool isRelesed = false;
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-    {
-        isPressed = true;
-    }
-    else
-    {
-        if (!isPressed)
-        {
-            isRelesed = true;
-        }
-        isPressed = false;
-    }
-    static int  c = 0;
-    return (isPressed && !isRelesed);
+    static bool wasPressed = false; 
+    bool currentlyPressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+
+    bool justPressed = (currentlyPressed && !wasPressed);
+
+    wasPressed = currentlyPressed;
+    return justPressed;
 }
 
 #pragma once
