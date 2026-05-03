@@ -143,8 +143,9 @@ public:
 
     virtual ~Enemy()
     {
-        if(currentSnowballAnim != nullptr)
-            delete [] currentSnowballAnim ;
+        //Does not point to heap
+        /*if(currentSnowballAnim != nullptr)
+            delete [] currentSnowballAnim ;*/
     }
 
 
