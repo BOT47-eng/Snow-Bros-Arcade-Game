@@ -3,8 +3,6 @@
 #include "Hitbox.hpp"
 #include "AnimationComponent.hpp"
 
-using namespace sf;
-
 class Projectile
 {
 protected:
@@ -18,14 +16,14 @@ public:
     Projectile() : Vx(0), Vy(0), active(false) {}
 
     virtual void update(float dt) = 0;
-    virtual void draw(RenderWindow& window, bool debug) const = 0;
+    virtual void draw(sf::RenderWindow& window, bool debug) const = 0;
     virtual ~Projectile() {}
 
-    FloatRect getHitbox() const 
+    sf::FloatRect getHitbox() const 
     { 
         return sprite.getGlobalHitbox(); 
     }
-    Vector2f getPosition() const 
+    sf::Vector2f getPosition() const 
     { 
         return sprite.getPosition(); 
     }
@@ -56,14 +54,14 @@ private:
 public:
     Snowball();
 
-    void setTexture(const Texture& texture);
+    void setTexture(const sf::Texture& texture);
 
-    void loadSpritesheet(const Texture& texture, const IntRect* frames, int count, float duration = 0.05);
+    void loadSpritesheet(const sf::Texture& texture, const sf::IntRect* frames, int count, float duration = 0.05);
 
-    void fire(Vector2f pos, bool facingRight);
+    void fire(sf::Vector2f pos, bool facingRight);
 
     void update(float dt) override;
-    void draw(RenderWindow& window, bool debug = false) const override;
+    void draw(sf::RenderWindow& window, bool debug = false) const override;
 
     int getSnowAmount() const 
     {

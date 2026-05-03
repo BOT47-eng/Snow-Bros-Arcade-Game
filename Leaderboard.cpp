@@ -1,15 +1,18 @@
 #include "LeaderBoard.hpp"
 
+using namespace std;
+using namespace sf;
+
 void Leaderboard::saveToFile(string name, int scores, int levelReached, string date)
 {
     ofstream file;
     file.open("Resources/Leaderboard.txt", ios::app);
     if (!file.is_open())
     {
-        cout << "Error in Opening the leaderboard.txt file\n";
+        std::cout << "Error in Opening the leaderboard.txt file\n";
         exit(0);
     }
-    file << name << " " << scores << " " << levelReached << " " << date << endl;
+    file << name << " " << scores << " " << levelReached << " " << date << std::endl;
     file.close();
 }
 
@@ -20,7 +23,7 @@ int Leaderboard::countNoOfPlayers()
     file.open("Resources/Leaderboard.txt", ios::in);
     if (!file.is_open())
     {
-        cout << "Error in Opening the leaderboard.txt file\n";
+        std::cout << "Error in Opening the leaderboard.txt file\n";
         exit(0);
     }
     string s;
@@ -62,7 +65,7 @@ void Leaderboard::sortRanking()
     }
     // for(int st = 0 ; st <= size - 1 ; st++)
     // {
-    //     cout << playerNames[st] << " " << scores[st] << endl ;
+    //     std::cout << playerNames[st] << " " << scores[st] << std::endl ;
     // }
 }
 
@@ -84,7 +87,7 @@ void Leaderboard::loadFromFile()
     file.seekg(0, ios::beg);
     if (!file.is_open())
     {
-        cout << "Error in Opening the leaderboard.txt file\n";
+        std::cout << "Error in Opening the leaderboard.txt file\n";
         exit(0);
     }
     string s;

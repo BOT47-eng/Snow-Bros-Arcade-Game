@@ -12,15 +12,12 @@
 #include "PlayerDatabase.hpp"
 #include "LeaderBoard.hpp"
 
-using namespace sf;
-using namespace std;
-
 struct BlockData {
 	float x, y, width, height;
 };
 
 struct EnemyData {
-	string type;
+	std::string type;
 	float x, y;
 };
 
@@ -39,9 +36,9 @@ private:
 	int levelCount;
 	bool* levelUnlocked;
 	bool* levelCompleted;
-	RenderWindow* window;
-	Font* fontHeader;
-	Font* fontNormal;
+	sf::RenderWindow* window;
+	sf::Font* fontHeader;
+	sf::Font* fontNormal;
 	PlayerInfo* players;
 	bool player1Active;
 	bool player2Active;
@@ -59,9 +56,9 @@ private:
 	void drawShop(Player& player);
 	int drawPauseMenu(Player& p1, Player& p2, bool singlePlayer);
 	bool runLevel(int levelIndex, Player& p1, Player& p2);
-	Enemy* createEnemy(const string& type, float x, float y);
+	Enemy* createEnemy(const std::string& type, float x, float y);
 	void savePlayerProgress(Player& p1, Player& p2, int levelIndex);
-	void loadPlayerProgress(const string& username, Player& player, bool isPlayer1);
+	void loadPlayerProgress(const std::string& username, Player& player, bool isPlayer1);
 	void applyPersistentEffects(Player& player, const PlayerSaveData& saveData);
 	void resetLevelState(Player& p1, Player& p2);
 
@@ -69,8 +66,8 @@ public:
 	LevelManager(Leaderboard* ld);
 	~LevelManager();
 
-	bool loadLevelConfig(const string& filepath);
-	void startGame(int gameMode, RenderWindow* w, Font* fHeader, Font* fNormal, PlayerInfo* p, bool p1Login, bool p2Login);
+	bool loadLevelConfig(const std::string& filepath);
+	void startGame(int gameMode, sf::RenderWindow* w, sf::Font* fHeader, sf::Font* fNormal, PlayerInfo* p, bool p1Login, bool p2Login);
 	int getLevelCount();
 	bool isLevelUnlocked(int levelIndex);
 	bool isLevelCompleted(int levelIndex);

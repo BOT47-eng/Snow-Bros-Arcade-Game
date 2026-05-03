@@ -3,6 +3,9 @@
 
 const float Player::INVINCIBLE_TIME = 1.5f;
 
+using namespace std;
+using namespace sf;
+
 Player::Player(){}
 
 Player::Player(int index, PlayerStats stats) : stats(stats), index(index), velocityX(0), velocityY(0), onGround(false), wantsShoot(false), lives(2), gems(0), score(0), invincible(false), invincibleTimer(0), currentAnim(&animIdle), isShooting(false), snowballTimer(0), cooldown(0), snowballCooldown(0.3f), isBalloonMode(false), balloonTimer(15.f)

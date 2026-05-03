@@ -4,6 +4,7 @@
 #include <sstream>
 
 using namespace std;
+using namespace sf;
 
 PlayerDatabaseManager::PlayerDatabaseManager() 
 {
@@ -42,16 +43,16 @@ bool PlayerDatabaseManager::savePlayerProgress(const PlayerSaveData& data, Leade
 
     if (!file.is_open()) 
     {
-        cout << "Failed to open file for saving: " << filepath << endl;
+        std::cout << "Failed to open file for saving: " << filepath << std::endl;
         return false;
     }
 
-    file << data.username << endl;
-    file << data.current_level << endl;
-    file << data.current_score << endl;
-    file << data.lives_remaining << endl;
-    file << data.gem_count << endl;
-    file << data.high_score << endl;
+    file << data.username << std::endl;
+    file << data.current_level << std::endl;
+    file << data.current_score << std::endl;
+    file << data.lives_remaining << std::endl;
+    file << data.gem_count << std::endl;
+    file << data.high_score << std::endl;
     file << getCurrentDateTime();
     
     for (int i = 0; i < 5; i++)
@@ -61,10 +62,10 @@ bool PlayerDatabaseManager::savePlayerProgress(const PlayerSaveData& data, Leade
             file << " ";
     }
 
-    file << endl;
+    file << std::endl;
 
     file.close();
-    cout << "Player progress saved for: " << data.username << endl;
+    std::cout << "Player progress saved for: " << data.username << std::endl;
 
     if (ld)
     {
@@ -80,14 +81,14 @@ bool PlayerDatabaseManager::loadPlayerProgress(const string& username, PlayerSav
 
     if (!fileExists(filepath)) 
     {
-        cout << "Save file not found for: " << username << endl;
+        std::cout << "Save file not found for: " << username << std::endl;
         return false;
     }
 
     ifstream file(filepath);
     if (!file.is_open()) 
     {
-        cout << "Failed to open file for loading: " << filepath << endl;
+        std::cout << "Failed to open file for loading: " << filepath << std::endl;
         return false;
     }
 
@@ -132,7 +133,7 @@ bool PlayerDatabaseManager::loadPlayerProgress(const string& username, PlayerSav
                     }
                     else 
                     {
-                        cout << "Could not load all shop items" << endl;
+                        std::cout << "Could not load all shop items" << std::endl;
                         file.close();
                         return false;
                     }
@@ -142,10 +143,10 @@ bool PlayerDatabaseManager::loadPlayerProgress(const string& username, PlayerSav
         lineIndex++;
     }
 
-    //cout << data.current_level << endl;
+    //std::cout << data.current_level << std::endl;
 
     file.close();
-    cout << "Player progress loaded for: " << username << endl;
+    std::cout << "Player progress loaded for: " << username << std::endl;
     return true;
 }
 

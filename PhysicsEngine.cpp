@@ -2,6 +2,9 @@
 #include "GameUnit.hpp"
 #include <cmath>
 
+using namespace std;
+using namespace sf;
+
 const float PhysicsEngine::GRAVITY = 980.f;
 const float PhysicsEngine::TERMINAL_VELOCITY = 800.f;
 const float PhysicsEngine::FLOOR_Y = 560.f;

@@ -12,10 +12,6 @@
 //#include "Snowball.cpp"
 //#include "InputManager.cpp"
 
-
-using namespace std ;
-using namespace sf;
-
 static bool isMouseClicked()
 {
     bool isPressed = false;
@@ -50,7 +46,7 @@ private :
     bool isSnowBallPowerChosen ;
     bool isDistanceIncreaseChosen ;
     bool isBallonModeChosen ; 
-    string PurchaseState ; //Purchase Successful or Failed(not enough gems)
+    std::string PurchaseState ; //Purchase Successful or Failed(not enough gems)
 
 
     /////////////////////////////
@@ -84,7 +80,7 @@ public:
 
     void update(sf::RenderWindow &window , Player& p) ;
     void draw(sf::RenderWindow &window, Player &p) ; 
-    string getPurchaseState() { return PurchaseState; }
+    std::string getPurchaseState() { return PurchaseState; }
     void resetPurchaseState() { PurchaseState = ""; }
 
 }; 

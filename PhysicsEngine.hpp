@@ -35,7 +35,6 @@ public:
     void addPlatform(Block* block);
     void clearPlatforms();
     
-    
     //for 1 player
     void update(Player& player, float dt);
     void update(Player& player, Enemy** enemies, int enemyCount, float dt);

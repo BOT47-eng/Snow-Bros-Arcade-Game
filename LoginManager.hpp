@@ -7,9 +7,6 @@
 
 #include "PlayerInfo.hpp"
 
-using namespace std;
-using namespace sf;
-
 class LoginManager {
 private:
     //State variables to check which screen Player is on
@@ -21,29 +18,29 @@ private:
     bool loggedIn;
     int currentScreen;
     bool showPassword;
-    Font fontHeader, fontNormal;
+    sf::Font fontHeader, fontNormal;
 
     //0 = Username, 1 = Password, 2 = Email
     int activeField;
 
-    string inputUsername;
-    string inputPassword;
-    string inputEmail;
-    string statusMessage;
+    std::string inputUsername;
+    std::string inputPassword;
+    std::string inputEmail;
+    std::string statusMessage;
 
     PlayerInfo otherPlayer;
 
-    long long hash(const string& password);
-    string getTimestamp();
+    long long hash(const std::string& password);
+    std::string getTimestamp();
     void saveUserToFile(PlayerInfo player);
-    bool verifyCredentials(string username, string password);
-    bool usernameExists(const string& username);
+    bool verifyCredentials(std::string username, std::string password);
+    bool usernameExists(const std::string& username);
 
 public:
     LoginManager();
-    void handleInput(Event& event, RenderWindow& window);
-    void draw(RenderWindow& window);
-    void setFonts(Font& fontH, Font& fontN);
+    void handleInput(sf::Event& event, sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window);
+    void setFonts(sf::Font& fontH, sf::Font& fontN);
 
     bool isLoggedIn() const 
     { 

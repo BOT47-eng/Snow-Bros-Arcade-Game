@@ -1,5 +1,8 @@
 #include "LevelManager.hpp"
 
+using namespace sf;
+using namespace std;
+
 LevelManager::LevelManager(Leaderboard* ld) : levels(nullptr), levelCount(0), levelUnlocked(nullptr), levelCompleted(nullptr), window(nullptr), fontHeader(nullptr), fontNormal(nullptr), players(nullptr), player1Active(false), player2Active(false), isSinglePlayer(false), p1(0), p2(1), shop(nullptr), leaderboard(ld)
 {}
 
@@ -67,13 +70,13 @@ bool LevelManager::loadLevelConfig(const string& filepath)
 		}
 
 		if (!(file >> levels[i].blockCount)) {
-			cout << "Could not read blockCount for level " << levels[i].levelNumber << endl;
+			std::cout << "Could not read blockCount for level " << levels[i].levelNumber << std::endl;
 			return false;
 		}
 
 		if (levels[i].blockCount > 80) 
 		{
-			cout << "Level " << levels[i].levelNumber << " exceeds 80 block limit" << endl;
+			std::cout << "Level " << levels[i].levelNumber << " exceeds 80 block limit" << std::endl;
 			return false;
 		}
 
@@ -1017,7 +1020,7 @@ void LevelManager::startGame(int gameMode, RenderWindow* window, Font* fHeader, 
 		if (gameMode == 1 && saveManager.playerSaveExists(players[0].username)) 
 		{
 			loadPlayerProgress(players[0].username, p1, true);
-			cout << p1SaveData.current_level << endl;
+			std::cout << p1SaveData.current_level << std::endl;
 			for (int i = 0; i < levelCount; i++)
 			{
 				if (i < p1SaveData.current_level - 1)
@@ -1122,14 +1125,14 @@ void LevelManager::loadPlayerProgress(const string& username, Player& player, bo
 {
 	if (!saveManager.playerSaveExists(username)) 
 	{
-		cout << "No save file found for player: " << username << endl;
+		std::cout << "No save file found for player: " << username << std::endl;
 		return;
 	}
 
 	PlayerSaveData saveData;
 	if (!saveManager.loadPlayerProgress(username, saveData)) 
 	{
-		cout << "Failed to load player progress for: " << username << endl;
+		std::cout << "Failed to load player progress for: " << username << std::endl;
 		return;
 	}
 

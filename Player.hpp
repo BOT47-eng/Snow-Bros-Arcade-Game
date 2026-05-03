@@ -18,7 +18,7 @@ public:
     static const int MAX_BALLS = 16;
     static const int SCREEN_WIDTH = 600;
 private:
-    Texture playerTexture;
+    sf::Texture playerTexture;
 
     void updateInvincibility(float dt);
 
@@ -46,12 +46,12 @@ private:
     float speedBoostTimer;
     float balloonTimer;
 
-    const FloatRect playerHitbox = { 0, 0, 60, 72 };
-    const IntRect idlePlayerFrames = { IntRect(19, 3, 57, 72) };
-    const IntRect walkPlayerFrames[3] = { IntRect(100, 3, 45, 72), IntRect(185 , 3, 52, 73), IntRect(269, 1, 49, 74) };
-    const IntRect jumpPlayerFrames[6] = { IntRect(9, 83, 60, 75), IntRect(95, 83, 60, 65), IntRect(180, 83, 60, 65), IntRect(263, 85, 60, 75), IntRect(351, 88, 60, 70), IntRect(433, 86, 68, 68) };
-    const IntRect shootPlayerFrames = { IntRect(252, 172, 72, 72) };
-    IntRect snowballFrames = { IntRect(514, 1022, 22, 33) };
+    const sf::FloatRect playerHitbox = { 0, 0, 60, 72 };
+    const sf::IntRect idlePlayerFrames = { sf::IntRect(19, 3, 57, 72) };
+    const sf::IntRect walkPlayerFrames[3] = { sf::IntRect(100, 3, 45, 72), sf::IntRect(185 , 3, 52, 73), sf::IntRect(269, 1, 49, 74) };
+    const sf::IntRect jumpPlayerFrames[6] = { sf::IntRect(9, 83, 60, 75), sf::IntRect(95, 83, 60, 65), sf::IntRect(180, 83, 60, 65), sf::IntRect(263, 85, 60, 75), sf::IntRect(351, 88, 60, 70), sf::IntRect(433, 86, 68, 68) };
+    const sf::IntRect shootPlayerFrames = { sf::IntRect(252, 172, 72, 72) };
+    sf::IntRect snowballFrames = { sf::IntRect(514, 1022, 22, 33) };
 
     HitboxSprite sprite;
 
@@ -69,13 +69,13 @@ private:
 public:
     Player();
     Player(int index, PlayerStats stats = PlayerStats());
-    void setTexture(const Texture& texture, IntRect rect);
-    void setHitboxRect(FloatRect localRect);
+    void setTexture(const sf::Texture& texture, sf::IntRect rect);
+    void setHitboxRect(sf::FloatRect localRect);
     void handleInput(const InputManager& input, float dt);
     void update(float dt);
-    void draw(RenderWindow& window, bool debug = false) const;
+    void draw(sf::RenderWindow& window, bool debug = false) const;
 
-    void loadSpritesheet(const Texture& texture, const IntRect* idleFrames, int idleCount, const IntRect* walkFrames, int walkCount, const IntRect* jumpFrames, int jumpCount, const IntRect* fallFrames, int fallCount, FloatRect        hitboxRect, float            frameDuration = 0.1f);
+    void loadSpritesheet(const sf::Texture& texture, const sf::IntRect* idleFrames, int idleCount, const sf::IntRect* walkFrames, int walkCount, const sf::IntRect* jumpFrames, int jumpCount, const sf::IntRect* fallFrames, int fallCount, sf::FloatRect hitboxRect, float frameDuration = 0.1f);
 
     //These functions are for moving and pushing player out of walls, ceiling and ground
     void applyVelocity(float dt);          
@@ -97,8 +97,8 @@ public:
         lives++;
     }
 
-    FloatRect getHitbox() const;
-    Vector2f getPosition() const 
+    sf::FloatRect getHitbox() const;
+    sf::Vector2f getPosition() const
     { 
         return sprite.getPosition(); 
     }
@@ -152,7 +152,7 @@ public:
     }
 
     //For physics engine
-    void setPosition(Vector2f pos);
+    void setPosition(sf::Vector2f pos);
     void setVelocityX(float Vx) 
     { 
         velocityX = Vx; 
@@ -172,8 +172,8 @@ public:
     }
 
     //For snowballs
-    void setTextureSnowball(const Texture& texture);
-    void loadSpritesheetSnowball(const Texture& texture, const IntRect* frames, int count, float duration = 0.05);
+    void setTextureSnowball(const sf::Texture& texture);
+    void loadSpritesheetSnowball(const sf::Texture& texture, const sf::IntRect* frames, int count, float duration = 0.05);
     void updateSnowballs(float dt);
     Snowball& getBall(int i)
     {

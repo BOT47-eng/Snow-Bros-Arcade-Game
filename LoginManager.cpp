@@ -1,5 +1,8 @@
 #include "LoginManager.hpp"
 
+using namespace std;
+using namespace sf;
+
 LoginManager::LoginManager() {
     loggedIn = false;
     currentScreen = LOGIN_SCREEN;
@@ -40,10 +43,10 @@ bool LoginManager::verifyCredentials(string username, string password)
         getline(inFile, temp.email);
         getline(inFile, temp.created);
 
-        cout << temp.username << endl;
-        cout << temp.passwordHash << endl;
-        cout << temp.email << endl;
-        cout << temp.created << endl;
+        std::cout << temp.username << std::endl;
+        std::cout << temp.passwordHash << std::endl;
+        std::cout << temp.email << std::endl;
+        std::cout << temp.created << std::endl;
 
         if (string(temp.username) == username && temp.passwordHash == inputHash) 
         {
@@ -66,7 +69,7 @@ void LoginManager::saveUserToFile(PlayerInfo player)
 
 void LoginManager::logout() 
 {
-    cout << currentUser.username << " logged out" << endl;
+    std::cout << currentUser.username << " logged out" << std::endl;
     currentUser = PlayerInfo();
     loggedIn = false;
     currentScreen = LOGIN_SCREEN;
@@ -414,7 +417,7 @@ string LoginManager::getTimestamp() {
     char buffer[50];
 
     //This automatically adds has \n at the end 
-   ctime_r(buffer, sizeof(buffer), &timestamp);
+   ctime_s(buffer, sizeof(buffer), &timestamp);
 
     string temp = buffer;
 

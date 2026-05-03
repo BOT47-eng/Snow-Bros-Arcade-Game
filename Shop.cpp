@@ -1,5 +1,8 @@
 #include "Shop.hpp"
 
+using namespace std;
+using namespace sf;
+
 Shop::Shop()
 {
     isExtraLifeChosen = false;
@@ -24,17 +27,17 @@ Shop::Shop()
         !itemsTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/Player_Blue.png") ||
         !itemsTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/Player_Red.png"))
     {
-        cout << "Error in loading the textures in Shop Class\n";
+        std::cout << "Error in loading the textures in Shop Class\n";
         exit(0);
     }
     if (!font.loadFromFile("Resources/SnowBrosAssets/Fonts/normal-font.ttf"))
     {
-        cout << "Error in loading the fonts in Shop Class\n";
+        std::cout << "Error in loading the fonts in Shop Class\n";
         exit(0);
     }
     if (!backgroundTex.loadFromFile("Resources/SnowBrosAssets/Images/ShopBackground.jpg"))
     {
-        cout << "Error in loading the Background tex in Shop Class\n";
+        std::cout << "Error in loading the Background tex in Shop Class\n";
         exit(0);
     }
 
