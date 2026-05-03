@@ -1,5 +1,8 @@
 #include "Hitbox.hpp"
 
+using namespace std;
+using namespace sf;
+
 void HitboxSprite::setHitbox(const FloatRect& hitbox)
 {
 	this->hitbox = hitbox;

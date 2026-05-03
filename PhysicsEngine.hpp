@@ -15,6 +15,7 @@ private:
     void wrapScreen(Player& player) const;
     void checkSnowballCollisions(Player& player, Enemy** enemies, int enemyCount, int playerID) const;
     void checkEnemyPlayerCollisions(Player& player, Enemy** enemies, int enemyCount) const;
+    void checkMinionPlayerCollisions(Player& player, Enemy** enemies, int enemyCount) const;
     void handleSnowballPhysics(Enemy* snowball, Block* blocks, int blockCount, float dt) const;
     void handleSnowballBoundary(Enemy* snowball) const;
     void checkSnowballEnemyCollisions(Player& p1, Player& p2, Enemy* snowball, Enemy** enemies, int enemyCount) const;

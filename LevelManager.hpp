@@ -50,6 +50,8 @@ private:
 	PlayerSaveData p1SaveData;
 	PlayerSaveData p2SaveData;
 	Leaderboard* leaderboard;
+	sf::Sprite* backgrounds;
+	sf::Texture backgroundSpriteSheet;
 
 	void drawLevelSelect(int gameMode);
 	void drawGameOver(int p1Score, int p2Score, bool p1Alive, bool p2Alive);

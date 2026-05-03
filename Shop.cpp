@@ -270,6 +270,11 @@ void Shop::draw(sf::RenderWindow& window, Player& p)
         currentime.restart();
     }
 
+    Text gemText("Gems: " + to_string(p.getGems()), font, 60);
+    gemText.setFillColor(Color::White);
+    gemText.setPosition(450.f, -10.f);
+    window.draw(gemText);
+
     Text purchaseText(PurchaseState, font, 60);
     purchaseText.setFillColor(Color::White);
     purchaseText.setPosition(300.f, 480.f);

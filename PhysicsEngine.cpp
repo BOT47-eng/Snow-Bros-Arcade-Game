@@ -303,6 +303,7 @@ void PhysicsEngine::update(Player& player, Enemy** enemies, int enemyCount, floa
     }
     checkSnowballCollisions(player, enemies, enemyCount, 0);
     checkEnemyPlayerCollisions(player, enemies, enemyCount);
+    checkMinionPlayerCollisions(player, enemies, enemyCount);
     //delete[] arr;
 }
 
@@ -348,6 +349,9 @@ void PhysicsEngine::update(Player& p1, Player& p2, Enemy** enemies, int enemyCou
 
     checkEnemyPlayerCollisions(p1, enemies, enemyCount);
     checkEnemyPlayerCollisions(p2, enemies, enemyCount);
+
+    checkMinionPlayerCollisions(p1, enemies, enemyCount);
+    checkMinionPlayerCollisions(p2, enemies, enemyCount);
     //delete[] arr;
 }
 
@@ -468,6 +472,40 @@ void PhysicsEngine::enforceEnemyFloorBoundary(Enemy* enemy) const
         else
         {
             enemy->setVy(0);
+        }
+    }
+}
+
+void PhysicsEngine::checkMinionPlayerCollisions(Player& player, Enemy** enemies, int enemyCount) const
+{
+    if (!player.isAlive() || player.isInvincible())
+        return;
+
+    for (int i = 0; i < enemyCount; i++)
+    {
+        if (!enemies[i])
+            continue;
+
+        Mogera* mogera = dynamic_cast<Mogera*>(enemies[i]);
+        if (!mogera)
+            continue;
+
+        Minions* minions = mogera->getMinions();
+        int totalMinions = mogera->getTotalMinionsSpawn();
+
+        if (!minions)
+            continue;
+
+        for (int j = 0; j < totalMinions; j++)
+        {
+            if (minions[j].getHealth() <= 0)
+                continue;
+
+            if (player.getHitbox().intersects(minions[j].getEnemyHitBox()))
+            {
+                player.takeDamage();
+                return;
+            }
         }
     }
 }

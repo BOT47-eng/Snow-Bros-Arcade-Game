@@ -2,22 +2,19 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
-using namespace std;
-using namespace sf;
-
-class HitboxSprite : public Sprite {
+class HitboxSprite : public sf::Sprite {
 private:
-	FloatRect hitbox;
+	sf::FloatRect hitbox;
 
 public:
-	void setHitbox(const FloatRect& hitbox);
+	void setHitbox(const sf::FloatRect& hitbox);
 
-	FloatRect getGlobalHitbox() const;
+	sf::FloatRect getGlobalHitbox() const;
 
 	bool intersects(const HitboxSprite& other) const;
 
-	bool intersects(const FloatRect& rect) const;
+	bool intersects(const sf::FloatRect& rect) const;
 
-	void drawHitbox(RenderWindow& window, Color color = Color::Green) const;
+	void drawHitbox(sf::RenderWindow& window, sf::Color color = sf::Color::Green) const;
 
 };

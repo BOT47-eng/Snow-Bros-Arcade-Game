@@ -1,5 +1,7 @@
 #include "InputManager.hpp"
 
+using namespace std;
+using namespace sf;
 
 void InputManager::setKeys(Keyboard::Scancode player1[4], Keyboard::Scancode player2[4])
 {

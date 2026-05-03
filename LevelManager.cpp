@@ -3,8 +3,11 @@
 using namespace sf;
 using namespace std;
 
-LevelManager::LevelManager(Leaderboard* ld) : levels(nullptr), levelCount(0), levelUnlocked(nullptr), levelCompleted(nullptr), window(nullptr), fontHeader(nullptr), fontNormal(nullptr), players(nullptr), player1Active(false), player2Active(false), isSinglePlayer(false), p1(0), p2(1), shop(nullptr), leaderboard(ld)
-{}
+LevelManager::LevelManager(Leaderboard* ld) : levels(nullptr), levelCount(0), levelUnlocked(nullptr), levelCompleted(nullptr), window(nullptr), fontHeader(nullptr), fontNormal(nullptr), players(nullptr), player1Active(false), player2Active(false), isSinglePlayer(false), p1(0), p2(1), shop(nullptr), leaderboard(ld), backgrounds(nullptr)
+{
+	if (!backgroundSpriteSheet.loadFromFile("Resources/Levels/backgrounds.png"))
+		cout << "Couldn't load backgrounds;" << endl;
+}
 
 LevelManager::~LevelManager()
 {
@@ -25,6 +28,8 @@ LevelManager::~LevelManager()
 		delete[] levelCompleted;
 	if (players)
 		delete[] players;
+	if (backgrounds)
+		delete[] backgrounds;
 }
 
 bool LevelManager::loadLevelConfig(const string& filepath)
@@ -40,6 +45,7 @@ bool LevelManager::loadLevelConfig(const string& filepath)
 	if (levelCount <= 0)
 		return false;
 
+	backgrounds = new Sprite[levelCount];
 	levels = new LevelData[levelCount];
 	levelUnlocked = new bool[levelCount];
 	levelCompleted = new bool[levelCount];
@@ -193,6 +199,11 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 	hudText.setFont(*fontHeader);
 	hudText.setCharacterSize(12);
 	hudText.setFillColor(Color::White);
+
+	Text gemCount;
+	gemCount.setFont(*fontHeader);
+	gemCount.setCharacterSize(12);
+	gemCount.setFillColor(Color::White);
 
 	bool debugOn = false;
 	bool paused = false;
@@ -424,35 +435,48 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 		{
 			if (player1Active) 
 			{
-				hudText.setString(players[0].username + "  Lives:" + to_string(p1.getLives()) +
-					"  Score:" + to_string(p1.getScore()));
+				hudText.setString(players[0].username + "  Lives:" + to_string(p1.getLives()) + "  Score:" + to_string(p1.getScore()));
+				gemCount.setString("Gems P1:" + to_string(p1.getGems()));
 			}
 			else 
 			{
-				hudText.setString(players[1].username + "  Lives:" + to_string(p2.getLives()) +
-					"  Score:" + to_string(p2.getScore()));
+				hudText.setString(players[1].username + "  Lives:" + to_string(p2.getLives()) + "  Score:" + to_string(p2.getScore()));
+				gemCount.setString("Gems P2:" + to_string(p2.getGems()));
 			}
 		}
 		else 
 		{
-			hudText.setString(players[0].username + "  Lives:" + to_string(p1.getLives()) +
-				"  Score:" + to_string(p1.getScore()));
+			hudText.setString(players[0].username + "  Lives:" + to_string(p1.getLives()) + "  Score:" + to_string(p1.getScore()));
+			gemCount.setString("Gems P1:" + to_string(p1.getGems()));
 		}
 		hudText.setPosition(8.f, 4.f);
 		window->draw(hudText);
 
+		gemCount.setPosition(475.f, 4.f);
+		window->draw(gemCount);
+
 		if (!isSinglePlayer) 
 		{
-			hudText.setString(players[1].username + "  Lives:" + to_string(p2.getLives()) +
-				"  Score:" + to_string(p2.getScore()));
+			hudText.setString(players[1].username + "  Lives:" + to_string(p2.getLives()) + "  Score:" + to_string(p2.getScore()));
+			gemCount.setString("Gems P2:" + to_string(p2.getGems()));
 			hudText.setPosition(8.f, 24.f);
 			window->draw(hudText);
+			gemCount.setPosition(475.f, 24.f);
+			window->draw(gemCount);
 		}
 
 		if (level.isBossLevel) 
 		{
+			Text bossHealth;
+			bossHealth.setFont(*fontHeader);
+			bossHealth.setCharacterSize(16);
+			bossHealth.setFillColor(Color::White);
+			bossHealth.setPosition(273.f, 36.f);
+			bossHealth.setString("Boss HP" + to_string(int(enemies[0]->getHealth() - enemies[0]->getSnowAccumulated())));
+			window->draw(bossHealth);
+
 			hudText.setString("BOSS LEVEL");
-			hudText.setPosition(500.f, 4.f);
+			hudText.setPosition(280.f, 4.f);
 			window->draw(hudText);
 		}
 

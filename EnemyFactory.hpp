@@ -1514,7 +1514,8 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
         EnemySprite.setTexture(MinionSpriteSheet) ;
         EnemySprite.setTextureRect(defaultArea) ;
         EnemySprite.setScale(0.2 , 0.2) ;
-        EnemySprite.setHitbox(EnemySprite.getLocalBounds()) ; 
+        EnemySprite.setOrigin(EnemySprite.getLocalBounds().width/2.f, EnemySprite.getLocalBounds().height / 2.f);
+        EnemySprite.setHitbox(EnemySprite.getLocalBounds()); 
 
 
         // Stand up frames
@@ -1612,7 +1613,7 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
         mywindow.draw(EnemySprite);
 
         if (debug)
-            EnemySprite.drawHitbox(mywindow, sf::Color::Yellow);
+            EnemySprite.drawHitbox(mywindow, sf::Color::Red);
     }
 
     virtual int getScore() override
@@ -1689,7 +1690,7 @@ public :
         Enemyheight = 0 ;
         xFactorShiftForSpriteToAlignWithEachOther  = 0; 
 
-        health = 10 ;
+        health = 15 ;
         totalMinionsSpawn = 0 ;
         smallJumpAnimation = nullptr;
         bigJumpAnimation = nullptr ;
@@ -1877,6 +1878,10 @@ public :
     {
         return 5000;
     }
+
+    Minions* getMinions() { return minions; }
+    int getTotalMinionsSpawn() const { return totalMinionsSpawn; }
+    int getMaxMinions() const { return totalCountOfMinionsBossCanSpawnAtaTime; }
 
 };
 
@@ -2103,9 +2108,9 @@ public:
     /////////////////////////////////
     /////////////////////////////////
 
-    virtual void CreateEnemy(float x, float y);
-    virtual void update(sf::RenderWindow& mywindow, float dt, Block* B, const int BLOCKSIZE);
-    virtual void draw(sf::RenderWindow& mywindow, bool debug) ;
+    virtual void CreateEnemy(float x, float y) {}
+    virtual void update(sf::RenderWindow& mywindow, float dt, Block* B, const int BLOCKSIZE) {}
+    virtual void draw(sf::RenderWindow& mywindow, bool debug) {}
     virtual int getScore()
     {
         return 10000;

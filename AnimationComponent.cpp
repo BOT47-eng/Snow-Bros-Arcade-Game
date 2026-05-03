@@ -1,5 +1,7 @@
 #include "AnimationComponent.hpp"
 
+using namespace sf;
+
 AnimationComponent::AnimationComponent() : frameCount(0), currentFrame(0), frameDuration(0.1f), frameTimer(0.f), looping(true), finished(false)
 {
     for (int i = 0; i < MAX_FRAMES; i++)

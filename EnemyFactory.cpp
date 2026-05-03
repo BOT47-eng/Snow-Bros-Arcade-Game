@@ -221,7 +221,7 @@ void Mogera::CreateEnemy(float x, float y)
 
     if (!SpriteSheetofBoss.loadFromFile("Resources/SnowBrosAssets/Images/Mogera.png"))
     {
-        cout << "Error in loading the SpriteSheet of MoeMoe Boss lol\n";
+        std::cout << "Error in loading the SpriteSheet of MoeMoe Boss lol\n";
         exit(0);
     }
      if (!roarBuffer.loadFromFile("Resources/SnowBrosAssets/Sounds/MogeraRoar.mp3")) 
@@ -241,6 +241,7 @@ void Mogera::CreateEnemy(float x, float y)
     EnemySprite.setTextureRect(area);
     EnemySprite.setTexture(SpriteSheetofBoss);
     EnemySprite.setPosition(x, y);
+    EnemySprite.setHitbox(FloatRect(area));
 
     ///////////////////////
     // setting Up the legs
@@ -300,8 +301,19 @@ void Mogera::CreateEnemy(float x, float y)
 
 void Mogera::update(const float dt, Block* B, const int BLOCKSIZE)
 {
+    if (snowAccumulated >= health)
+    {
+        sethealth(-1);
+        if (minions != nullptr)
+        {
+            delete[] minions;
+            minions = nullptr;
+            totalMinionsSpawn = 0;
+        }
+    }
+
     // Adding the Minions Spawn feature here Damn it aaaaa
-    if(minionsSpawnTimer.getElapsedTime().asSeconds() >= totalTimeAfterWhichToSpawnTheMinions)
+    if(health > 0 && minionsSpawnTimer.getElapsedTime().asSeconds() >= totalTimeAfterWhichToSpawnTheMinions)
     {
         if (totalMinionsSpawn < totalCountOfMinionsBossCanSpawnAtaTime)
         {
@@ -313,10 +325,11 @@ void Mogera::update(const float dt, Block* B, const int BLOCKSIZE)
         minionsSpawnTimer.restart();
     }
 
-    for (int st = 0; st <= totalMinionsSpawn -  1; st++)
-    {
-        minions[st].update(dt, B, BLOCKSIZE);
-    }
+    if (health > 0)
+        for (int st = 0; st <= totalMinionsSpawn -  1; st++)
+        {
+            minions[st].update(dt, B, BLOCKSIZE);
+        }
     ///////////
 
     CheckWeatherBossWantsToJumpOrNot() ;
@@ -393,7 +406,15 @@ void Mogera::update(const float dt, Block* B, const int BLOCKSIZE)
     EnemySprite.setPosition({ x, y });
     EnemyLegsSprite.setPosition({ x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight });
 
-
+    if (snowAccumulated >= health - 1)
+    {
+        if (minions != nullptr)
+        {
+            delete[] minions;
+            minions = nullptr;
+            totalMinionsSpawn = 0;
+        }
+    }
 
     if(totalMinionsSpawn >= totalCountOfMinionsBossCanSpawnAtaTime)
     {
