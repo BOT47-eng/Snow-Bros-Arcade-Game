@@ -224,6 +224,15 @@ void Mogera::CreateEnemy(float x, float y)
         cout << "Error in loading the SpriteSheet of MoeMoe Boss lol\n";
         exit(0);
     }
+     if (!roarBuffer.loadFromFile("Resources/SnowBrosAssets/Sounds/MogeraRoar.mp3")) 
+    {
+        std::cout << "Error loading roar.wav" << std::endl;
+        exit(0) ; 
+    } 
+    roarSound.setBuffer(roarBuffer);
+
+
+
 
     /////////////////////
     // For Test 
@@ -242,7 +251,14 @@ void Mogera::CreateEnemy(float x, float y)
                     {1924  , 443 , 539 , 329}
     };
     bigJumpAnimation = new AnimationComponent;
-    bigJumpAnimation->loadSprite(areaOfLegs, framesOfLegs, 0.01);
+    bigJumpAnimation->loadSprite(areaOfLegs, framesOfLegs, 0.75);
+
+    sf::IntRect areaofTop[3] = {{44, 9, 539, 460} , 
+                                {588, 9, 539, 460} ,
+                                {1165, 9, 539, 460}} ; 
+
+    roarAnimation = new AnimationComponent ; 
+    roarAnimation->loadSprite(areaofTop , 3  , 0.55) ; 
 
 
     EnemyLegsSprite.setScale({ 0.25 , 0.25 });
@@ -277,17 +293,91 @@ void Mogera::CreateEnemy(float x, float y)
 
 void Mogera::update(sf::RenderWindow& mywindow, const float dt, Block* B, const int BLOCKSIZE)
 {
-    UpdateY(dt);
+    CheckWeatherBossWantsToJumpOrNot() ;
+
+   if(isLongJump)
+   {
+    UpdateY(dt) ; 
+   }
+   else if(isFalling == true)
+   {
+    UpdateY(dt); 
+    if(TOTALTIMEAFTERWHICHTOSTOPCHECKINGTHECOLLOSION >= STOPCHECKINGCOLLOSIONTIMER.getElapsedTime().asSeconds())
+        {   if(CheckCollosionsWithPlatforms(B , BLOCKSIZE) == true )
+            {
+                isFalling = false ;
+                setVy(-abs(CopyVy)) ;
+            }
+        }
+    else 
+    {
+        if(STOPCHECKINGCOLLOSIONTIMER.getElapsedTime().asSeconds() >= 10)
+        {
+            STOPCHECKINGCOLLOSIONTIMER.restart() ; 
+        }
+    }
+    // After Platform it has go up sooo
+   }
 
 
 
 
     ////////////////////
     /// Checking all the collosion here 
-    CheckCollionsWithScreenY(600, 600);
+    bool TouchestheUpScreen = CheckCollosionWithScreenYUP(600 , 560) ; 
+    isOnLand =   CheckCollionsWithScreenYDOWN(600, 560);
+    if(isOnLand == true)
+    {
+        isLongJump = false ; 
+        setVy(-abs(CopyVy)) ; 
+        animationTimeofBigJump.restart() ; 
+    }
+    else if(TouchestheUpScreen)
+    {
+        isFalling = true ; 
+        setVy(abs(CopyVy)) ;
+        animationTimeofBigJump.restart() ; 
+    }
+
+    if(isLongJump == true)
+    {
+        EnemyLegsSprite.setTextureRect(bigJumpAnimation->getCurrentFrame()) ;
+        bigJumpAnimation->update(dt) ;
+    }
+    else
+    {
+        EnemyLegsSprite.setTextureRect(bigJumpAnimation->getSepcificFrame(0)) ;
+    }
+
+
+    ////////////
+    // Adding the Roar thing 
+    if(animationTimeofRoar.getElapsedTime().asSeconds() <= totalTimeofRoarAnimation)
+    {
+        EnemySprite.setTextureRect(roarAnimation->getCurrentFrame()) ;
+        roarAnimation->update(dt) ; 
+
+        if(roarAnimation->getCurrentFrameIndex() == 2)
+        {
+            roarSound.play()  ;
+        }
+    }
+    if(isOnLand)
+    {
+        animationTimeofRoar.restart() ; 
+    }
+
+   
+    
+    
 
     EnemySprite.setPosition({ x, y });
     EnemyLegsSprite.setPosition({ x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight });
+
+    for(int st  = 0 ; st <= BLOCKSIZE -  1; st++)
+    {
+        B[st].draw(mywindow , true) ; 
+    }
 }
 
 void Mogera::draw(sf::RenderWindow& mywindow, bool debug)

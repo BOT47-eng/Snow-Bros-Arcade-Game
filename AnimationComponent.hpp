@@ -24,4 +24,13 @@ public:
     IntRect getCurrentFrame() const;
     void reset();
     bool isFinished() const;
+    IntRect getSepcificFrame(int  n) const 
+    {
+        if(n < frameCount)
+            return frames[n] ; 
+        
+        return {0 , 0  , 0, 0} ;
+    }
+    int getCurrentFrameIndex() const {return currentFrame ;}
+    void setCurrentFrameIndex(int n ) {currentFrame = n ;}
 };
