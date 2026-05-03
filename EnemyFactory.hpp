@@ -1510,7 +1510,7 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
             exit(0);
 
         }
-        sf::IntRect defaultArea(1796, 806, 167 , 161);
+        sf::IntRect defaultArea(2185, 996, 116 , 139);
         EnemySprite.setTexture(MinionSpriteSheet) ;
         EnemySprite.setTextureRect(defaultArea) ;
         EnemySprite.setScale(0.2 , 0.2) ;
@@ -1528,7 +1528,7 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
         // Move frames
         moveFrames[0] = sf::IntRect(1799, 810, 161, 162);
         moveFrames[1] = sf::IntRect(1973, 806, 161, 162);
-        moveFrames[2] = sf::IntRect(2145, 765, 161, 177);
+        moveFrames[2] = sf::IntRect(2145, 780, 161, 177);
 
         moveAnim = new AnimationComponent;
         moveAnim->loadSprite(moveFrames, totalMoveFrames, 0.15f); 
@@ -1870,9 +1870,9 @@ public :
     /////////////////////////////////
     /////////////////////////////////
 
-    virtual void CreateEnemy(float x , float y)  ;
-    virtual void update(sf::RenderWindow &mywindow , float dt, Block* B, const int BLOCKSIZE)  ;
-    virtual void draw(sf::RenderWindow &mywindow, bool debug) ;
+    virtual void CreateEnemy(float x , float y)  override ;
+    virtual void update(float dt, Block* B, const int BLOCKSIZE) override  ;
+    virtual void draw(sf::RenderWindow &mywindow, bool debug)  override;
     virtual int getScore()
     {
         return 5000;

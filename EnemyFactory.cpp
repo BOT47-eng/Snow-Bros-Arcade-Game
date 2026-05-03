@@ -226,7 +226,7 @@ void Mogera::CreateEnemy(float x, float y)
     }
      if (!roarBuffer.loadFromFile("Resources/SnowBrosAssets/Sounds/MogeraRoar.mp3")) 
     {
-        std::cout << "Error loading roar.wav" << std::endl;
+        std::cout << "Error loading Roar.mp3" << std::endl;
         exit(0) ; 
     } 
     roarSound.setBuffer(roarBuffer);
@@ -298,7 +298,7 @@ void Mogera::CreateEnemy(float x, float y)
     setCopyVy(400);
 }
 
-void Mogera::update(sf::RenderWindow& mywindow, const float dt, Block* B, const int BLOCKSIZE)
+void Mogera::update(const float dt, Block* B, const int BLOCKSIZE)
 {
     // Adding the Minions Spawn feature here Damn it aaaaa
     if(minionsSpawnTimer.getElapsedTime().asSeconds() >= totalTimeAfterWhichToSpawnTheMinions)
@@ -344,10 +344,6 @@ void Mogera::update(sf::RenderWindow& mywindow, const float dt, Block* B, const 
     }
     // After Platform it has go up sooo
    }
-
-   
-
-
 
     ////////////////////
     /// Checking all the collosion here 
@@ -409,11 +405,6 @@ void Mogera::update(sf::RenderWindow& mywindow, const float dt, Block* B, const 
             totalMinionsSpawn = 0 ; 
         }
     }
-
-    for(int st  = 0 ; st <= BLOCKSIZE -  1; st++)
-    {
-        B[st].draw(mywindow , true) ; 
-    }
 }
 
 void Mogera::draw(sf::RenderWindow& mywindow, bool debug)
@@ -424,6 +415,12 @@ void Mogera::draw(sf::RenderWindow& mywindow, bool debug)
     for(int i = 0; i < totalMinionsSpawn; i++)
     {
         minions[i].draw(mywindow, debug);
+    }
+
+     if (debug)
+    {
+        EnemySprite.drawHitbox(mywindow, Color::Red);
+        EnemyLegsSprite.drawHitbox(mywindow, Color::Red);
     }
 
 
