@@ -804,15 +804,11 @@ public :
     }
 
     ///////////////////////////////////////////////////////////////
-    /////// update for FlyingFoog — three mutually exclusive phases:
-    /////// REST -> AERIAL -> NORMAL (with gravity/platforms)
 
     virtual void update(const float dt , Block *B , const int BLOCKSIZE) override
     {
         ///////////////////////////////////////////////////////////
-        /////// PHASE 1 — REST MODE
-        /////// Enemy is stationary. Gravity and platforms are skipped
-        /////// entirely so nothing can push or pull it while resting.
+        /////// PHASE 1 rest mode 
         if(isOnRestMode)
         {
             // Hold position — no movement whatsoever
@@ -845,10 +841,8 @@ public :
         }
 
         ///////////////////////////////////////////////////////////
-        /////// PHASE 2 — AERIAL MODE
-        /////// Enemy flies freely. Gravity and platform checks are
-        /////// skipped so it moves through the air unaffected.
-        /////// Screen boundaries still apply so it can't leave the window.
+        /////// PHASE 2 areil
+.
         if(isInAeialMode)
         {
             UpdateX(dt) ;
@@ -891,13 +885,11 @@ public :
             }
             
             /*checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;*/
-            return ; // Skip the rest of update — aerial is its own complete state
+            return ; 
         }
 
         ///////////////////////////////////////////////////////////
-        /////// PHASE 3 — NORMAL MODE (walking / jumping on platforms)
-        /////// Identical to Botom logic, plus a check at the end
-        /////// to decide whether to enter rest mode.
+        /////// PHASE 3
 
         UpdateX(dt) ;
         UpdateY(dt) ;
@@ -1240,9 +1232,7 @@ public :
             ///////////////////////////////////
 
         ///////////////////////////////////////////////////////////
-        /////// PHASE 1 — REST MODE
-        /////// Enemy is stationary. Gravity and platforms are skipped
-        /////// entirely so nothing can push or pull it while resting.
+        /////// PHASE 1 
         if(isOnRestMode && !isFallingDown)
         {
             // Hold position — no movement whatsoever
@@ -1275,10 +1265,7 @@ public :
         }
 
         ///////////////////////////////////////////////////////////
-        /////// PHASE 2 — AERIAL MODE
-        /////// Enemy flies freely. Gravity and platform checks are
-        /////// skipped so it moves through the air unaffected.
-        /////// Screen boundaries still apply so it can't leave the window.
+        /////// PHASE 2 
         if(isInAeialMode)
         {
             UpdateX(dt) ;
@@ -1321,14 +1308,11 @@ public :
             }
             
             /*checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;*/
-            return ; // Skip the rest of update — aerial is its own complete state
+            return ;
         }
 
         ///////////////////////////////////////////////////////////
-        /////// PHASE 3 — NORMAL MODE (walking / jumping on platforms)
-        /////// Identical to Botom logic, plus a check at the end
-        /////// to decide whether to enter rest mode.
-        
+        /////// PHASE 3 
 
         UpdateX(dt) ;
         UpdateY(dt) ;
@@ -1482,7 +1466,6 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
                     onLand = true;
                 }
             }
-            // ← Horizontal overlaps are intentionally IGNORED
             //   so minion walks off edges instead of getting pushed back
         }
         EnemySprite.setPosition(x, y);
@@ -1503,7 +1486,6 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
 
     virtual void CreateEnemy(float x, float y) override
     {
-        // 1. Texture Fix: Load directly into the class member
         if (!MinionSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Mogera.png"))
         {
             std::cout << "Error loading Minion spritesheet\n";
@@ -1577,7 +1559,6 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
         {
             if (!hasStoodUp)
             {
-                // Phase 1: Standing up (Not moving X)
                 EnemySprite.setTextureRect(standUpAnim->getCurrentFrame());
                 standUpAnim->update(dt); 
                 
@@ -1590,13 +1571,11 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
             }
             else 
             {
-                // Phase 2: Moving in one direction
                 UpdateX(dt); // Actually apply the X velocity so the sprite moves
                 
                 EnemySprite.setTextureRect(moveAnim->getCurrentFrame());
                 moveAnim->update(dt);
                 
-                // Optional: Ensure it doesn't fall through the floor if it walks off a ledge
                 if (!CheckVerticalOnlyCollision(B, BLOCKSIZE)) 
                 {
                     setVy(getVy() + 980.0f * dt); // Re-apply gravity if falling
