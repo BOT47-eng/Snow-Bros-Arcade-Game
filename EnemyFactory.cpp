@@ -214,7 +214,7 @@ void Enemy::breakOutOfSnowball()
     animSnowballBreakout.reset();
 }
 
-void Mogera::CreateEnemy(float x, float y)
+void Mogera::CreateEnemy(float x, float y , int index)
 {
     ////////////////////////////////////////
     // Loading and setting all the textures
@@ -317,7 +317,7 @@ void Mogera::update(const float dt, Block* B, const int BLOCKSIZE)
     {
         if (totalMinionsSpawn < totalCountOfMinionsBossCanSpawnAtaTime)
         {
-            minions[totalMinionsSpawn].CreateEnemy(x + 30, y); // pos change factor  a little bit 
+            minions[totalMinionsSpawn].CreateEnemy(x + 30, y , 0); // pos change factor  a little bit 
             totalMinionsSpawn++;
         }
 

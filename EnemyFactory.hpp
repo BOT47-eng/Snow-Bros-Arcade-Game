@@ -152,7 +152,7 @@ public:
 
     //////////////////////
     //// Main Functions for Every Enemy 
-    virtual void CreateEnemy(float x , float y) = 0 ;
+    virtual void CreateEnemy(float x , float y , int index) = 0 ;
     virtual void update(const float dt, Block* B, const int BLOCKSIZE) = 0;
     virtual void draw(sf::RenderWindow &mywindow, bool debug) = 0 ;
     virtual int getScore() = 0;
@@ -294,14 +294,26 @@ public:
     }
 
 
-    virtual void CreateEnemy(float x , float y) override
+    virtual void CreateEnemy(float x , float y , int index) override
     {
         ///////////////////////////////////////
         ////// Creating the Enemy first 
         sf::Texture EnemyTexture;
         sf::IntRect area(2 , 934 , 88 , 93) ; // Default idle/start state
+        std::string imagePath = "Resources/SnowBrosAssets/Images/Botom_Pink.png" ; // default ;
+        if(index == 0)
+        {
+             imagePath = "Resources/SnowBrosAssets/Images/Botom_Pink.png";
+        }
+        else if(index == 1)
+        {
+             imagePath = "Resources/SnowBrosAssets/Images/Botom_Orange.png";
+        }
+        else if(index == 2)
+        {
+            imagePath = "Resources/SnowBrosAssets/Images/Botom_Blue.png";
+        }
     
-        std::string imagePath = "Resources/SnowBrosAssets/Images/Botom_Pink.png";
     
         if(!EnemyTexture.loadFromFile(imagePath , area))
         {
@@ -329,9 +341,25 @@ public:
 
 
         // --- Right Movement Textures ---
+        if(index == 1)
+        {
+        EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/BotomOrangeRight1.png");
+        EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/BotomOrangeRight2.png");
+        EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/BotomOrangeRight3.png");
+        }
+        else if(index == 2)
+        {
+            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/BotomBlueRight1.png");
+            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/BotomBlueRight2.png");
+            EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/BotomBlueRight3.png");
+        }
+        else
+        {
         EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight1.png");
         EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight2.png");
         EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight3.png");
+        }
+
 
         // --- Left Movement Textures ---
         EnemySpriteLeftMovementTextures[0].loadFromFile(imagePath, sf::IntRect(2, 367, 92, 82));
@@ -347,14 +375,39 @@ public:
     
         /////////////////////////////////////////////
         ///// Now Setting the Properties of the Enemy
-        sethealth(2);
-        healthOriginal = 2;
-        setPos(x , y) ;
-        setVx(200) ;  /// TEST TO CHANGE LATER
-        setVy(200) ;  // TEST TO CHANGE LATER 
-        originalSpeed = 200;
-        setCopyVx(200) ;
-        setCopyVy(200) ;
+        if(index == 1)
+        {
+            sethealth(2);
+            healthOriginal = 2;
+            setPos(x , y) ;
+            setVx(220) ;  /// TEST TO CHANGE LATER
+            setVy(220) ;  // TEST TO CHANGE LATER 
+            originalSpeed = 220;
+            setCopyVx(220) ;
+            setCopyVy(220) ;
+        }
+        else if(index ==2)
+        {
+            sethealth(2);
+            healthOriginal = 2;
+            setPos(x , y) ;
+            setVx(230) ;  /// TEST TO CHANGE LATER
+            setVy(230) ;  // TEST TO CHANGE LATER 
+            originalSpeed = 230;
+            setCopyVx(230) ;
+            setCopyVy(230) ;
+        }
+        else 
+        {
+            sethealth(2);
+            healthOriginal = 2;
+            setPos(x , y) ;
+            setVx(200) ;  /// TEST TO CHANGE LATER
+            setVy(200) ;  // TEST TO CHANGE LATER 
+            originalSpeed = 200;
+            setCopyVx(200) ;
+            setCopyVy(200) ;
+        }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////// UPDATE FUNCTION AND ALL IT'S RELATED FUNCTIONS FOR THE BOTOM ENEMY CLASS 
@@ -728,11 +781,161 @@ public :
 
 public : 
 
-    virtual void CreateEnemy(float x , float y) 
+    virtual void CreateEnemy(float x , float y , int index) override 
     {
+        if(index == 1)
+        {
+            sf::Texture EnemyTex ; 
+            sf::IntRect area(50 , 30 , 97 ,162) ;
+            if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , area))
+            {
+            std::cout << "Error in Loading the FlyingFoogaRed\n" ; 
+            exit(0) ; 
+            }
+            setEnemyTexture(EnemyTex) ;
+            EnemySprite.setScale(0.3 , 0.3) ;
+            setEnemyHitBoxSprite() ;
+
+            ////////////////////////////////////////
+            ///// Loading Different Animation texture in the arrays 
+            TotalAnimationofRightMovement = 2;
+            TotalAnimationofleftMovement = 2;
+            TotalAnimationofJump = 2;
+            TotalAnimationofFalling = 2;
+            TotalAnimationofFlying = 2 ;
+
+            EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
+            EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
+            EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
+            EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
+            FlyingTexture = new sf::Texture[TotalAnimationofFlying];
+
+
+            // Right Movement Textures _ areas
+            sf::IntRect area1(18 , 440 , 160 ,133) ;
+            sf::IntRect area2(215 , 436 , 166 , 126) ;
+        
+
+            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , area1);
+            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , area2);
+
+        //  Left Movement Textures
+            EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", area1);
+            EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", area2);
+
+        // Jumping Up Textures arers
+            sf::IntRect jumpArea1(41 , 242 , 131 , 137) ;
+            sf::IntRect jumpArea2(230, 260 , 140  , 121) ; 
+
+            EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", jumpArea1);
+            EnemySpriteJumpingUpTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", jumpArea2);
+
+        // Falling Down Textures
+            EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", jumpArea1);
+            EnemySpriteFallingDownTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", jumpArea2);
+
+
+        //// Default on Land / Rest Texture 
+            sf::IntRect areaLand(49,  31 ,97 , 160) ;
+            DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , areaLand) ;
+
+
+        // Flying Texture set
+            sf::IntRect flyarea1(216 , 22 , 167 , 166) ; 
+            sf::IntRect flyarea2(430 , 23 , 143 , 156)  ;
+    
+            FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , flyarea1) ; 
+            FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , flyarea2) ;
+
+
+        /////////////////////////////////////////////
+        ///// Now Setting the Properties of the Enemy
+        setPos(x , y) ;
+        setVx(210) ;
+        setVy(210) ;
+        originalSpeed = 210;
+        setCopyVx(210) ;
+        setCopyVy(210) ;
+        }
+        else if(index == 2)
+        {
+            sf::Texture EnemyTex ; 
+            sf::IntRect area(50 , 30 , 97 ,162) ;
+            if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , area))
+            {
+            std::cout << "Error in Loading the FlyingFoogaRed\n" ; 
+            exit(0) ; 
+            }
+            setEnemyTexture(EnemyTex) ;
+            EnemySprite.setScale(0.3 , 0.3) ;
+            setEnemyHitBoxSprite() ;
+
+            ////////////////////////////////////////
+            ///// Loading Different Animation texture in the arrays 
+            TotalAnimationofRightMovement = 2;
+            TotalAnimationofleftMovement = 2;
+            TotalAnimationofJump = 2;
+            TotalAnimationofFalling = 2;
+            TotalAnimationofFlying = 2 ;
+
+            EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
+            EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
+            EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
+            EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
+            FlyingTexture = new sf::Texture[TotalAnimationofFlying];
+
+
+            // Right Movement Textures _ areas
+            sf::IntRect area1(18 , 440 , 160 ,133) ;
+            sf::IntRect area2(215 , 436 , 166 , 126) ;
+        
+
+            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , area1);
+            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , area2);
+
+        //  Left Movement Textures
+            EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", area1);
+            EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", area2);
+
+        // Jumping Up Textures arers
+            sf::IntRect jumpArea1(41 , 242 , 131 , 137) ;
+            sf::IntRect jumpArea2(230, 260 , 140  , 121) ; 
+
+            EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", jumpArea1);
+            EnemySpriteJumpingUpTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", jumpArea2);
+
+        // Falling Down Textures
+            EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", jumpArea1);
+            EnemySpriteFallingDownTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", jumpArea2);
+
+
+        //// Default on Land / Rest Texture 
+            sf::IntRect areaLand(49,  31 ,97 , 160) ;
+            DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , areaLand) ;
+
+
+        // Flying Texture set
+            sf::IntRect flyarea1(216 , 22 , 167 , 166) ; 
+            sf::IntRect flyarea2(430 , 23 , 143 , 156)  ;
+    
+            FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , flyarea1) ; 
+            FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , flyarea2) ;
+
+
+        /////////////////////////////////////////////
+        ///// Now Setting the Properties of the Enemy
+        setPos(x , y) ;
+        setVx(220) ;
+        setVy(220) ;
+        originalSpeed = 220;
+        setCopyVx(220) ;
+        setCopyVy(220) ;
+        }
+        else // default case 
+        {
         sf::Texture EnemyTex ; 
         sf::IntRect area(50 , 30 , 97 ,162) ;
-        if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , area))
+        if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , area))
         {
             std::cout << "Error in Loading the FlyingFoogaRed\n" ; 
             exit(0) ; 
@@ -759,6 +962,7 @@ public :
         // Right Movement Textures _ areas
         sf::IntRect area1(18 , 440 , 160 ,133) ;
         sf::IntRect area2(215 , 436 , 166 , 126) ;
+        
 
         EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , area1);
         EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , area2);
@@ -801,6 +1005,7 @@ public :
         originalSpeed = 200;
         setCopyVx(200) ;
         setCopyVy(200) ;
+        }
     }
 
     ///////////////////////////////////////////////////////////////
@@ -842,7 +1047,7 @@ public :
 
         ///////////////////////////////////////////////////////////
         /////// PHASE 2 areil
-.
+
         if(isInAeialMode)
         {
             UpdateX(dt) ;
@@ -1032,9 +1237,113 @@ public :
     }
 
 
-    virtual  void CreateEnemy(float x , float y) 
+    virtual  void CreateEnemy(float x , float y , int index) override  
     {
-        sf::Texture EnemyTex ; 
+        if(index == 1 || index == 2)
+        {
+            sf::Texture EnemyTex ; 
+        sf::IntRect area(9 , 41 , 122 ,122) ;
+        if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , area))
+        {
+            std::cout << "Error in Loading the TornadoRed Texture\n" ; 
+            exit(0) ; 
+        }
+        setEnemyTexture(EnemyTex) ;
+        EnemySprite.setScale(0.3 , 0.3) ;
+        setEnemyHitBoxSprite() ;
+
+
+
+
+        ////////////////////////////////////////
+        ///// Loading Different Animation texture in the arrays 
+        TotalAnimationofRightMovement = 3 ;
+        TotalAnimationofleftMovement = 3 ;
+        TotalAnimationofJump = 1 ;
+        TotalAnimationofFalling = 1 ;
+        TotalAnimationofFlying = 8 ;
+        TotalAnimationofKnifeThrowingTexture = 2 ; 
+
+
+        EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
+        EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
+        EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
+        EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
+        FlyingTexture = new sf::Texture[TotalAnimationofFlying];
+        EnemyKnifeThrowingTexture = new sf::Texture[TotalAnimationofKnifeThrowingTexture] ; 
+
+
+        // Right Movement Textures _ areas
+
+        EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/TornadoBlue_01.png");
+        EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/TornadoBlue_02.png");
+        EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/TornadoBlue_03.png");
+
+        //  Left Movement Textures
+        sf::IntRect area1(146 , 36 , 122 , 121) ;
+        sf::IntRect area2(283 , 36 , 122 , 122) ;
+        sf::IntRect area3(428 , 36 , 122 , 122) ;
+
+        EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", area1);
+        EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", area2);
+        EnemySpriteLeftMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", area3);
+
+        // Jumping Up Textures arers
+        sf::IntRect jumpArea1(14 , 205 , 122 , 122) ;
+
+        EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", jumpArea1);
+
+        // Falling Down Textures
+        sf::IntRect FallArea1(8 ,  541 , 122 , 122) ;
+        EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", FallArea1);
+
+
+        //// Default on Land / Rest Texture 
+        sf::IntRect areaLand(9 , 41 , 122 ,122)  ;
+        DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , areaLand) ;
+
+
+        // Flying Texture set
+        sf::IntRect flyarea1(8 , 1045 , 122 , 122) ; 
+        sf::IntRect flyarea2(150 , 1048 , 122 , 122)  ;
+        sf::IntRect flyarea3(288 , 1044 , 122 , 122)  ;
+        sf::IntRect flyarea4(423 , 1042 , 122 , 122)  ;
+        sf::IntRect flyarea5(552 , 1047 , 122 , 122)  ;
+        sf::IntRect flyarea6(700 , 1058 , 122 , 122)  ;
+        sf::IntRect flyarea7(856 , 1048 , 122 , 122)  ;
+        sf::IntRect flyarea8(980 , 1041 , 122 , 122)  ;
+
+    
+        FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea1) ; 
+        FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea2) ; 
+        FlyingTexture[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea3) ; 
+        FlyingTexture[3].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea4) ; 
+        FlyingTexture[4].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea5) ; 
+        FlyingTexture[5].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea6) ; 
+        FlyingTexture[6].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea7) ; 
+        FlyingTexture[7].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea8) ; 
+
+
+        EnemyKnifeThrowingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , {30 , 882  , 110 , 111}); 
+        EnemyKnifeThrowingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , {146 , 887 , 116 , 111}) ; 
+
+    
+        sf::IntRect knifearea =  {496,  891 , 66 , 27}  ; 
+        KnifeTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , knifearea) ;  
+        Knife->setTexture(KnifeTex) ;
+        Knife->setActive(false) ;
+
+        /////////////////////////////////////////////
+        ///// Now Setting the Properties of the Enemy
+        setPos(x , y) ;
+        setVx(200) ;
+        setVy(200) ;
+        setCopyVx(200) ;
+        setCopyVy(200) ;
+        }
+        else // DEAFULT RED
+        {
+            sf::Texture EnemyTex ; 
         sf::IntRect area(9 , 41 , 122 ,122) ;
         if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , area))
         {
@@ -1133,6 +1442,7 @@ public :
         setVy(200) ;
         setCopyVx(200) ;
         setCopyVy(200) ;
+        }
     }
 
     void ThrowKnife()
@@ -1484,7 +1794,7 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
     return onLand;
 }
 
-    virtual void CreateEnemy(float x, float y) override
+    virtual void CreateEnemy(float x, float y , int index) override
     {
         if (!MinionSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Mogera.png"))
         {
@@ -1849,7 +2159,7 @@ public :
     /////////////////////////////////
     /////////////////////////////////
 
-    virtual void CreateEnemy(float x , float y)  override ;
+    virtual void CreateEnemy(float x , float y , int index)  override ;
     virtual void update(float dt, Block* B, const int BLOCKSIZE) override  ;
     virtual void draw(sf::RenderWindow &mywindow, bool debug)  override;
     virtual int getScore()
@@ -1961,7 +2271,7 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
     return onLand;
 }
 
-    virtual void CreateEnemy(float x, float y) override
+    virtual void CreateEnemy(float x, float y , int index) override
     {
         if (!MinionSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Gamakichi.png"))
         {
@@ -2203,7 +2513,7 @@ public :
     /////////////////////////////////
     /////////////////////////////////
 
-    virtual void CreateEnemy(float x, float y)
+    virtual void CreateEnemy(float x, float y , int index) override
     {
         if(!GamakichiSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Gamakichi.png"))
         {
@@ -2287,7 +2597,7 @@ public :
         {
             if (totalCountOfBomber < totalCountOfBombersBossCanSpawnAtaTime)
             {
-                bombers[totalCountOfBomber].CreateEnemy(x + (rand() % 300),  y );
+                bombers[totalCountOfBomber].CreateEnemy(x + (rand() % 300),  y , 0);
                 bombers[totalCountOfBomber].timeToReverseTheGravity.restart() ; // i saad yes saad did this so they can fly else every spawned will go down since timers is up when all are created  at  time 
                 totalCountOfBomber++;
             }
