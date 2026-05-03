@@ -31,6 +31,8 @@ private:
 	/////////////////////////////////
 	// For MainMenu LeaderBoard Image
 	sf::Texture leaderBoardButtonTex;
+	sf::Texture bg_tex;
+	sf::Sprite bg_sprite;
 
 public:
 	GameUnit() : isGameActive(false), levelMenu(false), loginMenu(false), levelManager(&leaderboardObj)
@@ -39,9 +41,12 @@ public:
 		window.setFramerateLimit(60);
 		fontHeader.loadFromFile("Resources/SnowBrosAssets/Fonts/header-font.ttf");
 		fontNormal.loadFromFile("Resources/SnowBrosAssets/Fonts/normal-font.ttf");
-		leaderBoardButtonTex.loadFromFile("Resources/SnowBrosAssets/Images/LeaderBoardButtonImage.jpg") ;
+		leaderBoardButtonTex.loadFromFile("Resources/SnowBrosAssets/Images/trophy.png") ;
 		loginPlayer[0].setFonts(fontHeader, fontNormal);
 		loginPlayer[1].setFonts(fontHeader, fontNormal);
+
+		if (bg_tex.loadFromFile("Resources/Levels/Backgrounds/MainMenu.jpeg"))
+			bg_sprite.setTexture(bg_tex);
 
 		loggedIn[0] = false;
 		loggedIn[1] = false;

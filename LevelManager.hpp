@@ -65,7 +65,7 @@ private:
 	void drawShop(Player& player);
 	int drawPauseMenu(Player& p1, Player& p2, bool singlePlayer);
 	bool runLevel(int levelIndex, Player& p1, Player& p2);
-	Enemy* createEnemy(const std::string& type, float x, float y);
+	Enemy* createEnemy(const std::string& type, float x, float y, int levelIndex);
 	void savePlayerProgress(Player& p1, Player& p2, int levelIndex);
 	void loadPlayerProgress(const std::string& username, Player& player, bool isPlayer1);
 	void applyPersistentEffects(Player& player, const PlayerSaveData& saveData);

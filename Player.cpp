@@ -34,7 +34,7 @@ Player::Player(int index, PlayerStats stats) : stats(stats), index(index), veloc
     }
 
     //applyBalloonMode(10.f);
-    gems = 1000;
+    //gems = 1000;
 
     loadSpritesheet(playerTexture, &idlePlayerFrames, 1, walkPlayerFrames, 3, jumpPlayerFrames, 6, &shootPlayerFrames, 1, playerHitbox);
 }

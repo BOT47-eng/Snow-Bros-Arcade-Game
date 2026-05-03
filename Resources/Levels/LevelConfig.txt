@@ -2,8 +2,8 @@
 1
 0
 2
-FlyingFoogaFoog 200 200
-FlyingFoogaFoog 400 250
+Botom 200 200
+Botom 400 250
 4
 0 560 600 40
 400 440 190 30
@@ -23,7 +23,7 @@ Botom 450 150
 3
 0
 2
-FlyingFoogaFoog 200 200
+Tornado 200 200
 Botom 400 200
 4
 0 560 600 40
@@ -55,11 +55,8 @@ Mogera 400 180
 40 145 230 30
 6
 0
-5
-FlyingFoogaFoog 120 200
-FlyingFoogaFoog 250 200
-FlyingFoogaFoog 380 200
-Botom 200 100
+2
+Tornado 120 200
 Botom 400 100
 6
 0 560 600 40
@@ -70,10 +67,8 @@ Botom 400 100
 150 200 300 30
 7
 0
-5
-FlyingFoogaFoog 120 200
-FlyingFoogaFoog 250 200
-FlyingFoogaFoog 380 200
+3
+Tornado 120 200
 Botom 200 100
 Botom 400 100
 4
@@ -99,8 +94,8 @@ Botom 400 100
 0
 5
 FlyingFoogaFoog 120 200
-FlyingFoogaFoog 250 200
-FlyingFoogaFoog 380 200
+Tornado 250 200
+Tornado 380 200
 Botom 200 100
 Botom 400 100
 4
@@ -110,16 +105,14 @@ Botom 400 100
 100 200 400 30
 10
 1
-5
-FlyingFoogaFoog 120 200
-FlyingFoogaFoog 250 200
-FlyingFoogaFoog 380 200
-Botom 200 100
-Botom 400 100
-6
+1
+Gamakichi 150 400
+8
 0 560 600 40
-50 440 200 30
-350 440 200 30
-150 320 300 30
-70 200 140 30
-390 200 140 30
+40 120 80 30
+480 120 80 30
+40 320 100 30
+460 320 100 30
+175 220 250 30
+40 450 100 30
+460 450 100 30

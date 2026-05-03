@@ -23,22 +23,22 @@ class Enemy
 protected:
     ///////////////////////
     //// Basic Properties
-    int health ; 
+    int health;
     int healthOriginal;
     float x;
-    float y; 
-    float Vx ;
-    float Vy ;
+    float y;
+    float Vx;
+    float Vy;
     bool isBoss;
     bool isFlying;
 
-    float CopyVx ;  // To use incase the actual value is 0
-    float CopyVy ; 
+    float CopyVx;  // To use incase the actual value is 0
+    float CopyVy;
 
     ////////////////////////////////
     ///// Different Sprite Animation 
     sf::Texture snowballTexture;
-    sf::Texture EnemySpriteTexture ; 
+    sf::Texture EnemySpriteTexture;
     sf::Texture botomSpriteTexture;
     sf::Texture flyingFroogaSpriteTexture;
     HitboxSprite EnemySprite;
@@ -46,8 +46,8 @@ protected:
     ///////////////////////////
     ///// All Other Necessary Functions for an Enemy Class 
 
-    void UpateAnimationPerFrameofEnemy_X() ;
-    void UpateAnimationPerFrameofEnemy_Y() ;
+    void UpateAnimationPerFrameofEnemy_X();
+    void UpateAnimationPerFrameofEnemy_Y();
 
     float snowAccumulated;
     bool isFullyCoated;
@@ -73,33 +73,33 @@ protected:
 public:
     /////////////////////////////
     //////// Setters 
-    void sethealth(int  h) ; 
-    void setPos(float x  , float y) ;
-    void setPos(sf::Vector2f v) ; 
-    void setVx(float d) ;
-    void setVy(float d) ; 
-    void setCopyVx(float d) ;
-    void setCopyVy(float d) ; 
-    void setEnemyTexture(const sf::Texture& T) ; 
-    void setEnemyHitBoxSprite() ; 
-    void setEnemySpriteAnimationsTexture_X(sf::Texture *t , const int SIZE) ; 
-    void setEnemySpriteAnimationsTexture_Y(sf::Texture *t , const int SIZE) ; 
-    void setEnemySpriteAnimation_X(sf::Sprite *S  , const int SIZE) ;
-    void setEnemySpriteAnimation_Y(sf::Sprite *S  , const int SIZE) ;
-    void setTotalAnimationNumber_X(int n) ;
-    void setTotalAnimationNumber_Y(int n) ;
+    void sethealth(int  h);
+    void setPos(float x, float y);
+    void setPos(sf::Vector2f v);
+    void setVx(float d);
+    void setVy(float d);
+    void setCopyVx(float d);
+    void setCopyVy(float d);
+    void setEnemyTexture(const sf::Texture& T);
+    void setEnemyHitBoxSprite();
+    void setEnemySpriteAnimationsTexture_X(sf::Texture* t, const int SIZE);
+    void setEnemySpriteAnimationsTexture_Y(sf::Texture* t, const int SIZE);
+    void setEnemySpriteAnimation_X(sf::Sprite* S, const int SIZE);
+    void setEnemySpriteAnimation_Y(sf::Sprite* S, const int SIZE);
+    void setTotalAnimationNumber_X(int n);
+    void setTotalAnimationNumber_Y(int n);
 
 
     ////////////////////////////
     ////// Getters 
-    int getHealth() const {return health;}
-    float getPosX() const {return x;}
-    float getPosY() const {return y;}
-    sf::Vector2f getPos() const {return {x , y};}
-    float getVx() const {return Vx;}
-    float getVy() const {return Vy;}
-    HitboxSprite getEnemySprite() const {return EnemySprite ; }
-    FloatRect getEnemyHitBox() const {return EnemySprite.getGlobalHitbox(); }
+    int getHealth() const { return health; }
+    float getPosX() const { return x; }
+    float getPosY() const { return y; }
+    sf::Vector2f getPos() const { return { x , y }; }
+    float getVx() const { return Vx; }
+    float getVy() const { return Vy; }
+    HitboxSprite getEnemySprite() const { return EnemySprite; }
+    FloatRect getEnemyHitBox() const { return EnemySprite.getGlobalHitbox(); }
 
     float getSnowAccumulated() const { return snowAccumulated; }
     bool getIsFullyCoated() const { return isFullyCoated; }
@@ -152,11 +152,11 @@ public:
 
     //////////////////////
     //// Main Functions for Every Enemy 
-    virtual void CreateEnemy(float x , float y , int index) = 0 ;
+    virtual void CreateEnemy(float x, float y, int index) = 0;
     virtual void update(const float dt, Block* B, const int BLOCKSIZE) = 0;
-    virtual void draw(sf::RenderWindow &mywindow, bool debug) = 0 ;
+    virtual void draw(sf::RenderWindow& mywindow, bool debug) = 0;
     virtual int getScore() = 0;
-}; 
+};
 //#endif
 
 ///////////////////////////////////////////////////////////////
@@ -168,37 +168,37 @@ public:
 
 class Botom : public Enemy
 {
-protected : 
+protected:
 
-    bool isLeft ; // For whenever change in x is negative 
+    bool isLeft; // For whenever change in x is negative 
     bool isRight; // For whenever change in x is positive 
-    bool isJumping ; // For whenever change in y is negative hence true 
-    bool isFallingDown ; // For whenever change in y is postive hence true 
-    float gravityfactor ;
-    sf::Clock timeToChangeDirection ; 
-    sf::Clock timeToJump ; 
-    sf::Clock  JumpInterval ; // To Keep track of the Jump time and bring it back to land
+    bool isJumping; // For whenever change in y is negative hence true 
+    bool isFallingDown; // For whenever change in y is postive hence true 
+    float gravityfactor;
+    sf::Clock timeToChangeDirection;
+    sf::Clock timeToJump;
+    sf::Clock  JumpInterval; // To Keep track of the Jump time and bring it back to land
 
     //////////////////////////////
     ///// Adding the Different animation sprite 
-    sf::Texture *EnemySpriteFallingDownTexture ; 
-    sf::Texture *EnemySpriteRightMovementTextures ;
-    sf::Texture *EnemySpriteLeftMovementTextures ;
-    sf::Texture *EnemySpriteJumpingUpTexture ; 
+    sf::Texture* EnemySpriteFallingDownTexture;
+    sf::Texture* EnemySpriteRightMovementTextures;
+    sf::Texture* EnemySpriteLeftMovementTextures;
+    sf::Texture* EnemySpriteJumpingUpTexture;
 
 
-    int TotalAnimationofJump ;
-    int TotalAnimationofFalling ;
-    int TotalAnimationofRightMovement ;
-    int TotalAnimationofleftMovement ; 
+    int TotalAnimationofJump;
+    int TotalAnimationofFalling;
+    int TotalAnimationofRightMovement;
+    int TotalAnimationofleftMovement;
 
-    int currentIndexofJumpAnimation ;
-    int currentIndexofFallAnimation ;
-    int currentIndexofRightAnimation ;
-    int currentIndexofLeftAnimation ;
+    int currentIndexofJumpAnimation;
+    int currentIndexofFallAnimation;
+    int currentIndexofRightAnimation;
+    int currentIndexofLeftAnimation;
 
 
-    sf::Clock animationClock; 
+    sf::Clock animationClock;
     float animationSpeed; // How long each frame stays on screen (in seconds)
 
 
@@ -207,47 +207,47 @@ public:
     ///////////////////////
     /////// Constructors
 
-    Botom() : isLeft(false) , isRight(true) , isJumping(false) , isFallingDown(false) , gravityfactor(980)  , Enemy()
+    Botom() : isLeft(false), isRight(true), isJumping(false), isFallingDown(false), gravityfactor(980), Enemy()
     {
-        timeToChangeDirection.restart() ; 
-        timeToJump.restart() ; 
-        JumpInterval.restart() ;
-        EnemySpriteFallingDownTexture = nullptr ; 
-        EnemySpriteRightMovementTextures = nullptr ;
-        EnemySpriteLeftMovementTextures = nullptr ;
-        EnemySpriteJumpingUpTexture = nullptr ; 
-    
-        TotalAnimationofFalling =  0 ;
-        TotalAnimationofJump = 0 ; 
-        TotalAnimationofleftMovement = 0 ;
-        TotalAnimationofRightMovement = 0 ;
+        timeToChangeDirection.restart();
+        timeToJump.restart();
+        JumpInterval.restart();
+        EnemySpriteFallingDownTexture = nullptr;
+        EnemySpriteRightMovementTextures = nullptr;
+        EnemySpriteLeftMovementTextures = nullptr;
+        EnemySpriteJumpingUpTexture = nullptr;
 
-        currentIndexofFallAnimation = 0 ;
-        currentIndexofJumpAnimation = 0 ;
-        currentIndexofLeftAnimation = 0 ;
-        currentIndexofRightAnimation = 0 ;
-    
-        animationSpeed = 0.15f ; 
-        animationClock.restart() ; 
+        TotalAnimationofFalling = 0;
+        TotalAnimationofJump = 0;
+        TotalAnimationofleftMovement = 0;
+        TotalAnimationofRightMovement = 0;
+
+        currentIndexofFallAnimation = 0;
+        currentIndexofJumpAnimation = 0;
+        currentIndexofLeftAnimation = 0;
+        currentIndexofRightAnimation = 0;
+
+        animationSpeed = 0.15f;
+        animationClock.restart();
         isBoss = false;
-        isFlying = false ;
-    } 
+        isFlying = false;
+    }
     ///////////////////////////
     //////// Destructors 
     virtual ~Botom()
     {
-        delete [] EnemySpriteFallingDownTexture ;
-        delete [] EnemySpriteJumpingUpTexture ;
-        delete [] EnemySpriteLeftMovementTextures ; 
-        delete [] EnemySpriteRightMovementTextures ; 
+        delete[] EnemySpriteFallingDownTexture;
+        delete[] EnemySpriteJumpingUpTexture;
+        delete[] EnemySpriteLeftMovementTextures;
+        delete[] EnemySpriteRightMovementTextures;
     }
     void UpdateDirection_X() // It is just  a random direction setter 
     {
-        int RandomTimeToChangeDirection = (rand() % (5 - 3 + 1)) + 3 ; // To make the movement feel more natural
-        if(timeToChangeDirection.getElapsedTime().asSeconds() > RandomTimeToChangeDirection)
+        int RandomTimeToChangeDirection = (rand() % (5 - 3 + 1)) + 3; // To make the movement feel more natural
+        if (timeToChangeDirection.getElapsedTime().asSeconds() > RandomTimeToChangeDirection)
         {
-            setVx(-getVx()) ; 
-            timeToChangeDirection.restart() ; 
+            setVx(-getVx());
+            timeToChangeDirection.restart();
         }
     }
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -256,75 +256,75 @@ public:
     // So The Animation of sprites starts from the beginning not the end
     void ResetCurrentIndexofFallAnimation()
     {
-        currentIndexofFallAnimation = 0 ;
+        currentIndexofFallAnimation = 0;
     }
 
     void ResetCurrentIndexofJumpAnimation()
     {
-        currentIndexofJumpAnimation =  0 ; 
+        currentIndexofJumpAnimation = 0;
     }
     void ResetCurrentIndexofLeftAnimation()
     {
-        currentIndexofLeftAnimation = 0 ;
+        currentIndexofLeftAnimation = 0;
     }
     void ResetCurrentIndexofRightAnimation()
     {
-        currentIndexofRightAnimation = 0; 
+        currentIndexofRightAnimation = 0;
     }
 
     void UpdateToRightMovementAnimation()
     {
-        EnemySprite.setTexture(EnemySpriteRightMovementTextures[currentIndexofRightAnimation] , true) ;
-        currentIndexofRightAnimation = (currentIndexofRightAnimation + 1) % TotalAnimationofRightMovement ; 
+        EnemySprite.setTexture(EnemySpriteRightMovementTextures[currentIndexofRightAnimation], true);
+        currentIndexofRightAnimation = (currentIndexofRightAnimation + 1) % TotalAnimationofRightMovement;
     }
     void UpdateToLeftMovementAnimation()
     {
-        EnemySprite.setTexture(EnemySpriteLeftMovementTextures[currentIndexofLeftAnimation] , true) ;
-        currentIndexofLeftAnimation = (currentIndexofLeftAnimation + 1) % TotalAnimationofleftMovement ; 
+        EnemySprite.setTexture(EnemySpriteLeftMovementTextures[currentIndexofLeftAnimation], true);
+        currentIndexofLeftAnimation = (currentIndexofLeftAnimation + 1) % TotalAnimationofleftMovement;
     }
     void UpdateToJumpMovementAnimation()
     {
-        EnemySprite.setTexture(EnemySpriteJumpingUpTexture[currentIndexofJumpAnimation] , true) ;
-        currentIndexofJumpAnimation = (currentIndexofJumpAnimation + 1) % TotalAnimationofJump ; 
+        EnemySprite.setTexture(EnemySpriteJumpingUpTexture[currentIndexofJumpAnimation], true);
+        currentIndexofJumpAnimation = (currentIndexofJumpAnimation + 1) % TotalAnimationofJump;
     }
     void UpdateToFallingMovementAnimation()
     {
-        EnemySprite.setTexture(EnemySpriteFallingDownTexture[currentIndexofFallAnimation] ,true) ;
-        currentIndexofFallAnimation = (currentIndexofFallAnimation) % TotalAnimationofFalling ; 
+        EnemySprite.setTexture(EnemySpriteFallingDownTexture[currentIndexofFallAnimation], true);
+        currentIndexofFallAnimation = (currentIndexofFallAnimation) % TotalAnimationofFalling;
     }
 
 
-    virtual void CreateEnemy(float x , float y , int index) override
+    virtual void CreateEnemy(float x, float y, int index) override
     {
         ///////////////////////////////////////
         ////// Creating the Enemy first 
         sf::Texture EnemyTexture;
-        sf::IntRect area(2 , 934 , 88 , 93) ; // Default idle/start state
-        std::string imagePath = "Resources/SnowBrosAssets/Images/Botom_Pink.png" ; // default ;
-        if(index == 0)
+        sf::IntRect area(2, 934, 88, 93); // Default idle/start state
+        std::string imagePath = "Resources/SnowBrosAssets/Images/Botom_Pink.png"; // default ;
+        if (index == 0)
         {
-             imagePath = "Resources/SnowBrosAssets/Images/Botom_Pink.png";
+            imagePath = "Resources/SnowBrosAssets/Images/Botom_Pink.png";
         }
-        else if(index == 1)
+        else if (index == 1)
         {
-             imagePath = "Resources/SnowBrosAssets/Images/Botom_Orange.png";
+            imagePath = "Resources/SnowBrosAssets/Images/Botom_Orange.png";
         }
-        else if(index == 2)
+        else if (index == 2)
         {
             imagePath = "Resources/SnowBrosAssets/Images/Botom_Blue.png";
         }
-    
-    
-        if(!EnemyTexture.loadFromFile(imagePath , area))
+
+
+        if (!EnemyTexture.loadFromFile(imagePath, area))
         {
-            std::cout << "Error in Loading the file\n" ;
-            exit(0) ;
+            std::cout << "Error in Loading the file\n";
+            exit(0);
         }
-        setEnemyTexture(EnemyTexture) ; // Default Standing 
-        setEnemyHitBoxSprite() ; 
+        setEnemyTexture(EnemyTexture); // Default Standing 
+        setEnemyHitBoxSprite();
         ////////////////////////////////////////
         ///// SCALING THE SPRITE
-        EnemySprite.setScale(0.5f, 0.5f); 
+        EnemySprite.setScale(0.5f, 0.5f);
 
         ////////////////////////////////////////
         ///// Loading Different Animation texture in the arrays 
@@ -341,13 +341,13 @@ public:
 
 
         // --- Right Movement Textures ---
-        if(index == 1)
+        if (index == 1)
         {
-        EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/BotomOrangeRight1.png");
-        EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/BotomOrangeRight2.png");
-        EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/BotomOrangeRight3.png");
+            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/BotomOrangeRight1.png");
+            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/BotomOrangeRight2.png");
+            EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/BotomOrangeRight3.png");
         }
-        else if(index == 2)
+        else if (index == 2)
         {
             EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/BotomBlueRight1.png");
             EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/BotomBlueRight2.png");
@@ -355,9 +355,9 @@ public:
         }
         else
         {
-        EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight1.png");
-        EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight2.png");
-        EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight3.png");
+            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight1.png");
+            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight2.png");
+            EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/BotomPinkRight3.png");
         }
 
 
@@ -372,41 +372,41 @@ public:
         // --- Falling Down Textures ---
         EnemySpriteFallingDownTexture[0].loadFromFile(imagePath, sf::IntRect(5, 597, 84, 91));
 
-    
+
         /////////////////////////////////////////////
         ///// Now Setting the Properties of the Enemy
-        if(index == 1)
+        if (index == 1)
         {
             sethealth(2);
             healthOriginal = 2;
-            setPos(x , y) ;
-            setVx(220) ;  /// TEST TO CHANGE LATER
-            setVy(220) ;  // TEST TO CHANGE LATER 
+            setPos(x, y);
+            setVx(220);  /// TEST TO CHANGE LATER
+            setVy(220);  // TEST TO CHANGE LATER 
             originalSpeed = 220;
-            setCopyVx(220) ;
-            setCopyVy(220) ;
+            setCopyVx(220);
+            setCopyVy(220);
         }
-        else if(index ==2)
+        else if (index == 2)
         {
             sethealth(2);
             healthOriginal = 2;
-            setPos(x , y) ;
-            setVx(230) ;  /// TEST TO CHANGE LATER
-            setVy(230) ;  // TEST TO CHANGE LATER 
+            setPos(x, y);
+            setVx(230);  /// TEST TO CHANGE LATER
+            setVy(230);  // TEST TO CHANGE LATER 
             originalSpeed = 230;
-            setCopyVx(230) ;
-            setCopyVy(230) ;
+            setCopyVx(230);
+            setCopyVy(230);
         }
-        else 
+        else
         {
             sethealth(2);
             healthOriginal = 2;
-            setPos(x , y) ;
-            setVx(200) ;  /// TEST TO CHANGE LATER
-            setVy(200) ;  // TEST TO CHANGE LATER 
+            setPos(x, y);
+            setVx(200);  /// TEST TO CHANGE LATER
+            setVy(200);  // TEST TO CHANGE LATER 
             originalSpeed = 200;
-            setCopyVx(200) ;
-            setCopyVy(200) ;
+            setCopyVx(200);
+            setCopyVy(200);
         }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -414,11 +414,11 @@ public:
 
     void UpdateX(float dt)
     {
-        x += Vx * dt ; 
+        x += Vx * dt;
     }
     void UpdateY(float dt)
     {
-        y += Vy * dt ;
+        y += Vy * dt;
     }
     bool CheckCollionsWithScreenX(const float width, const float height)
     {
@@ -433,7 +433,7 @@ public:
         }
         else if (x - halfW < 0)
         {
-            x = halfW;  
+            x = halfW;
             setVx(-getVx());
             flag = true;
         }
@@ -455,7 +455,7 @@ public:
         }
         else if (y - halfH < 0)
         {
-            y = halfH;  
+            y = halfH;
             setVy(abs(getVy()));
             flag = true;
         }
@@ -499,7 +499,7 @@ public:
                         y = blockBox.top - enemyBox.height / 2.0f;
                         setVy(0);
                         OnLand = true;
-                        
+
                     }
                     else
                     {
@@ -525,14 +525,14 @@ public:
 
     void EnemyWantsToJumporNot()
     {
-        if(timeToJump.getElapsedTime().asSeconds() > 5 && Vx != 0)
+        if (timeToJump.getElapsedTime().asSeconds() > 5 && Vx != 0)
         {
-            if(rand() % 2)
+            if (rand() % 2)
             {
-                isJumping = true ;
-                JumpInterval.restart() ;
+                isJumping = true;
+                JumpInterval.restart();
             }
-            timeToJump.restart() ; 
+            timeToJump.restart();
         }
     }
 
@@ -540,80 +540,80 @@ public:
     {
         //////////////////////////////////////////
         /// update the Position  of the sprite 
-        UpdateX(dt) ; // it will always be moving in x-direction
+        UpdateX(dt); // it will always be moving in x-direction
         UpdateY(dt);
 
 
-        EnemySprite.setPosition(x , y) ;
+        EnemySprite.setPosition(x, y);
 
-        UpdateDirection_X() ;
-        if(getVx() > 0)
+        UpdateDirection_X();
+        if (getVx() > 0)
         {
-            isRight = true ; 
-            isLeft = false ; 
-        }
-        else 
-        {
-            isLeft = true ;
-            isRight = false ;
-        }
-
-        CheckCollionsWithScreenX(600  , 600) ; 
-        CheckCollionsWithScreenY(600  , 600) ; 
-        /// If the enemy Jumps Ignore  the platform collosions and go up till the box it is currently colliding with is not below it.
-        if(!isJumping) 
-        {
-            bool CheckCollosionAndAlsoTellIfEnemyisOnLand = CheckCollosionsWithPlatforms(B , BLOCKSIZE);
-            if(!CheckCollosionAndAlsoTellIfEnemyisOnLand)
-            {
-                // Add the gravity factor because if it was on land then Vy is 0 
-                isFallingDown = true ;
-                setVy(gravityfactor) ; 
-                }
-            else
-            {
-                // Else enemy is on land set it's Vx 
-                isFallingDown = false ;
-                setVx(getVx()) ; 
-                setVy(0) ;
-            }
-        }
-        EnemyWantsToJumporNot() ; 
-
-        if(isJumping && float(JumpInterval.getElapsedTime().asSeconds()) < 0.3)
-        {
-            const int JumpFactorToSpeed = 1000 ;
-            setVy(-getVy() - JumpFactorToSpeed) ;
+            isRight = true;
+            isLeft = false;
         }
         else
         {
-            isJumping = false ; 
-            setVy(gravityfactor) ; 
+            isLeft = true;
+            isRight = false;
+        }
+
+        CheckCollionsWithScreenX(600, 600);
+        CheckCollionsWithScreenY(600, 600);
+        /// If the enemy Jumps Ignore  the platform collosions and go up till the box it is currently colliding with is not below it.
+        if (!isJumping)
+        {
+            bool CheckCollosionAndAlsoTellIfEnemyisOnLand = CheckCollosionsWithPlatforms(B, BLOCKSIZE);
+            if (!CheckCollosionAndAlsoTellIfEnemyisOnLand)
+            {
+                // Add the gravity factor because if it was on land then Vy is 0 
+                isFallingDown = true;
+                setVy(gravityfactor);
+            }
+            else
+            {
+                // Else enemy is on land set it's Vx 
+                isFallingDown = false;
+                setVx(getVx());
+                setVy(0);
+            }
+        }
+        EnemyWantsToJumporNot();
+
+        if (isJumping && float(JumpInterval.getElapsedTime().asSeconds()) < 0.3)
+        {
+            const int JumpFactorToSpeed = 1000;
+            setVy(-getVy() - JumpFactorToSpeed);
+        }
+        else
+        {
+            isJumping = false;
+            setVy(gravityfactor);
         }
 
 
         ///////////////////////////////////////////////////////////////////////
         ////////////////////  Updating all the Animations of Enemy in Specific movements
-    
-        if(float(animationClock.getElapsedTime().asSeconds()) >= animationSpeed)
+
+        if (float(animationClock.getElapsedTime().asSeconds()) >= animationSpeed)
         {
-            if(isLeft)
+            if (isLeft)
             {
-                UpdateToLeftMovementAnimation() ; 
+                UpdateToLeftMovementAnimation();
             }
             else if (isRight)
             {
-                UpdateToRightMovementAnimation() ;
-            }   
-            else if(isJumping)
-            {
-                UpdateToJumpMovementAnimation() ;
+                UpdateToRightMovementAnimation();
             }
-            else if(isFallingDown)
+            else if (isJumping)
             {
-                UpdateToFallingMovementAnimation() ; 
+                UpdateToJumpMovementAnimation();
             }
-            animationClock.restart() ;
+            else if (isFallingDown)
+            {
+                UpdateToFallingMovementAnimation();
+            }
+            animationClock.restart();
         }
 
 
@@ -621,10 +621,10 @@ public:
         //// If User Presses the F1/F2 button then we draw the hitbox 
         /*checkforShowHitBoxDetection(B , BLOCKSIZE) ; */
     }
-    virtual void draw(sf::RenderWindow &mywindow, bool debug)  override
+    virtual void draw(sf::RenderWindow& mywindow, bool debug)  override
     {
         /// ONLY DRAW DON'T CLEAR OR DISPLAY
-        mywindow.draw(Enemy::getEnemySprite()) ; 
+        mywindow.draw(Enemy::getEnemySprite());
 
         if (debug)
         {
@@ -636,89 +636,89 @@ public:
     {
         return 100 + rand() % 401;
     }
-}; 
+};
 //#endif
 //
 //
 //#ifndef FLYINGFOOGAFOOG
 //#define FLYINGFOOGAFOOG
 
-class FlyingFoogaFoog : public virtual Botom 
+class FlyingFoogaFoog : public virtual Botom
 {
-protected : 
+protected:
     //////////////////////////
     /////// Brid Properties
-    float isOnRestModeTime ; 
-    sf::Clock CurrentTimeofIsOnRestMode ;
+    float isOnRestModeTime;
+    sf::Clock CurrentTimeofIsOnRestMode;
 
-    float TotalTimeToChangeToRestMode ; 
-    sf::Clock CurrentTimeToChangeToRestMode ; 
+    float TotalTimeToChangeToRestMode;
+    sf::Clock CurrentTimeToChangeToRestMode;
 
     float  Areialtime;
-    sf::Clock CurrentAreialTime ;
+    sf::Clock CurrentAreialTime;
 
 
-    bool ChangedToRestMode ;
-    bool isInAeialMode ;
-    bool isOnRestMode; 
+    bool ChangedToRestMode;
+    bool isInAeialMode;
+    bool isOnRestMode;
 
 
     /////////////////////////
     /// Bird Sprites Texture 
     /// I have my sprite inhereited from botom no need to add extra
-    sf::Texture  DefaultOnLandTexture ; 
-    sf::Texture *FlyingTexture ; 
+    sf::Texture  DefaultOnLandTexture;
+    sf::Texture* FlyingTexture;
 
 
-    int TotalAnimationofFlying ;
-   
+    int TotalAnimationofFlying;
+
     int CurrentIndexofAnimationofFlying;
 
 
-public : 
+public:
     FlyingFoogaFoog() : Botom()
     {
-        isOnRestModeTime = 2.0f ;
-        Areialtime  = 8.0f ;
-        CurrentAreialTime.restart() ;
-        TotalTimeToChangeToRestMode =  5 ; 
-        CurrentTimeToChangeToRestMode.restart() ; 
+        isOnRestModeTime = 2.0f;
+        Areialtime = 8.0f;
+        CurrentAreialTime.restart();
+        TotalTimeToChangeToRestMode = 5;
+        CurrentTimeToChangeToRestMode.restart();
 
-        isInAeialMode = false ;
-        isOnRestMode = false ;
-        ChangedToRestMode = false  ; 
+        isInAeialMode = false;
+        isOnRestMode = false;
+        ChangedToRestMode = false;
 
-        TotalAnimationofFlying  = 0 ;
-        CurrentIndexofAnimationofFlying = 0; 
-        FlyingTexture = nullptr ;
+        TotalAnimationofFlying = 0;
+        CurrentIndexofAnimationofFlying = 0;
+        FlyingTexture = nullptr;
 
         sethealth(2);
         healthOriginal = 2;
         originalSpeed = 200;
         isBoss = false;
     }
-    ~FlyingFoogaFoog() 
+    ~FlyingFoogaFoog()
     {
-        delete [] FlyingTexture ;
+        delete[] FlyingTexture;
     }
 
 
-    void setAreialtime(float f) {Areialtime = f;} 
-    float getAreialtime() const {return Areialtime;} 
+    void setAreialtime(float f) { Areialtime = f; }
+    float getAreialtime() const { return Areialtime; }
 
 
-    protected : 
+protected:
     ///////////////////////////////////////////////////////////////
     ///////// All the animation helpers for FlyingFoog
     void UpdateToRestMovementAnimation()
     {
-        EnemySprite.setTexture(DefaultOnLandTexture) ; 
+        EnemySprite.setTexture(DefaultOnLandTexture);
     }
 
     void UpdateToFlyingAnimation()
     {
-        EnemySprite.setTexture(FlyingTexture[CurrentIndexofAnimationofFlying] , true) ;
-        CurrentIndexofAnimationofFlying = (CurrentIndexofAnimationofFlying + 1) % TotalAnimationofFlying ;
+        EnemySprite.setTexture(FlyingTexture[CurrentIndexofAnimationofFlying], true);
+        CurrentIndexofAnimationofFlying = (CurrentIndexofAnimationofFlying + 1) % TotalAnimationofFlying;
     }
 
     ///////////////////////////////////////////////////////////////
@@ -727,12 +727,12 @@ public :
     ///////// frame, so elapsed time could never reach TotalTimeToChangeToRestMode.
     bool ChangeToRestModeOrNot()
     {
-        if(CurrentTimeToChangeToRestMode.getElapsedTime().asSeconds() >= TotalTimeToChangeToRestMode)
+        if (CurrentTimeToChangeToRestMode.getElapsedTime().asSeconds() >= TotalTimeToChangeToRestMode)
         {
-            CurrentTimeToChangeToRestMode.restart() ; // restart only after threshold reached
-            return (rand() % 2) == 1 ;
+            CurrentTimeToChangeToRestMode.restart(); // restart only after threshold reached
+            return (rand() % 2) == 1;
         }
-        return false ;
+        return false;
     }
 
     bool CheckIfItIsOnLand(Block* b, const int SIZE)
@@ -755,12 +755,12 @@ public :
                     float enemyCenterY = enemyBox.top + enemyBox.height / 2.0f;
                     float blockCenterY = blockBox.top + blockBox.height / 2.0f;
 
-                    if (enemyCenterY < blockCenterY) 
+                    if (enemyCenterY < blockCenterY)
                     {
                         y = blockBox.top - enemyBox.height / 2.0f;
                         setVy(0);
                         onLand = true;
-                        
+
                     }
                     EnemySprite.setPosition(x, y);
                 }
@@ -779,22 +779,22 @@ public :
     }
 
 
-public : 
+public:
 
-    virtual void CreateEnemy(float x , float y , int index) override 
+    virtual void CreateEnemy(float x, float y, int index) override
     {
-        if(index == 1)
+        if (index == 1)
         {
-            sf::Texture EnemyTex ; 
-            sf::IntRect area(50 , 30 , 97 ,162) ;
-            if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , area))
+            sf::Texture EnemyTex;
+            sf::IntRect area(50, 30, 97, 162);
+            if (!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", area))
             {
-            std::cout << "Error in Loading the FlyingFoogaRed\n" ; 
-            exit(0) ; 
+                std::cout << "Error in Loading the FlyingFoogaRed\n";
+                exit(0);
             }
-            setEnemyTexture(EnemyTex) ;
-            EnemySprite.setScale(0.3 , 0.3) ;
-            setEnemyHitBoxSprite() ;
+            setEnemyTexture(EnemyTex);
+            EnemySprite.setScale(0.3, 0.3);
+            setEnemyHitBoxSprite();
 
             ////////////////////////////////////////
             ///// Loading Different Animation texture in the arrays 
@@ -802,7 +802,7 @@ public :
             TotalAnimationofleftMovement = 2;
             TotalAnimationofJump = 2;
             TotalAnimationofFalling = 2;
-            TotalAnimationofFlying = 2 ;
+            TotalAnimationofFlying = 2;
 
             EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
             EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
@@ -812,63 +812,63 @@ public :
 
 
             // Right Movement Textures _ areas
-            sf::IntRect area1(18 , 440 , 160 ,133) ;
-            sf::IntRect area2(215 , 436 , 166 , 126) ;
-        
+            sf::IntRect area1(18, 440, 160, 133);
+            sf::IntRect area2(215, 436, 166, 126);
 
-            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , area1);
-            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , area2);
 
-        //  Left Movement Textures
+            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", area1);
+            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", area2);
+
+            //  Left Movement Textures
             EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", area1);
             EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", area2);
 
-        // Jumping Up Textures arers
-            sf::IntRect jumpArea1(41 , 242 , 131 , 137) ;
-            sf::IntRect jumpArea2(230, 260 , 140  , 121) ; 
+            // Jumping Up Textures arers
+            sf::IntRect jumpArea1(41, 242, 131, 137);
+            sf::IntRect jumpArea2(230, 260, 140, 121);
 
             EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", jumpArea1);
             EnemySpriteJumpingUpTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", jumpArea2);
 
-        // Falling Down Textures
+            // Falling Down Textures
             EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", jumpArea1);
             EnemySpriteFallingDownTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", jumpArea2);
 
 
-        //// Default on Land / Rest Texture 
-            sf::IntRect areaLand(49,  31 ,97 , 160) ;
-            DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , areaLand) ;
+            //// Default on Land / Rest Texture 
+            sf::IntRect areaLand(49, 31, 97, 160);
+            DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", areaLand);
 
 
-        // Flying Texture set
-            sf::IntRect flyarea1(216 , 22 , 167 , 166) ; 
-            sf::IntRect flyarea2(430 , 23 , 143 , 156)  ;
-    
-            FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , flyarea1) ; 
-            FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png" , flyarea2) ;
+            // Flying Texture set
+            sf::IntRect flyarea1(216, 22, 167, 166);
+            sf::IntRect flyarea2(430, 23, 143, 156);
+
+            FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", flyarea1);
+            FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", flyarea2);
 
 
-        /////////////////////////////////////////////
-        ///// Now Setting the Properties of the Enemy
-        setPos(x , y) ;
-        setVx(210) ;
-        setVy(210) ;
-        originalSpeed = 210;
-        setCopyVx(210) ;
-        setCopyVy(210) ;
+            /////////////////////////////////////////////
+            ///// Now Setting the Properties of the Enemy
+            setPos(x, y);
+            setVx(210);
+            setVy(210);
+            originalSpeed = 210;
+            setCopyVx(210);
+            setCopyVy(210);
         }
-        else if(index == 2)
+        else if (index == 2)
         {
-            sf::Texture EnemyTex ; 
-            sf::IntRect area(50 , 30 , 97 ,162) ;
-            if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , area))
+            sf::Texture EnemyTex;
+            sf::IntRect area(50, 30, 97, 162);
+            if (!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", area))
             {
-            std::cout << "Error in Loading the FlyingFoogaRed\n" ; 
-            exit(0) ; 
+                std::cout << "Error in Loading the FlyingFoogaRed\n";
+                exit(0);
             }
-            setEnemyTexture(EnemyTex) ;
-            EnemySprite.setScale(0.3 , 0.3) ;
-            setEnemyHitBoxSprite() ;
+            setEnemyTexture(EnemyTex);
+            EnemySprite.setScale(0.3, 0.3);
+            setEnemyHitBoxSprite();
 
             ////////////////////////////////////////
             ///// Loading Different Animation texture in the arrays 
@@ -876,7 +876,7 @@ public :
             TotalAnimationofleftMovement = 2;
             TotalAnimationofJump = 2;
             TotalAnimationofFalling = 2;
-            TotalAnimationofFlying = 2 ;
+            TotalAnimationofFlying = 2;
 
             EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
             EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
@@ -886,253 +886,253 @@ public :
 
 
             // Right Movement Textures _ areas
-            sf::IntRect area1(18 , 440 , 160 ,133) ;
-            sf::IntRect area2(215 , 436 , 166 , 126) ;
-        
+            sf::IntRect area1(18, 440, 160, 133);
+            sf::IntRect area2(215, 436, 166, 126);
 
-            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , area1);
-            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , area2);
 
-        //  Left Movement Textures
+            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", area1);
+            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", area2);
+
+            //  Left Movement Textures
             EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", area1);
             EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", area2);
 
-        // Jumping Up Textures arers
-            sf::IntRect jumpArea1(41 , 242 , 131 , 137) ;
-            sf::IntRect jumpArea2(230, 260 , 140  , 121) ; 
+            // Jumping Up Textures arers
+            sf::IntRect jumpArea1(41, 242, 131, 137);
+            sf::IntRect jumpArea2(230, 260, 140, 121);
 
             EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", jumpArea1);
             EnemySpriteJumpingUpTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Orange.png", jumpArea2);
 
-        // Falling Down Textures
+            // Falling Down Textures
             EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", jumpArea1);
             EnemySpriteFallingDownTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", jumpArea2);
 
 
-        //// Default on Land / Rest Texture 
-            sf::IntRect areaLand(49,  31 ,97 , 160) ;
-            DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , areaLand) ;
+            //// Default on Land / Rest Texture 
+            sf::IntRect areaLand(49, 31, 97, 160);
+            DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", areaLand);
 
 
-        // Flying Texture set
-            sf::IntRect flyarea1(216 , 22 , 167 , 166) ; 
-            sf::IntRect flyarea2(430 , 23 , 143 , 156)  ;
-    
-            FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , flyarea1) ; 
-            FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , flyarea2) ;
+            // Flying Texture set
+            sf::IntRect flyarea1(216, 22, 167, 166);
+            sf::IntRect flyarea2(430, 23, 143, 156);
+
+            FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", flyarea1);
+            FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", flyarea2);
 
 
-        /////////////////////////////////////////////
-        ///// Now Setting the Properties of the Enemy
-        setPos(x , y) ;
-        setVx(220) ;
-        setVy(220) ;
-        originalSpeed = 220;
-        setCopyVx(220) ;
-        setCopyVy(220) ;
+            /////////////////////////////////////////////
+            ///// Now Setting the Properties of the Enemy
+            setPos(x, y);
+            setVx(220);
+            setVy(220);
+            originalSpeed = 220;
+            setCopyVx(220);
+            setCopyVy(220);
         }
         else // default case 
         {
-        sf::Texture EnemyTex ; 
-        sf::IntRect area(50 , 30 , 97 ,162) ;
-        if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png" , area))
-        {
-            std::cout << "Error in Loading the FlyingFoogaRed\n" ; 
-            exit(0) ; 
-        }
-        setEnemyTexture(EnemyTex) ;
-        EnemySprite.setScale(0.3 , 0.3) ;
-        setEnemyHitBoxSprite() ;
+            sf::Texture EnemyTex;
+            sf::IntRect area(50, 30, 97, 162);
+            if (!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Blue.png", area))
+            {
+                std::cout << "Error in Loading the FlyingFoogaRed\n";
+                exit(0);
+            }
+            setEnemyTexture(EnemyTex);
+            EnemySprite.setScale(0.3, 0.3);
+            setEnemyHitBoxSprite();
 
-        ////////////////////////////////////////
-        ///// Loading Different Animation texture in the arrays 
-        TotalAnimationofRightMovement = 2;
-        TotalAnimationofleftMovement = 2;
-        TotalAnimationofJump = 2;
-        TotalAnimationofFalling = 2;
-        TotalAnimationofFlying = 2 ;
+            ////////////////////////////////////////
+            ///// Loading Different Animation texture in the arrays 
+            TotalAnimationofRightMovement = 2;
+            TotalAnimationofleftMovement = 2;
+            TotalAnimationofJump = 2;
+            TotalAnimationofFalling = 2;
+            TotalAnimationofFlying = 2;
 
-        EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
-        EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
-        EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
-        EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
-        FlyingTexture = new sf::Texture[TotalAnimationofFlying];
-
-
-        // Right Movement Textures _ areas
-        sf::IntRect area1(18 , 440 , 160 ,133) ;
-        sf::IntRect area2(215 , 436 , 166 , 126) ;
-        
-
-        EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , area1);
-        EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , area2);
-
-        //  Left Movement Textures
-        EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", area1);
-        EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", area2);
-
-        // Jumping Up Textures arers
-        sf::IntRect jumpArea1(41 , 242 , 131 , 137) ;
-        sf::IntRect jumpArea2(230, 260 , 140  , 121) ; 
-
-        EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea1);
-        EnemySpriteJumpingUpTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea2);
-
-        // Falling Down Textures
-        EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea1);
-        EnemySpriteFallingDownTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea2);
+            EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
+            EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
+            EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
+            EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
+            FlyingTexture = new sf::Texture[TotalAnimationofFlying];
 
 
-        //// Default on Land / Rest Texture 
-        sf::IntRect areaLand(49,  31 ,97 , 160) ;
-        DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , areaLand) ;
+            // Right Movement Textures _ areas
+            sf::IntRect area1(18, 440, 160, 133);
+            sf::IntRect area2(215, 436, 166, 126);
 
 
-        // Flying Texture set
-        sf::IntRect flyarea1(216 , 22 , 167 , 166) ; 
-        sf::IntRect flyarea2(430 , 23 , 143 , 156)  ;
-    
-        FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , flyarea1) ; 
-        FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png" , flyarea2) ; 
+            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", area1);
+            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", area2);
+
+            //  Left Movement Textures
+            EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", area1);
+            EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", area2);
+
+            // Jumping Up Textures arers
+            sf::IntRect jumpArea1(41, 242, 131, 137);
+            sf::IntRect jumpArea2(230, 260, 140, 121);
+
+            EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea1);
+            EnemySpriteJumpingUpTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea2);
+
+            // Falling Down Textures
+            EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea1);
+            EnemySpriteFallingDownTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", jumpArea2);
+
+
+            //// Default on Land / Rest Texture 
+            sf::IntRect areaLand(49, 31, 97, 160);
+            DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", areaLand);
+
+
+            // Flying Texture set
+            sf::IntRect flyarea1(216, 22, 167, 166);
+            sf::IntRect flyarea2(430, 23, 143, 156);
+
+            FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", flyarea1);
+            FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/FlyingFoogaFoog_Red.png", flyarea2);
 
 
 
-        /////////////////////////////////////////////
-        ///// Now Setting the Properties of the Enemy
-        setPos(x , y) ;
-        setVx(200) ;
-        setVy(200) ;
-        originalSpeed = 200;
-        setCopyVx(200) ;
-        setCopyVy(200) ;
+            /////////////////////////////////////////////
+            ///// Now Setting the Properties of the Enemy
+            setPos(x, y);
+            setVx(200);
+            setVy(200);
+            originalSpeed = 200;
+            setCopyVx(200);
+            setCopyVy(200);
         }
     }
 
     ///////////////////////////////////////////////////////////////
 
-    virtual void update(const float dt , Block *B , const int BLOCKSIZE) override
+    virtual void update(const float dt, Block* B, const int BLOCKSIZE) override
     {
         ///////////////////////////////////////////////////////////
         /////// PHASE 1 rest mode 
-        if(isOnRestMode)
+        if (isOnRestMode)
         {
-            // Hold position — no movement whatsoever
-            setVx(0) ;
-            setVy(0) ;
-            EnemySprite.setPosition(x , y) ;
+            // Hold position â€” no movement whatsoever
+            setVx(0);
+            setVy(0);
+            EnemySprite.setPosition(x, y);
 
-            // After rest duration expires → switch to aerial mode
-            if(CurrentTimeofIsOnRestMode.getElapsedTime().asSeconds() >= isOnRestModeTime)
+            // After rest duration expires â†’ switch to aerial mode
+            if (CurrentTimeofIsOnRestMode.getElapsedTime().asSeconds() >= isOnRestModeTime)
             {
                 isFlying = true;
-                isOnRestMode    = false ;
-                ChangedToRestMode = false ;
-                isInAeialMode   = true ;
+                isOnRestMode = false;
+                ChangedToRestMode = false;
+                isInAeialMode = true;
                 // Restore horizontal speed and launch upward to start aerial phase
-                setVx(CopyVx) ;
-                setVy(-CopyVy) ;
-                CurrentAreialTime.restart() ;
+                setVx(CopyVx);
+                setVy(-CopyVy);
+                CurrentAreialTime.restart();
             }
 
             // Animation
-            if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+            if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
             {
-                UpdateToRestMovementAnimation() ;
-                animationClock.restart() ;
+                UpdateToRestMovementAnimation();
+                animationClock.restart();
             }
 
             /*checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;*/
-            return ; // Skip the rest of update — rest is its own complete state
+            return; // Skip the rest of update â€” rest is its own complete state
         }
 
         ///////////////////////////////////////////////////////////
         /////// PHASE 2 areil
 
-        if(isInAeialMode)
+        if (isInAeialMode)
         {
-            UpdateX(dt) ;
-            UpdateY(dt) ;
-            EnemySprite.setPosition(x , y) ;
+            UpdateX(dt);
+            UpdateY(dt);
+            EnemySprite.setPosition(x, y);
 
-            UpdateDirection_X() ;
-            if(getVx() > 0) { isRight = true  ; isLeft = false ; }
-            else             { isLeft  = true  ; isRight = false ; }
+            UpdateDirection_X();
+            if (getVx() > 0) { isRight = true; isLeft = false; }
+            else { isLeft = true; isRight = false; }
 
             // Screen boundaries bounce the enemy so it stays visible
-            CheckCollionsWithScreenX(600 , 600) ;
+            CheckCollionsWithScreenX(600, 600);
             // For aerial Y: bounce off top/bottom instead of stopping
-            if(y + EnemySprite.getGlobalBounds().height > 600)
+            if (y + EnemySprite.getGlobalBounds().height > 600)
             {
-                y = 600 - EnemySprite.getGlobalBounds().height ;
-                setVy(-abs(getVy())) ; // bounce up
+                y = 600 - EnemySprite.getGlobalBounds().height;
+                setVy(-abs(getVy())); // bounce up
             }
-            else if(y < 0)
+            else if (y < 0)
             {
-                y = 0 ;
-                setVy(abs(getVy())) ; // bounce down
+                y = 0;
+                setVy(abs(getVy())); // bounce down
             }
-            EnemySprite.setPosition(x , y) ;
+            EnemySprite.setPosition(x, y);
 
-            // After aerial duration expires → fall back to normal mode
-            if(CurrentAreialTime.getElapsedTime().asSeconds() >= Areialtime && CheckIfItIsOnLand(B , BLOCKSIZE))
+            // After aerial duration expires â†’ fall back to normal mode
+            if (CurrentAreialTime.getElapsedTime().asSeconds() >= Areialtime && CheckIfItIsOnLand(B, BLOCKSIZE))
             {
                 isFlying = false;
-                isInAeialMode = false ;
-                isFallingDown = true  ;
-                setVy(gravityfactor)  ;
+                isInAeialMode = false;
+                isFallingDown = true;
+                setVy(gravityfactor);
             }
 
             // Animation
-            if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+            if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
             {
-                UpdateToFlyingAnimation() ;
-                animationClock.restart() ;
+                UpdateToFlyingAnimation();
+                animationClock.restart();
             }
-            
+
             /*checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;*/
-            return ; 
+            return;
         }
 
         ///////////////////////////////////////////////////////////
         /////// PHASE 3
 
-        UpdateX(dt) ;
-        UpdateY(dt) ;
-        EnemySprite.setPosition(x , y) ;
+        UpdateX(dt);
+        UpdateY(dt);
+        EnemySprite.setPosition(x, y);
 
-        UpdateDirection_X() ;
-        if(getVx() > 0) { isRight = true  ; isLeft = false ; }
-        else             { isLeft  = true  ; isRight = false ; }
+        UpdateDirection_X();
+        if (getVx() > 0) { isRight = true; isLeft = false; }
+        else { isLeft = true; isRight = false; }
 
-        CheckCollionsWithScreenX(600, 600) ;
-        CheckCollionsWithScreenY(600, 600) ;
+        CheckCollionsWithScreenX(600, 600);
+        CheckCollionsWithScreenY(600, 600);
 
-        if(!isJumping)
+        if (!isJumping)
         {
-            bool onLand = CheckCollosionsWithPlatforms(B , BLOCKSIZE) ;
-            if(!onLand)
+            bool onLand = CheckCollosionsWithPlatforms(B, BLOCKSIZE);
+            if (!onLand)
             {
-                isFallingDown = true ;
-                setVy(gravityfactor) ;
+                isFallingDown = true;
+                setVy(gravityfactor);
             }
             else
             {
-                isFallingDown = false ;
-                setVy(0) ;
+                isFallingDown = false;
+                setVy(0);
             }
         }
 
-        EnemyWantsToJumporNot() ;
+        EnemyWantsToJumporNot();
 
-        if(isJumping && float(JumpInterval.getElapsedTime().asSeconds()) < 0.3f)
+        if (isJumping && float(JumpInterval.getElapsedTime().asSeconds()) < 0.3f)
         {
-            const int JumpFactorToSpeed = 1000 ;
-            setVy(-getVy() - JumpFactorToSpeed) ;
+            const int JumpFactorToSpeed = 1000;
+            setVy(-getVy() - JumpFactorToSpeed);
         }
         else
         {
-            isJumping = false ;
-            setVy(gravityfactor) ;
+            isJumping = false;
+            setVy(gravityfactor);
         }
 
         ///////////////////////////////////////////////////////////
@@ -1140,33 +1140,33 @@ public :
         /////// in normal mode. ChangeToRestModeOrNot() now only
         /////// restarts its clock after the threshold fires, so
         /////// this check will actually trigger every ~10 seconds.
-        if(ChangeToRestModeOrNot())
+        if (ChangeToRestModeOrNot())
         {
-            isOnRestMode = true ;
-            ChangedToRestMode = true ;
-            CurrentTimeofIsOnRestMode.restart() ;
+            isOnRestMode = true;
+            ChangedToRestMode = true;
+            CurrentTimeofIsOnRestMode.restart();
         }
 
         ///////////////////////////////////////////////////////////
         /////// Simple animation change like botom
-        if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
         {
-            if(isLeft)          
-                UpdateToLeftMovementAnimation() ;
-            else if(isRight)    
-                UpdateToRightMovementAnimation() ;
-            else if(isJumping)  
-                UpdateToJumpMovementAnimation() ;
-            else if(isFallingDown) 
-                UpdateToFallingMovementAnimation() ;
+            if (isLeft)
+                UpdateToLeftMovementAnimation();
+            else if (isRight)
+                UpdateToRightMovementAnimation();
+            else if (isJumping)
+                UpdateToJumpMovementAnimation();
+            else if (isFallingDown)
+                UpdateToFallingMovementAnimation();
 
-            animationClock.restart() ;
+            animationClock.restart();
         }
     }
 
-    virtual void draw(sf::RenderWindow &mywindow, bool debug) override
+    virtual void draw(sf::RenderWindow& mywindow, bool debug) override
     {
-        mywindow.draw(Enemy::getEnemySprite()) ; 
+        mywindow.draw(Enemy::getEnemySprite());
 
         if (debug)
             EnemySprite.drawHitbox(mywindow, Color::Red);
@@ -1177,8 +1177,8 @@ public :
     {
         return 200 + rand() % 601;
     }
-    
-}; 
+
+};
 
 //#endif
 //
@@ -1186,299 +1186,299 @@ public :
 //#ifndef TORNADO
 //#define TORNADO
 
-class Tornado :  public virtual FlyingFoogaFoog 
+class Tornado : public virtual FlyingFoogaFoog
 {
-protected: 
+protected:
     ////////////////////
     // Just adding the feature of knife throwing
-    sf::Clock TimerForThrowKnifeOrNot ; 
-    float TotalTimeForThrowKnife  ;
+    sf::Clock TimerForThrowKnifeOrNot;
+    float TotalTimeForThrowKnife;
 
 
     //// If Time is true to throw knife now then 
-    sf::Clock TimeToThrowKnife ;
-    float TimeTakenToThrowKnife ; 
+    sf::Clock TimeToThrowKnife;
+    float TimeTakenToThrowKnife;
 
-    bool isThrowingTheKnife ;
+    bool isThrowingTheKnife;
 
-    int currentIndexOfKnifethrowingAnimation; 
-    sf::Texture *EnemyKnifeThrowingTexture ;
-    int TotalAnimationofKnifeThrowingTexture ;
+    int currentIndexOfKnifethrowingAnimation;
+    sf::Texture* EnemyKnifeThrowingTexture;
+    int TotalAnimationofKnifeThrowingTexture;
 
-    sf::Clock knifeTimer ;
-    sf::Texture KnifeTex ;
-    Snowball *Knife ; 
-    bool isKnifeFired ;
+    sf::Clock knifeTimer;
+    sf::Texture KnifeTex;
+    Snowball* Knife;
+    bool isKnifeFired;
 
-public : 
+public:
     Tornado()
     {
-        isKnifeFired = false; 
-        knifeTimer.restart() ;
-        Knife = new Snowball ; 
+        isKnifeFired = false;
+        knifeTimer.restart();
+        Knife = new Snowball;
 
-        TimerForThrowKnifeOrNot.restart() ;
-        TimeToThrowKnife.restart() ; 
+        TimerForThrowKnifeOrNot.restart();
+        TimeToThrowKnife.restart();
 
-        currentIndexOfKnifethrowingAnimation =  0; 
-        isThrowingTheKnife = false; 
-        TotalAnimationofKnifeThrowingTexture = 1 ; 
-        TimeTakenToThrowKnife = 1 ;
+        currentIndexOfKnifethrowingAnimation = 0;
+        isThrowingTheKnife = false;
+        TotalAnimationofKnifeThrowingTexture = 1;
+        TimeTakenToThrowKnife = 1;
 
-        TotalTimeForThrowKnife = 5 ; 
-        EnemyKnifeThrowingTexture  = nullptr ; 
+        TotalTimeForThrowKnife = 5;
+        EnemyKnifeThrowingTexture = nullptr;
         isBoss = false;
     }
 
     virtual ~Tornado()
     {
-        delete Knife ;
-        delete [] EnemyKnifeThrowingTexture ;
+        delete Knife;
+        delete[] EnemyKnifeThrowingTexture;
     }
 
 
-    virtual  void CreateEnemy(float x , float y , int index) override  
+    virtual  void CreateEnemy(float x, float y, int index) override
     {
-        if(index == 1 || index == 2)
+        if (index == 1 || index == 2)
         {
-            sf::Texture EnemyTex ; 
-        sf::IntRect area(9 , 41 , 122 ,122) ;
-        if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , area))
-        {
-            std::cout << "Error in Loading the TornadoRed Texture\n" ; 
-            exit(0) ; 
-        }
-        setEnemyTexture(EnemyTex) ;
-        EnemySprite.setScale(0.3 , 0.3) ;
-        setEnemyHitBoxSprite() ;
+            sf::Texture EnemyTex;
+            sf::IntRect area(9, 41, 122, 122);
+            if (!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", area))
+            {
+                std::cout << "Error in Loading the TornadoRed Texture\n";
+                exit(0);
+            }
+            setEnemyTexture(EnemyTex);
+            EnemySprite.setScale(0.3, 0.3);
+            setEnemyHitBoxSprite();
 
 
 
 
-        ////////////////////////////////////////
-        ///// Loading Different Animation texture in the arrays 
-        TotalAnimationofRightMovement = 3 ;
-        TotalAnimationofleftMovement = 3 ;
-        TotalAnimationofJump = 1 ;
-        TotalAnimationofFalling = 1 ;
-        TotalAnimationofFlying = 8 ;
-        TotalAnimationofKnifeThrowingTexture = 2 ; 
+            ////////////////////////////////////////
+            ///// Loading Different Animation texture in the arrays 
+            TotalAnimationofRightMovement = 3;
+            TotalAnimationofleftMovement = 3;
+            TotalAnimationofJump = 1;
+            TotalAnimationofFalling = 1;
+            TotalAnimationofFlying = 8;
+            TotalAnimationofKnifeThrowingTexture = 2;
 
 
-        EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
-        EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
-        EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
-        EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
-        FlyingTexture = new sf::Texture[TotalAnimationofFlying];
-        EnemyKnifeThrowingTexture = new sf::Texture[TotalAnimationofKnifeThrowingTexture] ; 
+            EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
+            EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
+            EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
+            EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
+            FlyingTexture = new sf::Texture[TotalAnimationofFlying];
+            EnemyKnifeThrowingTexture = new sf::Texture[TotalAnimationofKnifeThrowingTexture];
 
 
-        // Right Movement Textures _ areas
+            // Right Movement Textures _ areas
 
-        EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/TornadoBlue_01.png");
-        EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/TornadoBlue_02.png");
-        EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/TornadoBlue_03.png");
+            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/TornadoBlue_01.png");
+            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/TornadoBlue_02.png");
+            EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/TornadoBlue_03.png");
 
-        //  Left Movement Textures
-        sf::IntRect area1(146 , 36 , 122 , 121) ;
-        sf::IntRect area2(283 , 36 , 122 , 122) ;
-        sf::IntRect area3(428 , 36 , 122 , 122) ;
+            //  Left Movement Textures
+            sf::IntRect area1(146, 36, 122, 121);
+            sf::IntRect area2(283, 36, 122, 122);
+            sf::IntRect area3(428, 36, 122, 122);
 
-        EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", area1);
-        EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", area2);
-        EnemySpriteLeftMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", area3);
+            EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", area1);
+            EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", area2);
+            EnemySpriteLeftMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", area3);
 
-        // Jumping Up Textures arers
-        sf::IntRect jumpArea1(14 , 205 , 122 , 122) ;
+            // Jumping Up Textures arers
+            sf::IntRect jumpArea1(14, 205, 122, 122);
 
-        EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", jumpArea1);
+            EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", jumpArea1);
 
-        // Falling Down Textures
-        sf::IntRect FallArea1(8 ,  541 , 122 , 122) ;
-        EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", FallArea1);
-
-
-        //// Default on Land / Rest Texture 
-        sf::IntRect areaLand(9 , 41 , 122 ,122)  ;
-        DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , areaLand) ;
+            // Falling Down Textures
+            sf::IntRect FallArea1(8, 541, 122, 122);
+            EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", FallArea1);
 
 
-        // Flying Texture set
-        sf::IntRect flyarea1(8 , 1045 , 122 , 122) ; 
-        sf::IntRect flyarea2(150 , 1048 , 122 , 122)  ;
-        sf::IntRect flyarea3(288 , 1044 , 122 , 122)  ;
-        sf::IntRect flyarea4(423 , 1042 , 122 , 122)  ;
-        sf::IntRect flyarea5(552 , 1047 , 122 , 122)  ;
-        sf::IntRect flyarea6(700 , 1058 , 122 , 122)  ;
-        sf::IntRect flyarea7(856 , 1048 , 122 , 122)  ;
-        sf::IntRect flyarea8(980 , 1041 , 122 , 122)  ;
-
-    
-        FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea1) ; 
-        FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea2) ; 
-        FlyingTexture[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea3) ; 
-        FlyingTexture[3].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea4) ; 
-        FlyingTexture[4].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea5) ; 
-        FlyingTexture[5].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea6) ; 
-        FlyingTexture[6].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea7) ; 
-        FlyingTexture[7].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , flyarea8) ; 
+            //// Default on Land / Rest Texture 
+            sf::IntRect areaLand(9, 41, 122, 122);
+            DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", areaLand);
 
 
-        EnemyKnifeThrowingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , {30 , 882  , 110 , 111}); 
-        EnemyKnifeThrowingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , {146 , 887 , 116 , 111}) ; 
+            // Flying Texture set
+            sf::IntRect flyarea1(8, 1045, 122, 122);
+            sf::IntRect flyarea2(150, 1048, 122, 122);
+            sf::IntRect flyarea3(288, 1044, 122, 122);
+            sf::IntRect flyarea4(423, 1042, 122, 122);
+            sf::IntRect flyarea5(552, 1047, 122, 122);
+            sf::IntRect flyarea6(700, 1058, 122, 122);
+            sf::IntRect flyarea7(856, 1048, 122, 122);
+            sf::IntRect flyarea8(980, 1041, 122, 122);
 
-    
-        sf::IntRect knifearea =  {496,  891 , 66 , 27}  ; 
-        KnifeTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png" , knifearea) ;  
-        Knife->setTexture(KnifeTex) ;
-        Knife->setActive(false) ;
 
-        /////////////////////////////////////////////
-        ///// Now Setting the Properties of the Enemy
-        setPos(x , y) ;
-        setVx(200) ;
-        setVy(200) ;
-        setCopyVx(200) ;
-        setCopyVy(200) ;
+            FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", flyarea1);
+            FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", flyarea2);
+            FlyingTexture[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", flyarea3);
+            FlyingTexture[3].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", flyarea4);
+            FlyingTexture[4].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", flyarea5);
+            FlyingTexture[5].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", flyarea6);
+            FlyingTexture[6].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", flyarea7);
+            FlyingTexture[7].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", flyarea8);
+
+
+            EnemyKnifeThrowingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", { 30 , 882  , 110 , 111 });
+            EnemyKnifeThrowingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", { 146 , 887 , 116 , 111 });
+
+
+            sf::IntRect knifearea = { 496,  891 , 66 , 27 };
+            KnifeTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Blue.png", knifearea);
+            Knife->setTexture(KnifeTex);
+            Knife->setActive(false);
+
+            /////////////////////////////////////////////
+            ///// Now Setting the Properties of the Enemy
+            setPos(x, y);
+            setVx(200);
+            setVy(200);
+            setCopyVx(200);
+            setCopyVy(200);
         }
         else // DEAFULT RED
         {
-            sf::Texture EnemyTex ; 
-        sf::IntRect area(9 , 41 , 122 ,122) ;
-        if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , area))
-        {
-            std::cout << "Error in Loading the TornadoRed Texture\n" ; 
-            exit(0) ; 
-        }
-        setEnemyTexture(EnemyTex) ;
-        EnemySprite.setScale(0.3 , 0.3) ;
-        setEnemyHitBoxSprite() ;
+            sf::Texture EnemyTex;
+            sf::IntRect area(9, 41, 122, 122);
+            if (!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area))
+            {
+                std::cout << "Error in Loading the TornadoRed Texture\n";
+                exit(0);
+            }
+            setEnemyTexture(EnemyTex);
+            EnemySprite.setScale(0.3, 0.3);
+            setEnemyHitBoxSprite();
 
 
 
 
-        ////////////////////////////////////////
-        ///// Loading Different Animation texture in the arrays 
-        TotalAnimationofRightMovement = 3 ;
-        TotalAnimationofleftMovement = 3 ;
-        TotalAnimationofJump = 1 ;
-        TotalAnimationofFalling = 1 ;
-        TotalAnimationofFlying = 8 ;
-        TotalAnimationofKnifeThrowingTexture = 2 ; 
+            ////////////////////////////////////////
+            ///// Loading Different Animation texture in the arrays 
+            TotalAnimationofRightMovement = 3;
+            TotalAnimationofleftMovement = 3;
+            TotalAnimationofJump = 1;
+            TotalAnimationofFalling = 1;
+            TotalAnimationofFlying = 8;
+            TotalAnimationofKnifeThrowingTexture = 2;
 
 
-        EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
-        EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
-        EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
-        EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
-        FlyingTexture = new sf::Texture[TotalAnimationofFlying];
-        EnemyKnifeThrowingTexture = new sf::Texture[TotalAnimationofKnifeThrowingTexture] ; 
+            EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
+            EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
+            EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
+            EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
+            FlyingTexture = new sf::Texture[TotalAnimationofFlying];
+            EnemyKnifeThrowingTexture = new sf::Texture[TotalAnimationofKnifeThrowingTexture];
 
 
-        // Right Movement Textures _ areas
+            // Right Movement Textures _ areas
 
-        EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_01.png");
-        EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_02.png");
-        EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_03.png");
+            EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_01.png");
+            EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_02.png");
+            EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_03.png");
 
-        //  Left Movement Textures
-        sf::IntRect area1(146 , 36 , 122 , 121) ;
-        sf::IntRect area2(283 , 36 , 122 , 122) ;
-        sf::IntRect area3(428 , 36 , 122 , 122) ;
+            //  Left Movement Textures
+            sf::IntRect area1(146, 36, 122, 121);
+            sf::IntRect area2(283, 36, 122, 122);
+            sf::IntRect area3(428, 36, 122, 122);
 
-        EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area1);
-        EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area2);
-        EnemySpriteLeftMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area3);
+            EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area1);
+            EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area2);
+            EnemySpriteLeftMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area3);
 
-        // Jumping Up Textures arers
-        sf::IntRect jumpArea1(14 , 205 , 122 , 122) ;
+            // Jumping Up Textures arers
+            sf::IntRect jumpArea1(14, 205, 122, 122);
 
-        EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", jumpArea1);
+            EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", jumpArea1);
 
-        // Falling Down Textures
-        sf::IntRect FallArea1(8 ,  541 , 122 , 122) ;
-        EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", FallArea1);
-
-
-        //// Default on Land / Rest Texture 
-        sf::IntRect areaLand(9 , 41 , 122 ,122)  ;
-        DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , areaLand) ;
+            // Falling Down Textures
+            sf::IntRect FallArea1(8, 541, 122, 122);
+            EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", FallArea1);
 
 
-        // Flying Texture set
-        sf::IntRect flyarea1(8 , 1045 , 122 , 122) ; 
-        sf::IntRect flyarea2(150 , 1048 , 122 , 122)  ;
-        sf::IntRect flyarea3(288 , 1044 , 122 , 122)  ;
-        sf::IntRect flyarea4(423 , 1042 , 122 , 122)  ;
-        sf::IntRect flyarea5(552 , 1047 , 122 , 122)  ;
-        sf::IntRect flyarea6(700 , 1058 , 122 , 122)  ;
-        sf::IntRect flyarea7(856 , 1048 , 122 , 122)  ;
-        sf::IntRect flyarea8(980 , 1041 , 122 , 122)  ;
-
-    
-        FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea1) ; 
-        FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea2) ; 
-        FlyingTexture[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea3) ; 
-        FlyingTexture[3].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea4) ; 
-        FlyingTexture[4].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea5) ; 
-        FlyingTexture[5].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea6) ; 
-        FlyingTexture[6].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea7) ; 
-        FlyingTexture[7].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea8) ; 
+            //// Default on Land / Rest Texture 
+            sf::IntRect areaLand(9, 41, 122, 122);
+            DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", areaLand);
 
 
-        EnemyKnifeThrowingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , {30 , 882  , 110 , 111}); 
-        EnemyKnifeThrowingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , {146 , 887 , 116 , 111}) ; 
+            // Flying Texture set
+            sf::IntRect flyarea1(8, 1045, 122, 122);
+            sf::IntRect flyarea2(150, 1048, 122, 122);
+            sf::IntRect flyarea3(288, 1044, 122, 122);
+            sf::IntRect flyarea4(423, 1042, 122, 122);
+            sf::IntRect flyarea5(552, 1047, 122, 122);
+            sf::IntRect flyarea6(700, 1058, 122, 122);
+            sf::IntRect flyarea7(856, 1048, 122, 122);
+            sf::IntRect flyarea8(980, 1041, 122, 122);
 
-    
-        sf::IntRect knifearea =  {496,  891 , 66 , 27}  ; 
-        KnifeTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , knifearea) ;  
-        Knife->setTexture(KnifeTex) ;
-        Knife->setActive(false) ;
 
-        /////////////////////////////////////////////
-        ///// Now Setting the Properties of the Enemy
-        setPos(x , y) ;
-        setVx(200) ;
-        setVy(200) ;
-        setCopyVx(200) ;
-        setCopyVy(200) ;
+            FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", flyarea1);
+            FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", flyarea2);
+            FlyingTexture[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", flyarea3);
+            FlyingTexture[3].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", flyarea4);
+            FlyingTexture[4].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", flyarea5);
+            FlyingTexture[5].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", flyarea6);
+            FlyingTexture[6].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", flyarea7);
+            FlyingTexture[7].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", flyarea8);
+
+
+            EnemyKnifeThrowingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", { 30 , 882  , 110 , 111 });
+            EnemyKnifeThrowingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", { 146 , 887 , 116 , 111 });
+
+
+            sf::IntRect knifearea = { 496,  891 , 66 , 27 };
+            KnifeTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", knifearea);
+            Knife->setTexture(KnifeTex);
+            Knife->setActive(false);
+
+            /////////////////////////////////////////////
+            ///// Now Setting the Properties of the Enemy
+            setPos(x, y);
+            setVx(200);
+            setVy(200);
+            setCopyVx(200);
+            setCopyVy(200);
         }
     }
 
     void ThrowKnife()
     {
-        if(getVx() > 0)
+        if (getVx() > 0)
         {
-            isRight = true ;
-            isLeft = false ;
+            isRight = true;
+            isLeft = false;
         }
-        else 
+        else
         {
-            isRight  = false ;
-            isLeft = true ;
+            isRight = false;
+            isLeft = true;
         }
-        Knife->fire(EnemySprite.getPosition(), isRight) ; 
-        Knife->setActive(true) ; 
-        knifeTimer.restart() ;
+        Knife->fire(EnemySprite.getPosition(), isRight);
+        Knife->setActive(true);
+        knifeTimer.restart();
     }
 
     /// IF I CHANGE ANIMATION THIS WAY I ONLY NEED ONE VALUE TO STORE THE STORE OR ACTUALLY NONE AT ALL JUST A SIMPLESPIRITSHEET
     void ChangeToThrowKnifeAnimation()
     {
-        currentIndexOfKnifethrowingAnimation = (currentIndexOfKnifethrowingAnimation + 1) % TotalAnimationofKnifeThrowingTexture  ; 
-        sf::IntRect area ;
-        EnemySprite.setTexture(EnemyKnifeThrowingTexture[currentIndexOfKnifethrowingAnimation])  ;
-        if(getVx() > 0) // Enemy Pos Condition actually here 
+        currentIndexOfKnifethrowingAnimation = (currentIndexOfKnifethrowingAnimation + 1) % TotalAnimationofKnifeThrowingTexture;
+        sf::IntRect area;
+        EnemySprite.setTexture(EnemyKnifeThrowingTexture[currentIndexOfKnifethrowingAnimation]);
+        if (getVx() > 0) // Enemy Pos Condition actually here 
         {
-            EnemySprite.setScale(-0.3 , 0.3) ; 
-            isRight = true ; 
-            isLeft = false ;
+            EnemySprite.setScale(-0.3, 0.3);
+            isRight = true;
+            isLeft = false;
         }
         else
         {
-            EnemySprite.setScale(0.3 , 0.3) ; 
-            isLeft = true ;
-            isRight =  false ;
+            EnemySprite.setScale(0.3, 0.3);
+            isLeft = true;
+            isRight = false;
         }
     }
 
@@ -1488,34 +1488,34 @@ public :
         return 300 + rand() % 901;
     }
 
-     virtual void update(const float dt , Block *B , const int BLOCKSIZE) override
+    virtual void update(const float dt, Block* B, const int BLOCKSIZE) override
     {
         // //////
         // // PHASE 0 
         // ////////////////////////////////////////////////////////////////////
         // /////// ALL RELATED TO KNIFE THROW DONE  BY MEEEE
-        if(TimerForThrowKnifeOrNot.getElapsedTime().asSeconds() >= TotalTimeForThrowKnife) 
+        if (TimerForThrowKnifeOrNot.getElapsedTime().asSeconds() >= TotalTimeForThrowKnife)
         {
-            isKnifeFired = false ;
-            isThrowingTheKnife = true ;
-            TimerForThrowKnifeOrNot.restart() ; // Reset the time back so i can start the timer for next knife throw 
+            isKnifeFired = false;
+            isThrowingTheKnife = true;
+            TimerForThrowKnifeOrNot.restart(); // Reset the time back so i can start the timer for next knife throw 
             TimeToThrowKnife.restart();  // Reset to Initial time so i can throw the knife 
-            
+
         }
-        if(Knife->isActive() && isKnifeFired)
+        if (Knife->isActive() && isKnifeFired)
         {
-            Knife->update(dt) ;
+            Knife->update(dt);
         }
-        if (isThrowingTheKnife && 
-        TimeToThrowKnife.getElapsedTime().asSeconds() <= TimeTakenToThrowKnife &&
-        !isJumping && !isFallingDown && !isInAeialMode && !isOnRestMode)
+        if (isThrowingTheKnife &&
+            TimeToThrowKnife.getElapsedTime().asSeconds() <= TimeTakenToThrowKnife &&
+            !isJumping && !isFallingDown && !isInAeialMode && !isOnRestMode)
         {
             setVx(0);
             setVy(0);
-            if(!isKnifeFired)
+            if (!isKnifeFired)
             {
-                ThrowKnife() ; 
-                isKnifeFired = true ;
+                ThrowKnife();
+                isKnifeFired = true;
             }
 
             if (animationClock.getElapsedTime().asSeconds() >= 0.5f)
@@ -1528,174 +1528,174 @@ public :
         }
         else if (isThrowingTheKnife)  // THIS CONDITION EXECUTES ONLY WHEN THE ABOVE CONDITION TIMER IS FALSE AND THIS CONDITION IS NECESSARY SO  WE DON'T UPDATE EVEN IF THE ENEMY DID'NT Throw the KNIFE
         {
-            isKnifeFired = false ;
-            Knife->setActive(false) ;
+            isKnifeFired = false;
+            Knife->setActive(false);
             isThrowingTheKnife = false;
             setVx(isLeft ? -abs(CopyVx) : abs(CopyVx)); // preserve facing direction
             setVy(CopyVy);
             animationClock.restart(); // flush throw animation so walk resumes cleanly
-        }   
+        }
 
-        
-       
-            ////////////////////////////////////
-            ///////////////////////////////////
 
-        ///////////////////////////////////////////////////////////
-        /////// PHASE 1 
-        if(isOnRestMode && !isFallingDown)
+
+        ////////////////////////////////////
+        ///////////////////////////////////
+
+    ///////////////////////////////////////////////////////////
+    /////// PHASE 1 
+        if (isOnRestMode && !isFallingDown)
         {
-            // Hold position — no movement whatsoever
-            setVx(0) ;
-            setVy(0) ;
-            EnemySprite.setPosition(x , y) ;
+            // Hold position â€” no movement whatsoever
+            setVx(0);
+            setVy(0);
+            EnemySprite.setPosition(x, y);
 
-            // After rest duration expires → switch to aerial mode
-            if(CurrentTimeofIsOnRestMode.getElapsedTime().asSeconds() >= isOnRestModeTime)
+            // After rest duration expires â†’ switch to aerial mode
+            if (CurrentTimeofIsOnRestMode.getElapsedTime().asSeconds() >= isOnRestModeTime)
             {
                 isFlying = true;
-                isOnRestMode    = false ;
-                ChangedToRestMode = false ;
-                isInAeialMode   = true ;
+                isOnRestMode = false;
+                ChangedToRestMode = false;
+                isInAeialMode = true;
                 // Restore horizontal speed and launch upward to start aerial phase
-                setVx(CopyVx) ;
-                setVy(-CopyVy) ;
-                CurrentAreialTime.restart() ;
+                setVx(CopyVx);
+                setVy(-CopyVy);
+                CurrentAreialTime.restart();
             }
 
             // Animation
-            if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+            if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
             {
-                UpdateToRestMovementAnimation() ;
-                animationClock.restart() ;
+                UpdateToRestMovementAnimation();
+                animationClock.restart();
             }
 
             /*checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;*/
-            return ; // Skip the rest of update — rest is its own complete state
+            return; // Skip the rest of update â€” rest is its own complete state
         }
 
         ///////////////////////////////////////////////////////////
         /////// PHASE 2 
-        if(isInAeialMode)
+        if (isInAeialMode)
         {
-            UpdateX(dt) ;
-            UpdateY(dt) ;
-            EnemySprite.setPosition(x , y) ;
+            UpdateX(dt);
+            UpdateY(dt);
+            EnemySprite.setPosition(x, y);
 
-            UpdateDirection_X() ;
-            if(getVx() > 0) { isRight = true  ; isLeft = false ; }
-            else             { isLeft  = true  ; isRight = false ; }
+            UpdateDirection_X();
+            if (getVx() > 0) { isRight = true; isLeft = false; }
+            else { isLeft = true; isRight = false; }
 
             // Screen boundaries bounce the enemy so it stays visible
-            CheckCollionsWithScreenX(600 , 600) ;
+            CheckCollionsWithScreenX(600, 600);
             // For aerial Y: bounce off top/bottom instead of stopping
-            if(y + EnemySprite.getGlobalBounds().height > 600)
+            if (y + EnemySprite.getGlobalBounds().height > 600)
             {
-                y = 600 - EnemySprite.getGlobalBounds().height ;
-                setVy(-abs(getVy())) ; // bounce up
+                y = 600 - EnemySprite.getGlobalBounds().height;
+                setVy(-abs(getVy())); // bounce up
             }
-            else if(y < 0)
+            else if (y < 0)
             {
-                y = 0 ;
-                setVy(abs(getVy())) ; // bounce down
+                y = 0;
+                setVy(abs(getVy())); // bounce down
             }
-            EnemySprite.setPosition(x , y) ;
+            EnemySprite.setPosition(x, y);
 
-            // After aerial duration expires → fall back to normal mode
-            if(CurrentAreialTime.getElapsedTime().asSeconds() >= Areialtime && CheckIfItIsOnLand(B , BLOCKSIZE))
+            // After aerial duration expires â†’ fall back to normal mode
+            if (CurrentAreialTime.getElapsedTime().asSeconds() >= Areialtime && CheckIfItIsOnLand(B, BLOCKSIZE))
             {
                 isFlying = false;
-                isInAeialMode = false ;
-                isFallingDown = true  ;
-                setVy(gravityfactor)  ;
+                isInAeialMode = false;
+                isFallingDown = true;
+                setVy(gravityfactor);
             }
 
             // Animation
-            if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+            if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
             {
-                UpdateToFlyingAnimation() ;
-                animationClock.restart() ;
+                UpdateToFlyingAnimation();
+                animationClock.restart();
             }
-            
+
             /*checkforShowHitBoxDetection(mywindow , B , BLOCKSIZE) ;*/
-            return ;
+            return;
         }
 
         ///////////////////////////////////////////////////////////
         /////// PHASE 3 
 
-        UpdateX(dt) ;
-        UpdateY(dt) ;
-        EnemySprite.setPosition(x , y) ;
+        UpdateX(dt);
+        UpdateY(dt);
+        EnemySprite.setPosition(x, y);
 
-        
-        UpdateDirection_X() ;
-        if(getVx() > 0) { isRight = true  ; isLeft = false ; }
-        else             { isLeft  = true  ; isRight = false ; }
 
-        CheckCollionsWithScreenX(600, 600) ;
-        CheckCollionsWithScreenY(600, 600) ;
+        UpdateDirection_X();
+        if (getVx() > 0) { isRight = true; isLeft = false; }
+        else { isLeft = true; isRight = false; }
 
-        if(!isJumping)
+        CheckCollionsWithScreenX(600, 600);
+        CheckCollionsWithScreenY(600, 600);
+
+        if (!isJumping)
         {
-            bool onLand = CheckCollosionsWithPlatforms(B , BLOCKSIZE) ;
-            if(!onLand)
+            bool onLand = CheckCollosionsWithPlatforms(B, BLOCKSIZE);
+            if (!onLand)
             {
-                isFallingDown = true ;
-                setVy(gravityfactor) ;
+                isFallingDown = true;
+                setVy(gravityfactor);
             }
             else
             {
-                isFallingDown = false ;
-                setVy(0) ;
+                isFallingDown = false;
+                setVy(0);
             }
         }
 
-        EnemyWantsToJumporNot() ;
+        EnemyWantsToJumporNot();
 
-        if(isJumping && float(JumpInterval.getElapsedTime().asSeconds()) < 0.3f)
+        if (isJumping && float(JumpInterval.getElapsedTime().asSeconds()) < 0.3f)
         {
-            const int JumpFactorToSpeed = 1000 ;
-            setVy(-getVy() - JumpFactorToSpeed) ;
+            const int JumpFactorToSpeed = 1000;
+            setVy(-getVy() - JumpFactorToSpeed);
         }
         else
         {
-            isJumping = false ;
-            setVy(gravityfactor) ;
+            isJumping = false;
+            setVy(gravityfactor);
         }
-        
+
         ///////////////////////////////////////////////////////////
         /////// Check whether to enter rest mode only while
         /////// in normal mode. ChangeToRestModeOrNot() now only
         /////// restarts its clock after the threshold fires, so
         /////// this check will actually trigger every ~10 seconds.
-        if(ChangeToRestModeOrNot())
+        if (ChangeToRestModeOrNot())
         {
-            isOnRestMode = true ;
-            ChangedToRestMode = true ;
-            CurrentTimeofIsOnRestMode.restart() ;
+            isOnRestMode = true;
+            ChangedToRestMode = true;
+            CurrentTimeofIsOnRestMode.restart();
         }
 
         ///////////////////////////////////////////////////////////
         /////// Simple animation change like botom
-        if(animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
         {
-            if(isLeft)          
-                UpdateToLeftMovementAnimation() ;
-            else if(isRight)    
-                UpdateToRightMovementAnimation() ;
-            else if(isJumping)  
-                UpdateToJumpMovementAnimation() ;
-            else if(isFallingDown) 
-                UpdateToFallingMovementAnimation() ;
+            if (isLeft)
+                UpdateToLeftMovementAnimation();
+            else if (isRight)
+                UpdateToRightMovementAnimation();
+            else if (isJumping)
+                UpdateToJumpMovementAnimation();
+            else if (isFallingDown)
+                UpdateToFallingMovementAnimation();
 
-            animationClock.restart() ;
+            animationClock.restart();
         }
     }
-    virtual void draw(sf::RenderWindow &mywindow, bool debug) override
+    virtual void draw(sf::RenderWindow& mywindow, bool debug) override
     {
-        mywindow.draw(Enemy::getEnemySprite()) ; 
-        Knife->draw(mywindow , debug) ; 
+        mywindow.draw(Enemy::getEnemySprite());
+        Knife->draw(mywindow, debug);
 
         if (debug)
             EnemySprite.drawHitbox(mywindow, Color::Red);
@@ -1721,20 +1721,20 @@ protected:
 
     sf::IntRect standUpFrames[3];
     int totalStandUpFrames;
-    
+
     sf::IntRect moveFrames[3];
     int totalMoveFrames;
 
 public:
     Minions() : Botom()
     {
-        totalInAirTime      = 5.0f;
-        standUpAnim         = nullptr;
-        moveAnim            = nullptr;
-        totalStandUpFrames  = 3;
-        totalMoveFrames     = 3;
-        isBoss              = false;
-        hasStoodUp          = false; // Initialize to false
+        totalInAirTime = 5.0f;
+        standUpAnim = nullptr;
+        moveAnim = nullptr;
+        totalStandUpFrames = 3;
+        totalMoveFrames = 3;
+        isBoss = false;
+        hasStoodUp = false; // Initialize to false
     }
 
     ~Minions()
@@ -1750,51 +1750,51 @@ public:
             moveAnim = nullptr;
         }
     }
-bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
+    bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
     {
-    bool onLand = false;
-    float floorY = 560.0f;
+        bool onLand = false;
+        float floorY = 560.0f;
 
-    for (int i = 0; i < BLOCKSIZE; i++)
-    {
-        sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
-        sf::FloatRect blockBox = B[i].getHitbox();
-        sf::FloatRect overlap;
-
-        if (enemyBox.intersects(blockBox, overlap))
+        for (int i = 0; i < BLOCKSIZE; i++)
         {
-            // Only resolve if it's clearly a vertical collision
-            if (overlap.width > overlap.height)
+            sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
+            sf::FloatRect blockBox = B[i].getHitbox();
+            sf::FloatRect overlap;
+
+            if (enemyBox.intersects(blockBox, overlap))
             {
-                float enemyCenterY = enemyBox.top + enemyBox.height / 2.0f;
-                float blockCenterY = blockBox.top + blockBox.height / 2.0f;
-
-                if (enemyCenterY < blockCenterY) // Minion is above block
+                // Only resolve if it's clearly a vertical collision
+                if (overlap.width > overlap.height)
                 {
-                    y = blockBox.top - enemyBox.height / 2.0f;
-                    setVy(0);
-                    onLand = true;
+                    float enemyCenterY = enemyBox.top + enemyBox.height / 2.0f;
+                    float blockCenterY = blockBox.top + blockBox.height / 2.0f;
+
+                    if (enemyCenterY < blockCenterY) // Minion is above block
+                    {
+                        y = blockBox.top - enemyBox.height / 2.0f;
+                        setVy(0);
+                        onLand = true;
+                    }
                 }
+                //   so minion walks off edges instead of getting pushed back
             }
-            //   so minion walks off edges instead of getting pushed back
+            EnemySprite.setPosition(x, y);
         }
-        EnemySprite.setPosition(x, y);
+
+        // Hard floor
+        float halfH = EnemySprite.getGlobalBounds().height / 2.0f;
+        if (y + halfH >= floorY)
+        {
+            y = floorY - halfH;
+            setVy(0);
+            onLand = true;
+            EnemySprite.setPosition(x, y);
+        }
+
+        return onLand;
     }
 
-    // Hard floor
-    float halfH = EnemySprite.getGlobalBounds().height / 2.0f;
-    if (y + halfH >= floorY)
-    {
-        y = floorY - halfH;
-        setVy(0);
-        onLand = true;
-        EnemySprite.setPosition(x, y);
-    }
-
-    return onLand;
-}
-
-    virtual void CreateEnemy(float x, float y , int index) override
+    virtual void CreateEnemy(float x, float y, int index) override
     {
         if (!MinionSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Mogera.png"))
         {
@@ -1802,12 +1802,12 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
             exit(0);
 
         }
-        sf::IntRect defaultArea(2185, 996, 116 , 139);
-        EnemySprite.setTexture(MinionSpriteSheet) ;
-        EnemySprite.setTextureRect(defaultArea) ;
-        EnemySprite.setScale(0.2 , 0.2) ;
-        EnemySprite.setOrigin(EnemySprite.getLocalBounds().width/2.f, EnemySprite.getLocalBounds().height / 2.f);
-        EnemySprite.setHitbox(EnemySprite.getLocalBounds()); 
+        sf::IntRect defaultArea(2185, 996, 116, 139);
+        EnemySprite.setTexture(MinionSpriteSheet);
+        EnemySprite.setTextureRect(defaultArea);
+        EnemySprite.setScale(0.2, 0.2);
+        EnemySprite.setOrigin(EnemySprite.getLocalBounds().width / 2.f, EnemySprite.getLocalBounds().height / 2.f);
+        EnemySprite.setHitbox(EnemySprite.getLocalBounds());
 
 
         // Stand up frames
@@ -1816,7 +1816,7 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
         standUpFrames[2] = sf::IntRect(2318, 811, 147, 162);
 
         standUpAnim = new AnimationComponent;
-        standUpAnim->loadSprite(standUpFrames, totalStandUpFrames, 0.12f); 
+        standUpAnim->loadSprite(standUpFrames, totalStandUpFrames, 0.12f);
 
         // Move frames
         moveFrames[0] = sf::IntRect(1799, 810, 161, 162);
@@ -1824,7 +1824,7 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
         moveFrames[2] = sf::IntRect(2145, 780, 161, 177);
 
         moveAnim = new AnimationComponent;
-        moveAnim->loadSprite(moveFrames, totalMoveFrames, 0.15f); 
+        moveAnim->loadSprite(moveFrames, totalMoveFrames, 0.15f);
 
         // Physics Setup
         sethealth(1);
@@ -1837,7 +1837,7 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
         setCopyVy(200.0f);
 
         // State Flags
-        isFlying = true; 
+        isFlying = true;
         isInAir = true;
         isOnLand = false;
         hasStoodUp = false;
@@ -1849,18 +1849,18 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
         if (isInAir)
         {
             // Apply gravity (standardized for smoother arcs)
-            setVy(getVy() + 980.0f * dt); 
+            setVy(getVy() + 980.0f * dt);
             UpdateY(dt);
             UpdateX(dt); // Keeps moving horizontally while being thrown
 
-            EnemySprite.setPosition(x, y); 
+            EnemySprite.setPosition(x, y);
 
             // Check if it hit the ground
             if (CheckVerticalOnlyCollision(B, BLOCKSIZE))
             {
-                isInAir  = false;
+                isInAir = false;
                 isFlying = false;
-                isOnLand = true;    
+                isOnLand = true;
                 setVx(0); // Stop moving forward while doing the stand-up animation
                 setVy(0);
             }
@@ -1870,8 +1870,8 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
             if (!hasStoodUp)
             {
                 EnemySprite.setTextureRect(standUpAnim->getCurrentFrame());
-                standUpAnim->update(dt); 
-                
+                standUpAnim->update(dt);
+
                 // If it reaches the final frame of the stand up animation, lock it and start moving
                 if (standUpAnim->getCurrentFrameIndex() == totalStandUpFrames - 1)
                 {
@@ -1879,21 +1879,21 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
                     setVx(-200.0f); // Start moving left only
                 }
             }
-            else 
+            else
             {
                 UpdateX(dt); // Actually apply the X velocity so the sprite moves
-                
+
                 EnemySprite.setTextureRect(moveAnim->getCurrentFrame());
                 moveAnim->update(dt);
-                
-                if (!CheckVerticalOnlyCollision(B, BLOCKSIZE)) 
+
+                if (!CheckVerticalOnlyCollision(B, BLOCKSIZE))
                 {
                     setVy(getVy() + 980.0f * dt); // Re-apply gravity if falling
                     UpdateY(dt);
                 }
             }
-            
-            EnemySprite.setPosition(x, y); 
+
+            EnemySprite.setPosition(x, y);
         }
     }
 
@@ -1907,7 +1907,7 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
 
     virtual int getScore() override
     {
-        return 50 + rand() % 51; 
+        return 50 + rand() % 51;
     }
 };
 
@@ -2159,7 +2159,7 @@ public :
     /////////////////////////////////
     /////////////////////////////////
 
-    virtual void CreateEnemy(float x , float y , int index)  override ;
+    virtual void CreateEnemy(float x , float y, int index)  override ;
     virtual void update(float dt, Block* B, const int BLOCKSIZE) override  ;
     virtual void draw(sf::RenderWindow &mywindow, bool debug)  override;
     virtual int getScore()
@@ -2271,7 +2271,7 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
     return onLand;
 }
 
-    virtual void CreateEnemy(float x, float y , int index) override
+    virtual void CreateEnemy(float x, float y, int index) override
     {
         if (!MinionSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Gamakichi.png"))
         {
@@ -2283,9 +2283,8 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
         EnemySprite.setTexture(MinionSpriteSheet) ;
         EnemySprite.setTextureRect(defaultArea) ;
         EnemySprite.setScale(0.2 , 0.2) ;
+        EnemySprite.setHitbox(EnemySprite.getLocalBounds());
         EnemySprite.setOrigin(EnemySprite.getLocalBounds().width/2.f, EnemySprite.getLocalBounds().height / 2.f);
-        EnemySprite.setHitbox(EnemySprite.getLocalBounds()); 
-
 
         // Stand up frames
         standUpFrames[0] = sf::IntRect(42, 1510, 202, 200);
@@ -2436,11 +2435,7 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
 
 }; 
 
-
-
-
-
-class Gamakichi : public  Mogera
+class Gamakichi : public  Botom
 {
 private:
 
@@ -2469,7 +2464,7 @@ int totatTimeTokeepTheMouthOpen = 2 ;
 int totalCountOfBomber ; 
 sf::Clock  BombersSpawnTimer ; 
 int totalTimeAfterWhichToSpawnTheBombers ;
-Bomber  *bombers ;
+Bomber* bombers ;
 
 // It it just the size of array where all the created minions are stored
 int totalCountOfBombersBossCanSpawnAtaTime =  8 ; 
@@ -2477,6 +2472,7 @@ int totalCountOfBombersBossCanSpawnAtaTime =  8 ;
 public : 
     Gamakichi()
     {
+        health = 20;
         eyeOpenAndCloseLeftAnimation  = new AnimationComponent ;
         eyeOpenAndCloseRightAnimation  = new AnimationComponent ;
         MouthOpenandCloseAnimation  = new AnimationComponent ;
@@ -2513,7 +2509,7 @@ public :
     /////////////////////////////////
     /////////////////////////////////
 
-    virtual void CreateEnemy(float x, float y , int index) override
+    virtual void CreateEnemy(float x, float y, int index) override
     {
         if(!GamakichiSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Gamakichi.png"))
         {
@@ -2529,7 +2525,7 @@ public :
         EnemySprite.setTextureRect(area);
         EnemySprite.setTexture(GamakichiSpriteSheet);
         EnemySprite.setPosition(x, y);
-        EnemySprite.setHitbox(FloatRect(area));
+        EnemySprite.setHitbox(FloatRect(-15.f, 0, area.width, area.height));
         this->x  = x  ;
         this->y = y ;
         
@@ -2553,9 +2549,20 @@ public :
         
         
     }
-    virtual void update(sf::RenderWindow& mywindow, float dt, Block* B, const int BLOCKSIZE)
+    virtual void update(float dt, Block* B, const int BLOCKSIZE) override
     {
-        if(EyeOpenAndCloseTimer.getElapsedTime().asSeconds() >= totalTimeForEyeToOpenAndClose && !isMouthOpen)
+        if (snowAccumulated >= health)
+        {
+            sethealth(-1);
+            if (bombers != nullptr)
+            {
+                delete[] bombers;
+                bombers = nullptr;
+                totalCountOfBomber = 0;
+            }
+        }
+
+        if(health > 0 && EyeOpenAndCloseTimer.getElapsedTime().asSeconds() >= totalTimeForEyeToOpenAndClose && !isMouthOpen)
         {
             LeftEye.setTextureRect(eyeOpenAndCloseLeftAnimation->getCurrentFrame()) ;
             RightEye.setTextureRect(eyeOpenAndCloseRightAnimation->getCurrentFrame()) ; 
@@ -2586,31 +2593,40 @@ public :
             // Keep Mouth open Timer 
         }
 
-        for(int st =  0 ; st <= BLOCKSIZE - 1  ; st++)
-        {
-            B[st].draw(mywindow , true) ;
-        }
         ////////////////
         // all the freaking updates relate with bombers
 
-        if(BombersSpawnTimer.getElapsedTime().asSeconds() >= totalTimeAfterWhichToSpawnTheBombers)
+        if (snowAccumulated >= health - 1)
+        {
+            if (bombers != nullptr)
+            {
+                delete[] bombers;
+                bombers = nullptr;
+                totalCountOfBomber = 0;
+            }
+        }
+
+        if(bombers && BombersSpawnTimer.getElapsedTime().asSeconds() >= totalTimeAfterWhichToSpawnTheBombers)
         {
             if (totalCountOfBomber < totalCountOfBombersBossCanSpawnAtaTime)
             {
-                bombers[totalCountOfBomber].CreateEnemy(x + (rand() % 300),  y , 0);
+                bombers[totalCountOfBomber].CreateEnemy(x + (rand() % 300),  y, 0 );
                 bombers[totalCountOfBomber].timeToReverseTheGravity.restart() ; // i saad yes saad did this so they can fly else every spawned will go down since timers is up when all are created  at  time 
                 totalCountOfBomber++;
             }
 
-        totalTimeAfterWhichToSpawnTheBombers = 3 + (rand() % 4); // making it feel more natural 
-        BombersSpawnTimer.restart();
+            totalTimeAfterWhichToSpawnTheBombers = 3 + (rand() % 4); // making it feel more natural 
+            BombersSpawnTimer.restart();
         }
 
-        for (int st = 0; st <= totalCountOfBomber -  1; st++)
+        if(health > 0)
         {
-            bombers[st].update(dt, B, BLOCKSIZE);
+            for (int st = 0; st < totalCountOfBomber; st++)
+            {
+                if (bombers)
+                    bombers[st].update(dt, B, BLOCKSIZE);
+            }
         }
-
 
     /////////////////////
     /// Checking the end condition of minios 

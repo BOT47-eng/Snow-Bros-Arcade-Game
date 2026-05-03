@@ -286,7 +286,7 @@ void GameUnit::drawMainMenu()
 
     for (int i = 0; i < noOfOptions; i++)
     {
-        playOptionsTexts[i].setFillColor(Color::Black);
+        playOptionsTexts[i].setFillColor(Color::White);
     }
 
     playOptionsTexts[0].setPosition(Vector2f(15, 120));
@@ -306,8 +306,8 @@ void GameUnit::drawMainMenu()
     loginOptionsTexts[0].setPosition(Vector2f(15, 520));
     loginOptionsTexts[1].setPosition(Vector2f(315, 520));
 
-    loginOptionsTexts[0].setFillColor(Color::Black);
-    loginOptionsTexts[1].setFillColor(Color::Black);
+    loginOptionsTexts[0].setFillColor(Color::White);
+    loginOptionsTexts[1].setFillColor(Color::White);
 
     Vector2i mousePos;
 
@@ -390,7 +390,7 @@ void GameUnit::drawMainMenu()
             }
             else
             {
-                playOptionsTexts[i].setFillColor(Color::Black);
+                playOptionsTexts[i].setFillColor(Color::White);
             }
 
             if (i < 2)
@@ -401,7 +401,7 @@ void GameUnit::drawMainMenu()
                 }
                 else
                 {
-                    loginOptionsTexts[i].setFillColor(Color::Black);
+                    loginOptionsTexts[i].setFillColor(Color::White);
                 }
             }
 
@@ -430,15 +430,16 @@ void GameUnit::drawMainMenu()
         }
 
         window.clear();
+        window.draw(bg_sprite);
 
         for (int i = 0; i < noOfOptions; i++)
         {
-            window.draw(playOptions[i]);
+            //window.draw(playOptions[i]);
 
             if (i < 2)
             {
                 window.draw(loginLabelsText[i]);
-                window.draw(loginOptions[i]);
+                //window.draw(loginOptions[i]);
                 window.draw(loginOptionsTexts[i]);
             }
 

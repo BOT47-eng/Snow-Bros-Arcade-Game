@@ -9,7 +9,7 @@ LevelManager::LevelManager(Leaderboard* ld) : levels(nullptr), levelCount(0), le
 	if (starLevel == 4 || starLevel == 9)
 		starLevel--;
 
-	if (!backgroundSpriteSheet.loadFromFile("Resources/Levels/backgrounds.png"))
+	if (!backgroundSpriteSheet.loadFromFile("Resources/Levels/Backgrounds/levels.png"))
 		cout << "Couldn't load backgrounds;" << endl;
 	else
 		backgrounds.setTexture(backgroundSpriteSheet);
@@ -103,38 +103,47 @@ bool LevelManager::loadLevelConfig(const string& filepath)
 	return true;
 }
 
-Enemy* LevelManager::createEnemy(const string& type, float x, float y)
+Enemy* LevelManager::createEnemy(const string& type, float x, float y, int levelIndex)
 {
+	int index = 0;
+
+	if (levelIndex <= 5)
+		index = 0;
+	else if (levelIndex <= 7)
+		index = 1;
+	else
+		index = 2;
+
 	Enemy* enemy = nullptr;
 	if (type == "FlyingFoogaFoog") 
 	{
 		enemy = new FlyingFoogaFoog;
-		enemy->CreateEnemy(x, y);
+		enemy->CreateEnemy(x, y, index);
 	}
 	else if (type == "Botom") 
 	{
 		enemy = new Botom;
-		enemy->CreateEnemy(x, y);
+		enemy->CreateEnemy(x, y, index);
 	}
 	else if (type == "Tornado")
 	{
 		enemy = new Tornado;
-		enemy->CreateEnemy(x, y);
+		enemy->CreateEnemy(x, y, index);
 	}
 	else if (type == "Tornado")
 	{
 		enemy = new Tornado;
-		enemy->CreateEnemy(x, y);
+		enemy->CreateEnemy(x, y, index);
 	}
 	else if (type == "Mogera")
 	{
 		enemy = new Mogera;
-		enemy->CreateEnemy(x, y);
+		enemy->CreateEnemy(x, y, index);
 	}
 	else if (type == "Gamakichi")
 	{
 		enemy = new Gamakichi;
-		enemy->CreateEnemy(x, y);
+		enemy->CreateEnemy(x, y, index);
 	}
 	return enemy;
 }
@@ -196,6 +205,9 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 	Enemy** enemies = nullptr;
 	Collectible* star = nullptr;
 
+	p1.setPosition(Vector2f(5, 488));
+	p2.setPosition(Vector2f(530, 488));
+
 	int actualEnemyCount = levels[levelIndex].enemyCount;
 	if (checkIsBonusRainLevel(levelIndex))
 	{
@@ -209,7 +221,7 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 		enemies = new Enemy*[actualEnemyCount];
 		for (int i = 0; i < actualEnemyCount; i++)
 		{
-			enemies[i] = createEnemy(level.enemies[i].type, level.enemies[i].x, level.enemies[i].y);
+			enemies[i] = createEnemy(level.enemies[i].type, level.enemies[i].x, level.enemies[i].y, levelIndex);
 		}
 	}
 

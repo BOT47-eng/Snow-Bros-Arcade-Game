@@ -545,27 +545,52 @@ void PhysicsEngine::checkMinionPlayerCollisions(Player& player, Enemy** enemies,
         if (!enemies[i])
             continue;
 
+        Gamakichi* gamakichi = dynamic_cast<Gamakichi*>(enemies[i]);
         Mogera* mogera = dynamic_cast<Mogera*>(enemies[i]);
-        if (!mogera)
+        if (!mogera && !gamakichi)
             continue;
 
-        Minions* minions = mogera->getMinions();
-        int totalMinions = mogera->getTotalMinionsSpawn();
-
-        if (!minions)
-            continue;
-
-        for (int j = 0; j < totalMinions; j++)
+        if (mogera)
         {
-            if (minions[j].getHealth() <= 0)
+            Minions* minions = mogera->getMinions();
+            int totalMinions = mogera->getTotalMinionsSpawn();
+
+            if (!minions)
                 continue;
 
-            if (player.getHitbox().intersects(minions[j].getEnemyHitBox()))
+            for (int j = 0; j < totalMinions; j++)
             {
-                player.takeDamage();
-                return;
+                if (minions[j].getHealth() <= 0)
+                    continue;
+
+                if (player.getHitbox().intersects(minions[j].getEnemyHitBox()))
+                {
+                    player.takeDamage();
+                    return;
+                }
             }
         }
+        else if (gamakichi)
+        {
+            Bomber* bombers = gamakichi->getBombers();
+            int totalBombers = gamakichi->getTotalBombersSpawn();
+
+            if (!bombers)
+                continue;
+
+            for (int j = 0; j < totalBombers; j++)
+            {
+                if (bombers[j].getHealth() <= 0)
+                    continue;
+
+                if (player.getHitbox().intersects(bombers[j].getEnemyHitBox()))
+                {
+                    player.takeDamage();
+                    return;
+                }
+            }
+        }
+        
     }
 }
 
