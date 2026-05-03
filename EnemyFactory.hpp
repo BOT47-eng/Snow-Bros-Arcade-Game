@@ -229,6 +229,7 @@ public:
         animationSpeed = 0.15f ; 
         animationClock.restart() ; 
         isBoss = false;
+        isFlying = false ;
     } 
     ///////////////////////////
     //////// Destructors 
@@ -1237,11 +1238,6 @@ public :
             ////////////////////////////////////
             ///////////////////////////////////
 
-        
-
-
-    
-
         ///////////////////////////////////////////////////////////
         /////// PHASE 1 — REST MODE
         /////// Enemy is stationary. Gravity and platforms are skipped
@@ -1404,23 +1400,152 @@ public :
     virtual void draw(sf::RenderWindow &mywindow, bool debug) override
     {
         mywindow.draw(Enemy::getEnemySprite()) ; 
-        Knife->draw(mywindow , false) ; 
+        Knife->draw(mywindow , debug) ; 
 
         if (debug)
             EnemySprite.drawHitbox(mywindow, Color::Red);
 
     }
+};
+//#endif
 
-    void DRAWHITBOXES(sf::RenderWindow &mywindow , Block *B , int size)
+// Everything it inherits from botom my work would be to just throw 
+class Minions : public Botom
+{
+protected:
+
+    bool isInAir  ;
+    bool isOnLand ;
+
+
+    sf::Clock inAirTime;
+    float totalInAirTime;
+
+    AnimationComponent* standUpAnim;
+    AnimationComponent* moveAnim;
+
+    sf::Texture MinionSpriteSheet;
+
+    sf::IntRect standUpFrames[4];
+    int totalStandUpFrames;
+    // Move frames
+    sf::IntRect moveFrames[3];
+    int totalMoveFrames;
+
+    
+public:
+
+    Minions() : Botom()
     {
-        for(int st =  0 ; st <= size - 1 ; st++)
+        totalInAirTime      = 5.0f;
+        standUpAnim         = nullptr;
+        moveAnim            = nullptr;
+        totalStandUpFrames  = 3;
+        totalMoveFrames     = 3;
+        isBoss              = false;
+    }
+
+    ~Minions()
+    {
+        if (standUpAnim != nullptr)
         {
-            B[st].draw(mywindow , true) ; 
+            delete standUpAnim;
+            standUpAnim = nullptr;
+        }
+        if (moveAnim != nullptr)
+        {
+            delete moveAnim;
+            moveAnim = nullptr;
         }
     }
 
+    virtual void CreateEnemy(float x, float y) override
+    {
+        if (!MinionSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Mogera.png"))
+        {
+            std::cout << "Error loading Minion spritesheet\n";
+            exit(0);
+        }
+
+        sf::IntRect defaultArea(1796, 806, 167 , 161);  
+        sf::Texture defaultTex;
+        defaultTex.loadFromFile("Resources/SnowBrosAssets/Images/Mogera.png", defaultArea);
+        setEnemyTexture(defaultTex);
+        EnemySprite.setScale(0.2f, 0.2f);
+        setEnemyHitBoxSprite();
+
+      
+        standUpFrames[0] = sf::IntRect(1986,   984, 141, 162);
+        standUpFrames[1] = sf::IntRect(1791,  979, 141, 162);
+        standUpFrames[2] = sf::IntRect(2318  , 811, 147, 162);
+
+        standUpAnim = new AnimationComponent;
+        standUpAnim->loadSprite(standUpFrames, totalStandUpFrames, 0.12f, false); // false = play once
+
+
+        moveFrames[0] = sf::IntRect(1799,   810, 161, 162);
+        moveFrames[1] = sf::IntRect(1973,  806, 161, 162);
+        moveFrames[2] = sf::IntRect(2145, 765, 161, 177);
+
+        moveAnim = new AnimationComponent;
+        moveAnim->loadSprite(moveFrames, totalMoveFrames, 0.15f, true); // true = loop
+
+    
+
+        sethealth(1);
+        healthOriginal = 1;
+        setPos(x, y);
+        setVy(200.0f);
+        originalSpeed = 200.0f;
+        setCopyVx(200.0f);
+        setCopyVy(200.0f);
+
+
+        // Initially in Air
+        isFlying = true ; 
+        isInAir = true ;
+        isOnLand = false ;
+        inAirTime.restart();
+    }
+
+    virtual void update(const float dt, Block* B, const int BLOCKSIZE) override
+    {
+        if(isInAir)
+        {
+            UpdateY(dt) ;
+            UpdateX(dt) ;
+            if(CheckCollosionsWithPlatforms(B , BLOCKSIZE) == true)
+            {
+                isInAir  = false ;
+                isFlying =  false ;
+                isOnLand = true ;    
+            }
+        }
+        else if(isOnLand && (CheckCollosionsWithPlatforms(B , BLOCKSIZE) || CheckCollionsWithScreenY(600 , 560))) 
+        {
+
+        }
+        else 
+        {
+            
+        }
+    }
+
+    virtual void draw(sf::RenderWindow& mywindow, bool debug) override
+    {
+        mywindow.draw(EnemySprite);
+
+        if (debug)
+            EnemySprite.drawHitbox(mywindow, sf::Color::Yellow);
+    }
+
+    virtual int getScore() override
+    {
+        return 50 + rand() % 51; // minions worth less than regular enemies
+    }
+
 };
-//#endif
+
 
 class Mogera :  public  Botom
 {
@@ -1452,10 +1577,16 @@ private:
     float totalTimeofRoarAnimation ;
     float totalTimeofDeathAnimation ;
 
-
     sf::Clock timeToJumpTimer ;
-
     float totalTimeOfWeatherBossWantsToJumpOrNot ;
+
+
+    sf::Clock STOPCHECKINGCOLLOSIONTIMER ;
+    float TOTALTIMEAFTERWHICHTOSTOPCHECKINGTHECOLLOSION ; 
+    
+    sf::SoundBuffer roarBuffer ; 
+    sf::Sound roarSound;
+
 
     int smallJumpCount;
     bool isSmallJump  ;
@@ -1488,6 +1619,7 @@ public :
         animationTimeofDeath.restart() ;
         timeToJumpTimer.restart() ;
         CheckCollosionWithPlatformsOrNot.restart() ;
+        STOPCHECKINGCOLLOSIONTIMER.restart() ; 
 
         totalTimeOfWeatherBossWantsToJumpOrNot = 2.0f ;
         TotalTimeofCheckingCollosionWithPaltformsOrNot = 5 ; 
@@ -1496,6 +1628,9 @@ public :
         totalTimeofBigJumpAnimation = 3 ;
         totalTimeofRoarAnimation = 3 ;
         totalTimeofDeathAnimation = 5 ;
+        TOTALTIMEAFTERWHICHTOSTOPCHECKINGTHECOLLOSION = 5 ;
+
+        
 
 
         isBoss = true;
@@ -1511,17 +1646,13 @@ public :
     }
     ~Mogera()
     {
-        if(smallJumpAnimation != nullptr)
-        {
-            delete [] smallJumpAnimation ;
-        }
         if(bigJumpAnimation != nullptr)
         {
-            delete [] bigJumpAnimation ; 
+            delete  bigJumpAnimation ; 
         }
         if(roarAnimation != nullptr)
         {
-            delete [] roarAnimation ;
+            delete  roarAnimation ;
         }
         if(deathAnimation != nullptr)
         {
@@ -1535,13 +1666,35 @@ public :
 
     void CheckWeatherBossWantsToJumpOrNot()
     {
+        if(animationTimeofBigJump.getElapsedTime().asSeconds() >= totalTimeofBigJumpAnimation)
+        {
+            isLongJump = true ; 
+        } 
     }
 
     void UpdateY(const float dt)
     {
         y += Vy * dt ;
     }
-    bool CheckCollionsWithScreenY(const float width, const float height)
+    bool CheckCollosionWithScreenYUP(const float width, const float height)
+    {
+
+        bool flag = false;
+        if (y < 60)
+        {
+            y = 60;
+            isJumping  = false; // ← cancel jump so update loop falls into gravity
+            isLongJump  = false;
+            isSmallJump = false;
+            isFalling  = true;
+            setVy(abs(CopyVy)); // ← fall down immediately
+            flag = true;
+            EnemySprite.setPosition(x, y);
+            EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
+        }
+        return flag ; 
+    }
+    bool CheckCollionsWithScreenYDOWN(const float width, const float height)
     {
         bool flag = false;
 
@@ -1654,6 +1807,12 @@ public :
 
 };
 
+
+
+//////////////////////////////////////////////
+
+
+
 class Gamakichi : public  Botom
 {
 private:
@@ -1664,14 +1823,12 @@ private:
     int totalMinionsSpawn;
 
     sf::Texture SpriteSheetofBoss;
-    AnimationComponent* smallJumpAnimation;
     AnimationComponent* bigJumpAnimation;
     AnimationComponent* roarAnimation;
     AnimationComponent* deathAnimation;
     HitboxSprite EnemyLegsSprite;
 
 
-    sf::Clock animationTimeofSmallJump;
     sf::Clock animationTimeofBigJump;
     sf::Clock animationTimeofRoar;
     sf::Clock animationTimeofDeath;
@@ -1686,6 +1843,8 @@ private:
 
 
     sf::Clock timeToJumpTimer;
+
+    
 
     float totalTimeOfWeatherBossWantsToJumpOrNot;
 
@@ -1709,13 +1868,11 @@ public:
 
         health = 10;
         totalMinionsSpawn = 0;
-        smallJumpAnimation = nullptr;
         bigJumpAnimation = nullptr;
         roarAnimation = nullptr;
         deathAnimation = nullptr;
 
         animationTimeofBigJump.restart();
-        animationTimeofSmallJump.restart();
         animationTimeofRoar.restart();
         animationTimeofDeath.restart();
         timeToJumpTimer.restart();
@@ -1725,7 +1882,7 @@ public:
         TotalTimeofCheckingCollosionWithPaltformsOrNot = 5;
 
         totalTimeofSmallJumpAnimation = 5;
-        totalTimeofBigJumpAnimation = 3;
+        totalTimeofBigJumpAnimation = 2;
         totalTimeofRoarAnimation = 3;
         totalTimeofDeathAnimation = 5;
 
@@ -1743,10 +1900,6 @@ public:
     }
     ~Gamakichi()
     {
-        if (smallJumpAnimation != nullptr)
-        {
-            delete[] smallJumpAnimation;
-        }
         if (bigJumpAnimation != nullptr)
         {
             delete[] bigJumpAnimation;
@@ -1767,6 +1920,7 @@ public:
 
     void CheckWeatherBossWantsToJumpOrNot()
     {
+        
     }
 
     void UpdateY(const float dt)
@@ -1878,7 +2032,7 @@ public:
 
     virtual void CreateEnemy(float x, float y);
     virtual void update(sf::RenderWindow& mywindow, float dt, Block* B, const int BLOCKSIZE);
-    virtual void draw(sf::RenderWindow& mywindow, bool debug);
+    virtual void draw(sf::RenderWindow& mywindow, bool debug) ;
     virtual int getScore()
     {
         return 10000;
