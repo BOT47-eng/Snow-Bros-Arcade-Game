@@ -213,3 +213,89 @@ void Enemy::breakOutOfSnowball()
     animSnowballRoll.reset();
     animSnowballBreakout.reset();
 }
+
+void MOGUERABOSS::CreateEnemy(float x, float y)
+{
+    ////////////////////////////////////////
+    // Loading and setting all the textures
+
+    if (!SpriteSheetofBoss.loadFromFile("Resources/SnowBrosAssets/Images/Mogera.png"))
+    {
+        cout << "Error in loading the SpriteSheet of MoeMoe Boss lol\n";
+        exit(0);
+    }
+
+    /////////////////////
+    // For Test 
+    IntRect area(44, 9, 539, 460);
+    EnemySprite.setScale({ 0.25 ,  0.25 });
+    EnemySprite.setTextureRect(area);
+    EnemySprite.setTexture(SpriteSheetofBoss);
+    EnemySprite.setPosition(x, y);
+
+    ///////////////////////
+    // setting Up the legs
+    const int framesOfLegs = 3;
+    sf::IntRect  areaOfLegs[3] = {
+                    {1924 , 3 , 539 , 107},
+                    {1924 , 207 ,539 , 233},
+                    {1924  , 443 , 539 , 329}
+    };
+    bigJumpAnimation = new AnimationComponent;
+    bigJumpAnimation->loadSprite(areaOfLegs, framesOfLegs, 0.01);
+
+
+    EnemyLegsSprite.setScale({ 0.25 , 0.25 });
+    EnemyLegsSprite.setTexture(SpriteSheetofBoss);
+    EnemyLegsSprite.setTextureRect(areaOfLegs[0]);
+    sf::FloatRect legBounds = EnemyLegsSprite.getLocalBounds();
+
+    float shrinkX = 100.0f;
+    float shrinkY = 0.f;
+
+    legBounds.left += shrinkX;
+    legBounds.top += shrinkY;
+    legBounds.width -= shrinkX * 2;
+    legBounds.height -= shrinkY * 2;
+
+    EnemyLegsSprite.setHitbox(legBounds);
+    EnemyLegsSprite.setHitbox(legBounds);
+
+    xFactorShiftForSpriteToAlignWithEachOther = 10;
+    Enemyheight = EnemySprite.getGlobalBounds().height - 8;
+    EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
+
+
+
+
+    setPos(x, y);
+    setVx(0);
+    setVy(400);
+    setCopyVx(0);
+    setCopyVy(400);
+}
+
+void MOGUERABOSS::update(sf::RenderWindow& mywindow, const float dt, Block* B, const int BLOCKSIZE)
+{
+    UpdateY(dt);
+
+
+
+
+    ////////////////////
+    /// Checking all the collosion here 
+    CheckCollionsWithScreenY(600, 600);
+
+    EnemySprite.setPosition({ x, y });
+    EnemyLegsSprite.setPosition({ x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight });
+}
+
+int  MOGUERABOSS::getScore() { return 0; }
+
+void MOGUERABOSS::draw(sf::RenderWindow& mywindow, bool debug)
+{
+    mywindow.draw(EnemySprite);
+    mywindow.draw(EnemyLegsSprite);
+
+
+}

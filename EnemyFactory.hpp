@@ -7,7 +7,7 @@
 #include "Block.hpp"
 #include "AnimationComponent.hpp"
 #include "Projectile.hpp"
-#include "Snowball.cpp"
+//#include "Snowball.cpp"
 
 
 //#ifndef ENEMYFACTORY 
@@ -125,7 +125,7 @@ public:
 
     Enemy() : health(0), x(0), y(0), Vx(0), Vy(0), CopyVx(0), CopyVy(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), snowballCreatorPlayer(0), currentSnowballAnim(nullptr), isBoss(false), isFlying(false)
     {
-        if (!snowballTexture.loadFromFile("SnowBrosAssets/Images/Nick.png"))
+        if (!snowballTexture.loadFromFile("Resources/SnowBrosAssets/Images/Nick.png"))
         {
             std::cout << "Error loading snowball texture\n";
         }
@@ -134,7 +134,7 @@ public:
 
     Enemy(int h, float x, float y, float dx, float dy) : health(h), x(x), y(y), Vx(dx), Vy(dy), snowAccumulated(0), isFullyCoated(false), originalSpeed(0), isSnowball(false), isSnowballBreakingOut(false), snowballVelocityX(0), snowballVelocityY(0), snowballStaticTimer(0), snowballKillCount(0), snowballOnGround(false), snowballPushDirection(0), snowballCreatorPlayer(0), currentSnowballAnim(nullptr), isFlying(false)
     {
-        if (!snowballTexture.loadFromFile("SnowBrosAssets/Images/Nick.png"))
+        if (!snowballTexture.loadFromFile("ResourcesSnowBrosAssets/Images/Nick.png"))
         {
             std::cout << "Error loading snowball texture\n";
         }
@@ -989,198 +989,193 @@ public :
 class Tornado :  public virtual FlyingFoogaFoog 
 {
 protected: 
-////////////////////
-// Just adding the feature of knife throwing
-sf::Clock TimerForThrowKnifeOrNot ; 
-float TotalTimeForThrowKnife  ;
+    ////////////////////
+    // Just adding the feature of knife throwing
+    sf::Clock TimerForThrowKnifeOrNot ; 
+    float TotalTimeForThrowKnife  ;
 
 
-//// If Time is true to throw knife now then 
-sf::Clock TimeToThrowKnife ;
-float TimeTakenToThrowKnife ; 
+    //// If Time is true to throw knife now then 
+    sf::Clock TimeToThrowKnife ;
+    float TimeTakenToThrowKnife ; 
 
-bool isThrowingTheKnife ;
+    bool isThrowingTheKnife ;
 
-int currentIndexOfKnifethrowingAnimation; 
-sf::Texture *EnemyKnifeThrowingTexture ;
-int TotalAnimationofKnifeThrowingTexture ;
+    int currentIndexOfKnifethrowingAnimation; 
+    sf::Texture *EnemyKnifeThrowingTexture ;
+    int TotalAnimationofKnifeThrowingTexture ;
 
-
-
-
-sf::Clock knifeTimer ;
-sf::Texture KnifeTex ;
-Snowball *Knife ; 
-bool isKnifeFired ;
-
-
+    sf::Clock knifeTimer ;
+    sf::Texture KnifeTex ;
+    Snowball *Knife ; 
+    bool isKnifeFired ;
 
 public : 
-Tornado()
-{
-    isKnifeFired = false; 
-    knifeTimer.restart() ;
-    Knife = new Snowball ; 
-
-    TimerForThrowKnifeOrNot.restart() ;
-    TimeToThrowKnife.restart() ; 
-
-    currentIndexOfKnifethrowingAnimation =  0; 
-    isThrowingTheKnife = false; 
-    TotalAnimationofKnifeThrowingTexture = 1 ; 
-    TimeTakenToThrowKnife = 1 ;
-
-    TotalTimeForThrowKnife = 5 ; 
-    EnemyKnifeThrowingTexture  = nullptr ; 
-    isBoss = false;
-}
-
-virtual ~Tornado()
-{
-    delete Knife ;
-    delete [] EnemyKnifeThrowingTexture ;
-}
-
-
-virtual  void CreateEnemy(float x , float y) 
-{
-    sf::Texture EnemyTex ; 
-    sf::IntRect area(9 , 41 , 122 ,122) ;
-    if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , area))
+    Tornado()
     {
-        std::cout << "Error in Loading the TornadoRed Texture\n" ; 
-        exit(0) ; 
+        isKnifeFired = false; 
+        knifeTimer.restart() ;
+        Knife = new Snowball ; 
+
+        TimerForThrowKnifeOrNot.restart() ;
+        TimeToThrowKnife.restart() ; 
+
+        currentIndexOfKnifethrowingAnimation =  0; 
+        isThrowingTheKnife = false; 
+        TotalAnimationofKnifeThrowingTexture = 1 ; 
+        TimeTakenToThrowKnife = 1 ;
+
+        TotalTimeForThrowKnife = 5 ; 
+        EnemyKnifeThrowingTexture  = nullptr ; 
+        isBoss = false;
     }
-    setEnemyTexture(EnemyTex) ;
-    EnemySprite.setScale(0.3 , 0.3) ;
-    setEnemyHitBoxSprite() ;
+
+    virtual ~Tornado()
+    {
+        delete Knife ;
+        delete [] EnemyKnifeThrowingTexture ;
+    }
+
+
+    virtual  void CreateEnemy(float x , float y) 
+    {
+        sf::Texture EnemyTex ; 
+        sf::IntRect area(9 , 41 , 122 ,122) ;
+        if(!EnemyTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , area))
+        {
+            std::cout << "Error in Loading the TornadoRed Texture\n" ; 
+            exit(0) ; 
+        }
+        setEnemyTexture(EnemyTex) ;
+        EnemySprite.setScale(0.3 , 0.3) ;
+        setEnemyHitBoxSprite() ;
 
 
 
 
-    ////////////////////////////////////////
-    ///// Loading Different Animation texture in the arrays 
-    TotalAnimationofRightMovement = 3 ;
-    TotalAnimationofleftMovement = 3 ;
-    TotalAnimationofJump = 1 ;
-    TotalAnimationofFalling = 1 ;
-    TotalAnimationofFlying = 8 ;
-    TotalAnimationofKnifeThrowingTexture = 2 ; 
+        ////////////////////////////////////////
+        ///// Loading Different Animation texture in the arrays 
+        TotalAnimationofRightMovement = 3 ;
+        TotalAnimationofleftMovement = 3 ;
+        TotalAnimationofJump = 1 ;
+        TotalAnimationofFalling = 1 ;
+        TotalAnimationofFlying = 8 ;
+        TotalAnimationofKnifeThrowingTexture = 2 ; 
 
 
-    EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
-    EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
-    EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
-    EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
-    FlyingTexture = new sf::Texture[TotalAnimationofFlying];
-    EnemyKnifeThrowingTexture = new sf::Texture[TotalAnimationofKnifeThrowingTexture] ; 
+        EnemySpriteRightMovementTextures = new sf::Texture[TotalAnimationofRightMovement];
+        EnemySpriteLeftMovementTextures = new sf::Texture[TotalAnimationofleftMovement];
+        EnemySpriteJumpingUpTexture = new sf::Texture[TotalAnimationofJump];
+        EnemySpriteFallingDownTexture = new sf::Texture[TotalAnimationofFalling];
+        FlyingTexture = new sf::Texture[TotalAnimationofFlying];
+        EnemyKnifeThrowingTexture = new sf::Texture[TotalAnimationofKnifeThrowingTexture] ; 
 
 
-    // Right Movement Textures _ areas
+        // Right Movement Textures _ areas
 
-    EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_01.png");
-    EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_02.png");
-    EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_03.png");
+        EnemySpriteRightMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_01.png");
+        EnemySpriteRightMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_02.png");
+        EnemySpriteRightMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/TornadoRed_03.png");
 
-    //  Left Movement Textures
-    sf::IntRect area1(146 , 36   , 122 , 121) ;
-    sf::IntRect area2(283 , 36 , 122 , 122) ;
-    sf::IntRect area3(428 , 36 , 122 , 122) ;
+        //  Left Movement Textures
+        sf::IntRect area1(146 , 36 , 122 , 121) ;
+        sf::IntRect area2(283 , 36 , 122 , 122) ;
+        sf::IntRect area3(428 , 36 , 122 , 122) ;
 
-    EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area1);
-    EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area2);
-    EnemySpriteLeftMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area3);
+        EnemySpriteLeftMovementTextures[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area1);
+        EnemySpriteLeftMovementTextures[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area2);
+        EnemySpriteLeftMovementTextures[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", area3);
 
-    // Jumping Up Textures arers
-    sf::IntRect jumpArea1(14 , 205 , 122 , 122) ;
+        // Jumping Up Textures arers
+        sf::IntRect jumpArea1(14 , 205 , 122 , 122) ;
 
-    EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", jumpArea1);
+        EnemySpriteJumpingUpTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", jumpArea1);
 
-    // Falling Down Textures
-    sf::IntRect FallArea1(8 ,  541 , 122 , 122) ;
-    EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", FallArea1);
-
-
-    //// Default on Land / Rest Texture 
-    sf::IntRect areaLand(9 , 41 , 122 ,122)  ;
-    DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , areaLand) ;
+        // Falling Down Textures
+        sf::IntRect FallArea1(8 ,  541 , 122 , 122) ;
+        EnemySpriteFallingDownTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png", FallArea1);
 
 
-    // Flying Texture set
-    sf::IntRect flyarea1(8 , 1045 , 122 , 122) ; 
-    sf::IntRect flyarea2(150 , 1048 , 122 , 122)  ;
-    sf::IntRect flyarea3(288 , 1044 , 122 , 122)  ;
-    sf::IntRect flyarea4(423 , 1042 , 122 , 122)  ;
-    sf::IntRect flyarea5(552 , 1047 , 122 , 122)  ;
-    sf::IntRect flyarea6(700 , 1058 , 122 , 122)  ;
-    sf::IntRect flyarea7(856 , 1048 , 122 , 122)  ;
-    sf::IntRect flyarea8(980 , 1041 , 122 , 122)  ;
+        //// Default on Land / Rest Texture 
+        sf::IntRect areaLand(9 , 41 , 122 ,122)  ;
+        DefaultOnLandTexture.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , areaLand) ;
+
+
+        // Flying Texture set
+        sf::IntRect flyarea1(8 , 1045 , 122 , 122) ; 
+        sf::IntRect flyarea2(150 , 1048 , 122 , 122)  ;
+        sf::IntRect flyarea3(288 , 1044 , 122 , 122)  ;
+        sf::IntRect flyarea4(423 , 1042 , 122 , 122)  ;
+        sf::IntRect flyarea5(552 , 1047 , 122 , 122)  ;
+        sf::IntRect flyarea6(700 , 1058 , 122 , 122)  ;
+        sf::IntRect flyarea7(856 , 1048 , 122 , 122)  ;
+        sf::IntRect flyarea8(980 , 1041 , 122 , 122)  ;
 
     
-    FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea1) ; 
-    FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea2) ; 
-    FlyingTexture[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea3) ; 
-    FlyingTexture[3].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea4) ; 
-    FlyingTexture[4].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea5) ; 
-    FlyingTexture[5].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea6) ; 
-    FlyingTexture[6].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea7) ; 
-    FlyingTexture[7].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea8) ; 
+        FlyingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea1) ; 
+        FlyingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea2) ; 
+        FlyingTexture[2].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea3) ; 
+        FlyingTexture[3].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea4) ; 
+        FlyingTexture[4].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea5) ; 
+        FlyingTexture[5].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea6) ; 
+        FlyingTexture[6].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea7) ; 
+        FlyingTexture[7].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , flyarea8) ; 
 
 
-    EnemyKnifeThrowingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , {30 , 882  , 110 , 111}); 
-    EnemyKnifeThrowingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , {146 , 887 , 116 , 111}) ; 
+        EnemyKnifeThrowingTexture[0].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , {30 , 882  , 110 , 111}); 
+        EnemyKnifeThrowingTexture[1].loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , {146 , 887 , 116 , 111}) ; 
 
     
-    sf::IntRect knifearea =  {496,  891 , 66 , 27}  ; 
-    KnifeTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , knifearea) ;  
-    Knife->setTexture(KnifeTex) ;
-    Knife->setActive(false) ;
+        sf::IntRect knifearea =  {496,  891 , 66 , 27}  ; 
+        KnifeTex.loadFromFile("Resources/SnowBrosAssets/Images/Tornado_Red.png" , knifearea) ;  
+        Knife->setTexture(KnifeTex) ;
+        Knife->setActive(false) ;
 
-    /////////////////////////////////////////////
-    ///// Now Setting the Properties of the Enemy
-    setPos(x , y) ;
-    setVx(200) ;
-    setVy(200) ;
-    setCopyVx(200) ;
-    setCopyVy(200) ;
-}
+        /////////////////////////////////////////////
+        ///// Now Setting the Properties of the Enemy
+        setPos(x , y) ;
+        setVx(200) ;
+        setVy(200) ;
+        setCopyVx(200) ;
+        setCopyVy(200) ;
+    }
 
-void ThrowKnife()
-{
-    if(getVx() > 0)
+    void ThrowKnife()
     {
-        isRight = true ;
-        isLeft = false ;
+        if(getVx() > 0)
+        {
+            isRight = true ;
+            isLeft = false ;
+        }
+        else 
+        {
+            isRight  = false ;
+            isLeft = true ;
+        }
+        Knife->fire(EnemySprite.getPosition(), isRight) ; 
+        Knife->setActive(true) ; 
+        knifeTimer.restart() ;
     }
-    else 
-    {
-        isRight  = false ;
-        isLeft = true ;
-    }
-    Knife->fire(EnemySprite.getPosition(), isRight) ; 
-    Knife->setActive(true) ; 
-    knifeTimer.restart() ;
-}
 
-/// IF I CHANGE ANIMATION THIS WAY I ONLY NEED ONE VALUE TO STORE THE STORE OR ACTUALLY NONE AT ALL JUST A SIMPLESPIRITSHEET
-void ChangeToThrowKnifeAnimation()
-{
-    currentIndexOfKnifethrowingAnimation = (currentIndexOfKnifethrowingAnimation + 1) % TotalAnimationofKnifeThrowingTexture  ; 
-    sf::IntRect area ;
-    EnemySprite.setTexture(EnemyKnifeThrowingTexture[currentIndexOfKnifethrowingAnimation])  ;
-    if(getVx() > 0) // Enemy Pos Condition actually here 
+    /// IF I CHANGE ANIMATION THIS WAY I ONLY NEED ONE VALUE TO STORE THE STORE OR ACTUALLY NONE AT ALL JUST A SIMPLESPIRITSHEET
+    void ChangeToThrowKnifeAnimation()
     {
-        EnemySprite.setScale(-0.3 , 0.3) ; 
-        isRight = true ; 
-        isLeft = false ;
+        currentIndexOfKnifethrowingAnimation = (currentIndexOfKnifethrowingAnimation + 1) % TotalAnimationofKnifeThrowingTexture  ; 
+        sf::IntRect area ;
+        EnemySprite.setTexture(EnemyKnifeThrowingTexture[currentIndexOfKnifethrowingAnimation])  ;
+        if(getVx() > 0) // Enemy Pos Condition actually here 
+        {
+            EnemySprite.setScale(-0.3 , 0.3) ; 
+            isRight = true ; 
+            isLeft = false ;
+        }
+        else
+        {
+            EnemySprite.setScale(0.3 , 0.3) ; 
+            isLeft = true ;
+            isRight =  false ;
+        }
     }
-    else
-    {
-        EnemySprite.setScale(0.3 , 0.3) ; 
-        isLeft = true ;
-        isRight =  false ;
-    }
-}
 
 
     virtual int getScore()
@@ -1430,313 +1425,228 @@ class MOGUERABOSS :  public  Botom
 {
 private: 
 
-float xFactorShiftForSpriteToAlignWithEachOther ;
-float Enemyheight ;
+    float xFactorShiftForSpriteToAlignWithEachOther ;
+    float Enemyheight ;
 
-int totalMinionsSpawn ;
+    int totalMinionsSpawn ;
 
-sf::Texture SpriteSheetofBoss ;
-AnimationComponent *smallJumpAnimation ;
-AnimationComponent *bigJumpAnimation ;
-AnimationComponent *roarAnimation ;
-AnimationComponent *deathAnimation ;
-HitboxSprite EnemyLegsSprite ; 
-
-
-sf::Clock animationTimeofSmallJump ;
-sf::Clock animationTimeofBigJump ; 
-sf::Clock animationTimeofRoar ;
-sf::Clock animationTimeofDeath ;
-
-sf::Clock CheckCollosionWithPlatformsOrNot ;
-int TotalTimeofCheckingCollosionWithPaltformsOrNot ;
-
-float totalTimeofSmallJumpAnimation ;
-float totalTimeofBigJumpAnimation ;
-float totalTimeofRoarAnimation ;
-float totalTimeofDeathAnimation ;
+    sf::Texture SpriteSheetofBoss ;
+    AnimationComponent *smallJumpAnimation ;
+    AnimationComponent *bigJumpAnimation ;
+    AnimationComponent *roarAnimation ;
+    AnimationComponent *deathAnimation ;
+    HitboxSprite EnemyLegsSprite ; 
 
 
-sf::Clock timeToJumpTimer ;
+    sf::Clock animationTimeofSmallJump ;
+    sf::Clock animationTimeofBigJump ; 
+    sf::Clock animationTimeofRoar ;
+    sf::Clock animationTimeofDeath ;
 
-float totalTimeOfWeatherBossWantsToJumpOrNot ;
+    sf::Clock CheckCollosionWithPlatformsOrNot ;
+    int TotalTimeofCheckingCollosionWithPaltformsOrNot ;
 
-int smallJumpCount;
-bool isSmallJump  ;
-bool isLongJump  ;
+    float totalTimeofSmallJumpAnimation ;
+    float totalTimeofBigJumpAnimation ;
+    float totalTimeofRoarAnimation ;
+    float totalTimeofDeathAnimation ;
 
-bool isOnLand ; 
-bool isFalling ;
-bool isJumping ;
-bool isRoaring ;
-bool isDying ; // Lol
+
+    sf::Clock timeToJumpTimer ;
+
+    float totalTimeOfWeatherBossWantsToJumpOrNot ;
+
+    int smallJumpCount;
+    bool isSmallJump  ;
+    bool isLongJump  ;
+
+    bool isOnLand ; 
+    bool isFalling ;
+    bool isJumping ;
+    bool isRoaring ;
+    bool isDying ; // Lol
 
 
 public : 
 
-MOGUERABOSS() : Botom()
-{
-    Enemyheight = 0 ;
-    xFactorShiftForSpriteToAlignWithEachOther  = 0; 
+    MOGUERABOSS() : Botom()
+    {
+        Enemyheight = 0 ;
+        xFactorShiftForSpriteToAlignWithEachOther  = 0; 
 
-    health = 10 ;
-    totalMinionsSpawn = 0 ;
-    smallJumpAnimation = nullptr;
-    bigJumpAnimation = nullptr ;
-    roarAnimation = nullptr ;
-    deathAnimation = nullptr ;
+        health = 10 ;
+        totalMinionsSpawn = 0 ;
+        smallJumpAnimation = nullptr;
+        bigJumpAnimation = nullptr ;
+        roarAnimation = nullptr ;
+        deathAnimation = nullptr ;
 
-    animationTimeofBigJump.restart(); 
-    animationTimeofSmallJump.restart() ;
-    animationTimeofRoar.restart() ;
-    animationTimeofDeath.restart() ;
-    timeToJumpTimer.restart() ;
-    CheckCollosionWithPlatformsOrNot.restart() ;
+        animationTimeofBigJump.restart(); 
+        animationTimeofSmallJump.restart() ;
+        animationTimeofRoar.restart() ;
+        animationTimeofDeath.restart() ;
+        timeToJumpTimer.restart() ;
+        CheckCollosionWithPlatformsOrNot.restart() ;
 
-    totalTimeOfWeatherBossWantsToJumpOrNot = 2.0f ;
-    TotalTimeofCheckingCollosionWithPaltformsOrNot = 5 ; 
+        totalTimeOfWeatherBossWantsToJumpOrNot = 2.0f ;
+        TotalTimeofCheckingCollosionWithPaltformsOrNot = 5 ; 
 
-    totalTimeofSmallJumpAnimation  = 5 ;
-    totalTimeofBigJumpAnimation = 3 ;
-    totalTimeofRoarAnimation = 3 ;
-    totalTimeofDeathAnimation = 5 ;
+        totalTimeofSmallJumpAnimation  = 5 ;
+        totalTimeofBigJumpAnimation = 3 ;
+        totalTimeofRoarAnimation = 3 ;
+        totalTimeofDeathAnimation = 5 ;
 
 
     
-    isOnLand = false ; 
-    isFalling  = false ;
-    isJumping = false;
-    isRoaring = false ; 
-    isDying = false ;
+        isOnLand = false ; 
+        isFalling  = false ;
+        isJumping = false;
+        isRoaring = false ; 
+        isDying = false ;
 
-    isSmallJump = false ;
-    isLongJump = false ; 
-    smallJumpCount  =  0 ;
-}
-~MOGUERABOSS()
-{
-    if(smallJumpAnimation != nullptr)
-    {
-        delete [] smallJumpAnimation ;
+        isSmallJump = false ;
+        isLongJump = false ; 
+        smallJumpCount  =  0 ;
     }
-    if(bigJumpAnimation != nullptr)
+    ~MOGUERABOSS()
     {
-        delete [] bigJumpAnimation ; 
-    }
-    if(roarAnimation != nullptr)
-    {
-        delete [] roarAnimation ;
-    }
-    if(deathAnimation != nullptr)
-    {
-        delete[] deathAnimation ;
-    }
-}
-/////////////////////////////////
-/////////////////////////////////
-////////////////////////////////
-/// Required Functions by the boss
-
-void CheckWeatherBossWantsToJumpOrNot()
-{
-}
-
-void UpdateY(const float dt)
-{
-    y += Vy * dt ;
-}
-bool CheckCollionsWithScreenY(const float width, const float height)
-{
-    bool flag = false;
-
-    // // Ceiling hit — stop jump, start falling, don't lock velocity
-    // if (y < 60)
-    // {
-    //     y = 60;
-    //     isJumping  = false; // ← cancel jump so update loop falls into gravity
-    //     isLongJump  = false;
-    //     isSmallJump = false;
-    //     isFalling  = true;
-    //     setVy(abs(CopyVy)); // ← fall down immediately
-    //     flag = true;
-    //     EnemySprite.setPosition(x, y);
-    //     EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
-    //     return flag;
-    // }
-
-    if (y + Enemyheight + EnemyLegsSprite.getGlobalBounds().height > height)
-    {
-        y = height - Enemyheight - EnemyLegsSprite.getGlobalBounds().height;
-        setVy(0);
-        flag = true;
-    }
-
-    EnemySprite.setPosition(x, y);
-    EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
-    return flag;
-}
-
-bool CheckCollosionsWithPlatforms(Block* b, const int SIZE)
-{
-    bool OnLand = false;
-    float floorY = 560.0f;
-    
-    float totalHeight = Enemyheight + EnemyLegsSprite.getGlobalBounds().height;
-
-    for (int st = 0; st < SIZE; st++)
-    {
-        sf::FloatRect legBox = EnemyLegsSprite.getGlobalHitbox() ;
-        sf::FloatRect blockBox = b[st].getHitbox();
-        sf::FloatRect overlap;
-
-        if (legBox.intersects(blockBox, overlap))
+        if(smallJumpAnimation != nullptr)
         {
-            if (overlap.width < overlap.height)
-            {
-                if (legBox.left < blockBox.left)
-                {
-                    x -= overlap.width; 
-                    setVx(-abs(CopyVx));
-                }
-                else
-                {
-                    x += overlap.width; 
-                    setVx(abs(CopyVx));
-                }
-            }
-            else
-            {
-                if (legBox.top < blockBox.top) 
-                {
-                    y = blockBox.top - totalHeight ;
-                    setVy(0);
-                    OnLand = true;
-                }
-                else
-                {
-                    y += overlap.height; // Push down
-                    setVy(0);
-                    isJumping = false ; 
-                    isFalling = true ;
-                }
-            }
-
-            EnemySprite.setPosition(x, y);
-            EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight); 
+            delete [] smallJumpAnimation ;
+        }
+        if(bigJumpAnimation != nullptr)
+        {
+            delete [] bigJumpAnimation ; 
+        }
+        if(roarAnimation != nullptr)
+        {
+            delete [] roarAnimation ;
+        }
+        if(deathAnimation != nullptr)
+        {
+            delete[] deathAnimation ;
         }
     }
+    /////////////////////////////////
+    /////////////////////////////////
+    ////////////////////////////////
+    /// Required Functions by the boss
 
-    // Main floor bounds check
-    if (y + totalHeight >= floorY)
+    void CheckWeatherBossWantsToJumpOrNot()
     {
-        y = floorY - totalHeight;
-        setVy(0);
-        OnLand = true;
     }
 
-    EnemySprite.setPosition(x, y);
-    EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight) ; 
+    void UpdateY(const float dt)
+    {
+        y += Vy * dt ;
+    }
+    bool CheckCollionsWithScreenY(const float width, const float height)
+    {
+        bool flag = false;
 
-    return OnLand;
-}
+        // // Ceiling hit — stop jump, start falling, don't lock velocity
+        // if (y < 60)
+        // {
+        //     y = 60;
+        //     isJumping  = false; // ← cancel jump so update loop falls into gravity
+        //     isLongJump  = false;
+        //     isSmallJump = false;
+        //     isFalling  = true;
+        //     setVy(abs(CopyVy)); // ← fall down immediately
+        //     flag = true;
+        //     EnemySprite.setPosition(x, y);
+        //     EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
+        //     return flag;
+        // }
+
+        if (y + Enemyheight + EnemyLegsSprite.getGlobalBounds().height > height)
+        {
+            y = height - Enemyheight - EnemyLegsSprite.getGlobalBounds().height;
+            setVy(0);
+            flag = true;
+        }
+
+        EnemySprite.setPosition(x, y);
+        EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
+        return flag;
+    }
+
+    bool CheckCollosionsWithPlatforms(Block* b, const int SIZE)
+    {
+        bool OnLand = false;
+        float floorY = 560.0f;
+    
+        float totalHeight = Enemyheight + EnemyLegsSprite.getGlobalBounds().height;
+
+        for (int st = 0; st < SIZE; st++)
+        {
+            sf::FloatRect legBox = EnemyLegsSprite.getGlobalHitbox() ;
+            sf::FloatRect blockBox = b[st].getHitbox();
+            sf::FloatRect overlap;
+
+            if (legBox.intersects(blockBox, overlap))
+            {
+                if (overlap.width < overlap.height)
+                {
+                    if (legBox.left < blockBox.left)
+                    {
+                        x -= overlap.width; 
+                        setVx(-abs(CopyVx));
+                    }
+                    else
+                    {
+                        x += overlap.width; 
+                        setVx(abs(CopyVx));
+                    }
+                }
+                else
+                {
+                    if (legBox.top < blockBox.top) 
+                    {
+                        y = blockBox.top - totalHeight ;
+                        setVy(0);
+                        OnLand = true;
+                    }
+                    else
+                    {
+                        y += overlap.height; // Push down
+                        setVy(0);
+                        isJumping = false ; 
+                        isFalling = true ;
+                    }
+                }
+
+                EnemySprite.setPosition(x, y);
+                EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight); 
+            }
+        }
+
+        // Main floor bounds check
+        if (y + totalHeight >= floorY)
+        {
+            y = floorY - totalHeight;
+            setVy(0);
+            OnLand = true;
+        }
+
+        EnemySprite.setPosition(x, y);
+        EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight) ; 
+
+        return OnLand;
+    }
 
 
 
 
 
-/////////////////////////////////
-/////////////////////////////////
-/////////////////////////////////
+    /////////////////////////////////
+    /////////////////////////////////
+    /////////////////////////////////
 
+    virtual void CreateEnemy(float x , float y)  ;
+    virtual void update(sf::RenderWindow &mywindow , float dt, Block* B, const int BLOCKSIZE)  ;
+    virtual void draw(sf::RenderWindow &mywindow, bool debug) ;
+    virtual int getScore() ;
 
-virtual void CreateEnemy(float x , float y)  ;
-virtual void update(sf::RenderWindow &mywindow , float dt, Block* B, const int BLOCKSIZE)  ;
-virtual void draw(sf::RenderWindow &mywindow, bool debug) ;
-virtual int getScore() ;
 };
 
-void MOGUERABOSS::CreateEnemy(float x , float y)
-{
-    ////////////////////////////////////////
-    // Loading and setting all the textures
-
-    if(!SpriteSheetofBoss.loadFromFile("Resources/SnowBrosAssets/Images/Mogera.png"))
-    {
-        cout << "Error in loading the SpriteSheet of MoeMoe Boss lol\n" ;
-        exit(0) ;  
-    } 
-
-    /////////////////////
-    // For Test 
-    IntRect area(44 , 9 , 539 , 460) ;
-    EnemySprite.setScale({0.25 ,  0.25}) ;
-    EnemySprite.setTextureRect(area) ;
-    EnemySprite.setTexture(SpriteSheetofBoss) ; 
-    EnemySprite.setPosition(x , y) ; 
-
-    ///////////////////////
-    // setting Up the legs
-    const int framesOfLegs = 3 ;
-    sf::IntRect  areaOfLegs[3] = {
-                    {1924 , 3 , 539 , 107},
-                    {1924 , 207 ,539 , 233},
-                    {1924  , 443 , 539 , 329}            
-                } ; 
-    bigJumpAnimation = new AnimationComponent ;
-    bigJumpAnimation->loadSprite(areaOfLegs  , framesOfLegs , 0.01) ;
-
-
-    EnemyLegsSprite.setScale({0.25 , 0.25}) ;
-    EnemyLegsSprite.setTexture(SpriteSheetofBoss) ;
-    EnemyLegsSprite.setTextureRect(areaOfLegs[0]) ;
-    sf::FloatRect legBounds = EnemyLegsSprite.getLocalBounds();
-
-    float shrinkX = 100.0f;
-    float shrinkY = 0.f;
-
-    legBounds.left   += shrinkX;
-    legBounds.top    += shrinkY;
-    legBounds.width  -= shrinkX * 2;
-    legBounds.height -= shrinkY * 2;
-
-    EnemyLegsSprite.setHitbox(legBounds);
-    EnemyLegsSprite.setHitbox(legBounds);
-
-    xFactorShiftForSpriteToAlignWithEachOther = 10 ;
-    Enemyheight = EnemySprite.getGlobalBounds().height - 8 ; 
-    EnemyLegsSprite.setPosition(x  - xFactorShiftForSpriteToAlignWithEachOther , y + Enemyheight) ; 
-     
-
-
-
-    setPos(x ,  y) ;
-    setVx(0) ;
-    setVy(400) ; 
-    setCopyVx(0) ;
-    setCopyVy(400) ; 
-}
-
-void MOGUERABOSS::update(sf::RenderWindow &mywindow, const float dt, Block* B, const int BLOCKSIZE)
-{
-    UpdateY(dt) ; 
-
-
-
-
-    ////////////////////
-    /// Checking all the collosion here 
-    CheckCollionsWithScreenY(600 , 600) ;
-
-    EnemySprite.setPosition({x, y});
-    EnemyLegsSprite.setPosition({x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight});
-}
-
-int  MOGUERABOSS::getScore() {return 0 ;}
-
-void MOGUERABOSS::draw(sf::RenderWindow &mywindow , bool debug)
-{
-    mywindow.draw(EnemySprite);
-    mywindow.draw(EnemyLegsSprite) ;
-
-   
-}
