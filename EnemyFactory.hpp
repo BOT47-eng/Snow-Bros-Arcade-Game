@@ -2359,5 +2359,9 @@ public :
         return 10000;
     }
 
+    Bomber* getBombers() { return bombers; }
+    int getTotalBombersSpawn() const { return totalCountOfBomber; }
+    int getMaxBombers() const { return totalCountOfBombersBossCanSpawnAtaTime; }
+
 };
 
