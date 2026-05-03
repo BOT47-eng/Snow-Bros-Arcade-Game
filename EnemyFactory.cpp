@@ -281,6 +281,13 @@ void Mogera::CreateEnemy(float x, float y)
     Enemyheight = EnemySprite.getGlobalBounds().height - 8;
     EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
 
+    minions = new Minions[totalCountOfMinionsBossCanSpawnAtaTime]; 
+    totalMinionsSpawn = 0;
+    
+    // Set the first random spawn time (e.g., between 2 and 5 seconds)
+    totalTimeAfterWhichToSpawnTheMinions = 2 + (rand() % 4); 
+    minionsSpawnTimer.restart();
+
 
 
 
@@ -293,6 +300,25 @@ void Mogera::CreateEnemy(float x, float y)
 
 void Mogera::update(sf::RenderWindow& mywindow, const float dt, Block* B, const int BLOCKSIZE)
 {
+    // Adding the Minions Spawn feature here Damn it aaaaa
+    if(minionsSpawnTimer.getElapsedTime().asSeconds() >= totalTimeAfterWhichToSpawnTheMinions)
+    {
+        if (totalMinionsSpawn < totalCountOfMinionsBossCanSpawnAtaTime)
+        {
+            minions[totalMinionsSpawn].CreateEnemy(x + 30, y); // pos change factor  a little bit 
+            totalMinionsSpawn++;
+        }
+
+        totalTimeAfterWhichToSpawnTheMinions = 3 + (rand() % 4);
+        minionsSpawnTimer.restart();
+    }
+
+    for (int st = 0; st <= totalMinionsSpawn -  1; st++)
+    {
+        minions[st].update(dt, B, BLOCKSIZE);
+    }
+    ///////////
+
     CheckWeatherBossWantsToJumpOrNot() ;
 
    if(isLongJump)
@@ -368,12 +394,21 @@ void Mogera::update(sf::RenderWindow& mywindow, const float dt, Block* B, const 
         animationTimeofRoar.restart() ; 
     }
 
-   
-    
-    
-
     EnemySprite.setPosition({ x, y });
     EnemyLegsSprite.setPosition({ x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight });
+
+
+
+    if(totalMinionsSpawn >= totalCountOfMinionsBossCanSpawnAtaTime)
+    {
+        if(minions != nullptr)
+        {
+            delete [] minions; 
+            minions = nullptr ;
+            minions = new Minions[totalCountOfMinionsBossCanSpawnAtaTime]  ; 
+            totalMinionsSpawn = 0 ; 
+        }
+    }
 
     for(int st  = 0 ; st <= BLOCKSIZE -  1; st++)
     {
@@ -385,6 +420,11 @@ void Mogera::draw(sf::RenderWindow& mywindow, bool debug)
 {
     mywindow.draw(EnemySprite);
     mywindow.draw(EnemyLegsSprite);
+
+    for(int i = 0; i < totalMinionsSpawn; i++)
+    {
+        minions[i].draw(mywindow, debug);
+    }
 
 
 }

@@ -1456,6 +1456,50 @@ public:
             moveAnim = nullptr;
         }
     }
+bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
+    {
+    bool onLand = false;
+    float floorY = 560.0f;
+
+    for (int i = 0; i < BLOCKSIZE; i++)
+    {
+        sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
+        sf::FloatRect blockBox = B[i].getHitbox();
+        sf::FloatRect overlap;
+
+        if (enemyBox.intersects(blockBox, overlap))
+        {
+            // Only resolve if it's clearly a vertical collision
+            if (overlap.width > overlap.height)
+            {
+                float enemyCenterY = enemyBox.top + enemyBox.height / 2.0f;
+                float blockCenterY = blockBox.top + blockBox.height / 2.0f;
+
+                if (enemyCenterY < blockCenterY) // Minion is above block
+                {
+                    y = blockBox.top - enemyBox.height / 2.0f;
+                    setVy(0);
+                    onLand = true;
+                }
+            }
+            // ← Horizontal overlaps are intentionally IGNORED
+            //   so minion walks off edges instead of getting pushed back
+        }
+        EnemySprite.setPosition(x, y);
+    }
+
+    // Hard floor
+    float halfH = EnemySprite.getGlobalBounds().height / 2.0f;
+    if (y + halfH >= floorY)
+    {
+        y = floorY - halfH;
+        setVy(0);
+        onLand = true;
+        EnemySprite.setPosition(x, y);
+    }
+
+    return onLand;
+}
 
     virtual void CreateEnemy(float x, float y) override
     {
@@ -1464,14 +1508,14 @@ public:
         {
             std::cout << "Error loading Minion spritesheet\n";
             exit(0);
-        }
 
+        }
         sf::IntRect defaultArea(1796, 806, 167 , 161);
-        sf::Texture defaultTex = MinionSpriteSheet;
+        EnemySprite.setTexture(MinionSpriteSheet) ;
         EnemySprite.setTextureRect(defaultArea) ;
-        setEnemyTexture(defaultTex);
-        EnemySprite.setScale(0.2f, 0.2f);
-        setEnemyHitBoxSprite(); 
+        EnemySprite.setScale(0.2 , 0.2) ;
+        EnemySprite.setHitbox(EnemySprite.getLocalBounds()) ; 
+
 
         // Stand up frames
         standUpFrames[0] = sf::IntRect(1986, 984, 141, 162);
@@ -1519,7 +1563,7 @@ public:
             EnemySprite.setPosition(x, y); 
 
             // Check if it hit the ground
-            if (CheckCollosionsWithPlatforms(B, BLOCKSIZE))
+            if (CheckVerticalOnlyCollision(B, BLOCKSIZE))
             {
                 isInAir  = false;
                 isFlying = false;
@@ -1552,7 +1596,7 @@ public:
                 moveAnim->update(dt);
                 
                 // Optional: Ensure it doesn't fall through the floor if it walks off a ledge
-                if (!CheckCollosionsWithPlatforms(B, BLOCKSIZE)) 
+                if (!CheckVerticalOnlyCollision(B, BLOCKSIZE)) 
                 {
                     setVy(getVy() + 980.0f * dt); // Re-apply gravity if falling
                     UpdateY(dt);
@@ -1619,6 +1663,14 @@ private:
     sf::Sound roarSound;
 
 
+    sf::Clock  minionsSpawnTimer ; 
+    int totalTimeAfterWhichToSpawnTheMinions ;
+    Minions  *minions ;
+
+    // It it just the size of array where all the created minions are stored
+    const int totalCountOfMinionsBossCanSpawnAtaTime =  3 ; 
+
+
     int smallJumpCount;
     bool isSmallJump  ;
     bool isLongJump  ;
@@ -1651,6 +1703,7 @@ public :
         timeToJumpTimer.restart() ;
         CheckCollosionWithPlatformsOrNot.restart() ;
         STOPCHECKINGCOLLOSIONTIMER.restart() ; 
+        minionsSpawnTimer.restart()  ;
 
         totalTimeOfWeatherBossWantsToJumpOrNot = 2.0f ;
         TotalTimeofCheckingCollosionWithPaltformsOrNot = 5 ; 
@@ -1660,6 +1713,7 @@ public :
         totalTimeofRoarAnimation = 3 ;
         totalTimeofDeathAnimation = 5 ;
         TOTALTIMEAFTERWHICHTOSTOPCHECKINGTHECOLLOSION = 5 ;
+        totalTimeAfterWhichToSpawnTheMinions = 5 ; 
 
         
 
@@ -1688,6 +1742,10 @@ public :
         if(deathAnimation != nullptr)
         {
             delete[] deathAnimation ;
+        }
+        if(minions  != nullptr)
+        {
+            delete [] minions ;
         }
     }
     /////////////////////////////////
