@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <fstream>
 #include <string>
 #include "Block.hpp"
@@ -59,6 +60,7 @@ private:
 	bool starConsumed;
 	int starLevel;
 	bool bonusOccured[2];
+	Music levelMusic;
 
 	void drawLevelSelect(int gameMode);
 	void drawGameOver(int p1Score, int p2Score, bool p1Alive, bool p2Alive);

@@ -26,6 +26,7 @@ private:
 	LoginManager loginPlayer[2];
 	Leaderboard leaderboardObj;
 	LevelManager levelManager;
+	Music themeMusic;
 	//Database manageSaves;
 
 	/////////////////////////////////
@@ -37,6 +38,10 @@ private:
 public:
 	GameUnit() : isGameActive(false), levelMenu(false), loginMenu(false), levelManager(&leaderboardObj)
 	{
+		themeMusic.openFromFile("Resources/SnowBrosAssets/Sounds/snow_bros_theme_01.ogg");
+		themeMusic.setVolume(50);
+		themeMusic.setLoop(true);
+		themeMusic.play();
 		window.create(sf::VideoMode({ 600,600 }), "SnowBros 25I-3014 25I-3039", sf::Style::Close);
 		window.setFramerateLimit(60);
 		fontHeader.loadFromFile("Resources/SnowBrosAssets/Fonts/header-font.ttf");

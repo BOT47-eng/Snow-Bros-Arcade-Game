@@ -332,6 +332,7 @@ void GameUnit::drawMainMenu()
                     //New game
                     if (playOptions[0].getGlobalBounds().contains(Vector2f(mousePos)))
                     {
+                        themeMusic.pause();
                         if (loginPlayer[0].isLoggedIn() || loginPlayer[1].isLoggedIn())
                         {
                             levelManager.startGame(0, &window, &fontHeader, &fontNormal, players, loginPlayer[0].isLoggedIn(), loginPlayer[1].isLoggedIn());
@@ -340,6 +341,7 @@ void GameUnit::drawMainMenu()
                     //Continue game
                     else if (playOptions[1].getGlobalBounds().contains(Vector2f(mousePos)))
                     {
+                        themeMusic.pause();
                         if (loginPlayer[0].isLoggedIn() || loginPlayer[1].isLoggedIn())
                         {
                             levelManager.startGame(1, &window, &fontHeader, &fontNormal, players, loginPlayer[0].isLoggedIn(), loginPlayer[1].isLoggedIn());
@@ -348,6 +350,7 @@ void GameUnit::drawMainMenu()
                     //Guest mode
                     else if (playOptions[2].getGlobalBounds().contains(Vector2f(mousePos)))
                     {
+                        themeMusic.pause();
                         levelManager.startGame(2, &window, &fontHeader, &fontNormal, players, loginPlayer[0].isLoggedIn(), loginPlayer[1].isLoggedIn());
                     }
                     //Quit game

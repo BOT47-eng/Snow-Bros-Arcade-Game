@@ -182,6 +182,19 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 	if (levelIndex < 0 || levelIndex >= levelCount)
 		return false;
 
+	levelMusic.pause();
+
+	if (!levels[levelIndex].isBossLevel)
+	{
+		levelMusic.openFromFile("Resources/SnowBrosAssets/Sounds/snow_bros_level.ogg");
+	}
+	else
+	{
+		levelMusic.openFromFile("Resources/SnowBrosAssets/Sounds/final_boss_snow_bros.ogg");
+	}
+
+	levelMusic.play();
+
 	backgrounds.setTextureRect(IntRect(0, 0 + levelIndex * 600, 600, 600));
 
 	const int RESUME = 0;
@@ -205,7 +218,7 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 	Enemy** enemies = nullptr;
 	Collectible* star = nullptr;
 
-	p1.setPosition(Vector2f(5, 488));
+	p1.setPosition(Vector2f(65, 488));
 	p2.setPosition(Vector2f(530, 488));
 
 	int actualEnemyCount = levels[levelIndex].enemyCount;
@@ -311,6 +324,9 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 			}
 			else if (menuChoice == RETURN_MENU) 
 			{
+				levelMusic.pause();
+				levelMusic.openFromFile("Resources/SnowBrosAssets/Sounds/snow_bros_theme_02.ogg");
+				levelMusic.play();
 				for (int i = 0; i < level.blockCount; i++) 
 				{
 					blockArray[i].~Block();
@@ -435,6 +451,9 @@ bool LevelManager::runLevel(int levelIndex, Player& p1, Player& p2)
 
 		if ((!p1Alive && !p2Alive) || !enemiesAlive) 
 		{
+			levelMusic.pause();
+			levelMusic.openFromFile("Resources/SnowBrosAssets/Sounds/snow_bros_theme_02.ogg");
+			levelMusic.play();
 			drawGameOver(p1.getScore(), p2.getScore(), p1Alive, p2Alive);
 			
 			for (int i = 0; i < level.blockCount; i++) 
@@ -1097,6 +1116,11 @@ void LevelManager::startGame(int gameMode, RenderWindow* window, Font* fHeader, 
 	players = playerInfo;
 	player1Active = p1Login;
 	player2Active = p2Login;
+
+	levelMusic.openFromFile("Resources/SnowBrosAssets/Sounds/snow_bros_theme_02.ogg");
+	levelMusic.setLoop(true);
+	levelMusic.setVolume(50);
+	levelMusic.play();
 
 	players = new PlayerInfo[2];
 
