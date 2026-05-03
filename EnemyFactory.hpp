@@ -2511,6 +2511,7 @@ public :
 
     virtual void CreateEnemy(float x, float y, int index) override
     {
+        isBoss = true;
         if(!GamakichiSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Gamakichi.png"))
         {
             std::cout << "Error in Loading the SpriteSheet for Gamakichi\n" ;
