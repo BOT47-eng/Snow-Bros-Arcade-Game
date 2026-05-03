@@ -1622,7 +1622,6 @@ bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
     }
 };
 
-
 class Mogera :  public  Botom
 {
 private: 
@@ -1773,11 +1772,11 @@ public :
         if (y < 60)
         {
             y = 60;
-            isJumping  = false; // ← cancel jump so update loop falls into gravity
+            isJumping  = false; 
             isLongJump  = false;
             isSmallJump = false;
             isFalling  = true;
-            setVy(abs(CopyVy)); // ← fall down immediately
+            setVy(abs(CopyVy)); 
             flag = true;
             EnemySprite.setPosition(x, y);
             EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
@@ -1885,232 +1884,476 @@ public :
 
 };
 
-
-
 //////////////////////////////////////////////
 
 
-
-class Gamakichi : public  Botom
+class Bomber : public Minions
 {
-private:
-
-    float xFactorShiftForSpriteToAlignWithEachOther;
-    float Enemyheight;
-
-    int totalMinionsSpawn;
-
-    sf::Texture SpriteSheetofBoss;
-    AnimationComponent* bigJumpAnimation;
-    AnimationComponent* roarAnimation;
-    AnimationComponent* deathAnimation;
-    HitboxSprite EnemyLegsSprite;
-
-
-    sf::Clock animationTimeofBigJump;
-    sf::Clock animationTimeofRoar;
-    sf::Clock animationTimeofDeath;
-
-    sf::Clock CheckCollosionWithPlatformsOrNot;
-    int TotalTimeofCheckingCollosionWithPaltformsOrNot;
-
-    float totalTimeofSmallJumpAnimation;
-    float totalTimeofBigJumpAnimation;
-    float totalTimeofRoarAnimation;
-    float totalTimeofDeathAnimation;
-
-
-    sf::Clock timeToJumpTimer;
-
-    
-
-    float totalTimeOfWeatherBossWantsToJumpOrNot;
-
-    int smallJumpCount;
-    bool isSmallJump;
-    bool isLongJump;
-
+protected:
+    bool isInAir;
     bool isOnLand;
-    bool isFalling;
-    bool isJumping;
-    bool isRoaring;
-    bool isDying; // Lol
+    bool hasStoodUp; // New flag to track if the stand-up animation is finished
 
+    sf::Clock inAirTime;
+    float totalInAirTime;
+
+    AnimationComponent* standUpAnim;
+    AnimationComponent* moveAnim;
+    sf::Texture MinionSpriteSheet;
+
+    sf::IntRect standUpFrames[3];
+    int totalStandUpFrames;
+    
+    sf::IntRect moveFrames[3];
+    int totalMoveFrames;
+
+    public :
+    sf::Clock timeToReverseTheGravity ; //Downward my brother (the one reading this ... can i touch you)
+    int totalTimeAfterWhichToReverseTheGravity ; 
 
 public:
-
-    Gamakichi() : Botom()
+    Bomber() : Minions()
     {
-        Enemyheight = 0;
-        xFactorShiftForSpriteToAlignWithEachOther = 0;
+        totalInAirTime      = 5.0f;
+        standUpAnim         = nullptr;
+        moveAnim            = nullptr;
+        totalStandUpFrames  = 3;
+        totalMoveFrames     = 3;
+        isBoss              = false;
+        hasStoodUp          = false; // Initialize to false
 
-        health = 10;
-        totalMinionsSpawn = 0;
-        bigJumpAnimation = nullptr;
-        roarAnimation = nullptr;
-        deathAnimation = nullptr;
+        timeToReverseTheGravity.restart() ; 
+        totalTimeAfterWhichToReverseTheGravity = 3 ; 
+    }
 
-        animationTimeofBigJump.restart();
-        animationTimeofRoar.restart();
-        animationTimeofDeath.restart();
-        timeToJumpTimer.restart();
-        CheckCollosionWithPlatformsOrNot.restart();
+    ~Bomber()
+    {
+        if (standUpAnim != nullptr)
+        {
+            delete standUpAnim;
+            standUpAnim = nullptr;
+        }
+        if (moveAnim != nullptr)
+        {
+            delete moveAnim;
+            moveAnim = nullptr;
+        }
+    }
+bool CheckVerticalOnlyCollision(Block* B, const int BLOCKSIZE)
+    {
+    bool onLand = false;
+    float floorY = 560.0f;
 
-        totalTimeOfWeatherBossWantsToJumpOrNot = 2.0f;
-        TotalTimeofCheckingCollosionWithPaltformsOrNot = 5;
+    for (int i = 0; i < BLOCKSIZE; i++)
+    {
+        sf::FloatRect enemyBox = EnemySprite.getGlobalHitbox();
+        sf::FloatRect blockBox = B[i].getHitbox();
+        sf::FloatRect overlap;
 
-        totalTimeofSmallJumpAnimation = 5;
-        totalTimeofBigJumpAnimation = 2;
-        totalTimeofRoarAnimation = 3;
-        totalTimeofDeathAnimation = 5;
+        if (enemyBox.intersects(blockBox, overlap))
+        {
+            // Only resolve if it's clearly a vertical collision
+            if (overlap.width > overlap.height)
+            {
+                float enemyCenterY = enemyBox.top + enemyBox.height / 2.0f;
+                float blockCenterY = blockBox.top + blockBox.height / 2.0f;
+
+                if (enemyCenterY < blockCenterY) // Minion is above block
+                {
+                    y = blockBox.top - enemyBox.height / 2.0f;
+                    setVy(0);
+                    onLand = true;
+                }
+            }
+            //   so minion walks off edges instead of getting pushed back
+        }
+        EnemySprite.setPosition(x, y);
+    }
+
+    // Hard floor
+    float halfH = EnemySprite.getGlobalBounds().height / 2.0f;
+    if (y + halfH >= floorY)
+    {
+        y = floorY - halfH;
+        setVy(0);
+        onLand = true;
+        EnemySprite.setPosition(x, y);
+    }
+    return onLand;
+}
+
+    virtual void CreateEnemy(float x, float y) override
+    {
+        if (!MinionSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Gamakichi.png"))
+        {
+            std::cout << "Error loading Minion spritesheet\n";
+            exit(0);
+
+        }
+        sf::IntRect defaultArea(1411, 1519, 180 , 189);
+        EnemySprite.setTexture(MinionSpriteSheet) ;
+        EnemySprite.setTextureRect(defaultArea) ;
+        EnemySprite.setScale(0.2 , 0.2) ;
+        EnemySprite.setOrigin(EnemySprite.getLocalBounds().width/2.f, EnemySprite.getLocalBounds().height / 2.f);
+        EnemySprite.setHitbox(EnemySprite.getLocalBounds()); 
 
 
-        isBoss = true;
+        // Stand up frames
+        standUpFrames[0] = sf::IntRect(42, 1510, 202, 200);
+        standUpFrames[1] = sf::IntRect(340, 1217, 202, 240);
+        standUpFrames[2] = sf::IntRect(1675, 1248, 202, 213);
+
+        standUpAnim = new AnimationComponent;
+        standUpAnim->loadSprite(standUpFrames, totalStandUpFrames, 0.12f); 
+
+        moveFrames[0] = sf::IntRect(1402, 1206, 233, 256);
+        moveFrames[1] = sf::IntRect(1675, 1248, 202, 213);
+        moveFrames[2] = sf::IntRect(1917, 1235, 226, 222);
+
+        moveAnim = new AnimationComponent;
+        moveAnim->loadSprite(moveFrames, totalMoveFrames, 0.15f); 
+
+        sethealth(1);
+        healthOriginal = 1;
+        setPos(x, y);
+        setVy(-600.0f);
+        originalSpeed = 200.0f;
+        setCopyVy(-600.0f);
+
+        // i am gonnna randomize the x-direction here so the throwing thing feels natural
+        if(rand() % 2)
+        {
+            setVx(200.0f) ;
+            setCopyVx(200.0f);
+        }
+        else 
+        {
+            setVx(200.0f) ;
+            setCopyVx(200.0f);
+        }
+
+
+        isFlying = true; 
+        isInAir = true;
         isOnLand = false;
-        isFalling = false;
-        isJumping = false;
-        isRoaring = false;
-        isDying = false;
-
-        isSmallJump = false;
-        isLongJump = false;
-        smallJumpCount = 0;
+        hasStoodUp = false;
+        inAirTime.restart();
     }
-    ~Gamakichi()
-    {
-        if (bigJumpAnimation != nullptr)
-        {
-            delete[] bigJumpAnimation;
-        }
-        if (roarAnimation != nullptr)
-        {
-            delete[] roarAnimation;
-        }
-        if (deathAnimation != nullptr)
-        {
-            delete[] deathAnimation;
-        }
-    }
-    /////////////////////////////////
-    /////////////////////////////////
-    ////////////////////////////////
-    /// Required Functions by the boss
-
-    void CheckWeatherBossWantsToJumpOrNot()
-    {
-        
-    }
-
-    void UpdateY(const float dt)
-    {
-        y += Vy * dt;
-    }
-    bool CheckCollionsWithScreenY(const float width, const float height)
+    bool CheckCollionsWithScreenX(const float width, const float height)
     {
         bool flag = false;
+        float halfW = EnemySprite.getGlobalBounds().width / 2.f;
 
-        // // Ceiling hit — stop jump, start falling, don't lock velocity
-        // if (y < 60)
-        // {
-        //     y = 60;
-        //     isJumping  = false; // ← cancel jump so update loop falls into gravity
-        //     isLongJump  = false;
-        //     isSmallJump = false;
-        //     isFalling  = true;
-        //     setVy(abs(CopyVy)); // ← fall down immediately
-        //     flag = true;
-        //     EnemySprite.setPosition(x, y);
-        //     EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
-        //     return flag;
-        // }
-
-        if (y + Enemyheight + EnemyLegsSprite.getGlobalBounds().height > height)
+        if (x + halfW > width)
         {
-            y = height - Enemyheight - EnemyLegsSprite.getGlobalBounds().height;
-            setVy(0);
+            x = width - halfW;
+            setVx(-getVx());
+            flag = true;
+        }
+        else if (x - halfW < 0)
+        {
+            x = halfW;  
+            setVx(-getVx());
             flag = true;
         }
 
         EnemySprite.setPosition(x, y);
-        EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
         return flag;
     }
 
-    bool CheckCollosionsWithPlatforms(Block* b, const int SIZE)
+    virtual void update(const float dt, Block* B, const int BLOCKSIZE) override
     {
-        bool OnLand = false;
-        float floorY = 560.0f;
-
-        float totalHeight = Enemyheight + EnemyLegsSprite.getGlobalBounds().height;
-
-        for (int st = 0; st < SIZE; st++)
+        if (isInAir)
         {
-            sf::FloatRect legBox = EnemyLegsSprite.getGlobalHitbox();
-            sf::FloatRect blockBox = b[st].getHitbox();
-            sf::FloatRect overlap;
-
-            if (legBox.intersects(blockBox, overlap))
+            if(timeToReverseTheGravity.getElapsedTime().asSeconds() <= totalTimeAfterWhichToReverseTheGravity)
             {
-                if (overlap.width < overlap.height)
-                {
-                    if (legBox.left < blockBox.left)
-                    {
-                        x -= overlap.width;
-                        setVx(-abs(CopyVx));
-                    }
-                    else
-                    {
-                        x += overlap.width;
-                        setVx(abs(CopyVx));
-                    }
-                }
-                else
-                {
-                    if (legBox.top < blockBox.top)
-                    {
-                        y = blockBox.top - totalHeight;
-                        setVy(0);
-                        OnLand = true;
-                    }
-                    else
-                    {
-                        y += overlap.height; // Push down
-                        setVy(0);
-                        isJumping = false;
-                        isFalling = true;
-                    }
-                }
+                setVy(getVy() + 980.0f * dt); 
+                UpdateY(dt);
+                UpdateX(dt); 
+            }
+            else 
+            {
+                setVy(abs(getVy() + 980.0f * dt)); 
+                UpdateY(dt);
+                UpdateX(dt); 
+            }
 
-                EnemySprite.setPosition(x, y);
-                EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
+            EnemySprite.setPosition(x, y); 
+
+
+            // Check if it hit the ground
+            if (CheckVerticalOnlyCollision(B, BLOCKSIZE))
+            {
+                isInAir  = false;
+                isFlying = false;
+                isOnLand = true;    
+                setVx(0); 
+                setVy(0);
+            }
+        }
+        else if (isOnLand)
+        {
+            if (!hasStoodUp)
+            {
+                EnemySprite.setTextureRect(standUpAnim->getCurrentFrame());
+                standUpAnim->update(dt); 
+                
+                if (standUpAnim->getCurrentFrameIndex() == totalStandUpFrames - 1)
+                {
+                    hasStoodUp = true;
+                    setVx(-200.0f); // Start moving left only
+                }
+            }
+            else 
+            {
+                UpdateX(dt);
+                
+                EnemySprite.setTextureRect(moveAnim->getCurrentFrame());
+                moveAnim->update(dt);
+                
+                if (!CheckVerticalOnlyCollision(B, BLOCKSIZE)) 
+                {
+                    setVy(getVy() + 980.0f * dt);
+                    UpdateY(dt);
+                }
+            }
+            
+            EnemySprite.setPosition(x, y);  
+            CheckCollionsWithScreenX(600 , 560) ;
+        }
+        if(getVx() > 0)
+            {
+                EnemySprite.setScale({-0.2 , 0.2}) ;
+            }
+        else 
+        {
+                EnemySprite.setScale({0.2 , 0.2}) ;
+        } 
+    }
+    
+
+    virtual void draw(sf::RenderWindow& mywindow, bool debug) override
+    {
+        mywindow.draw(EnemySprite);
+
+        if (debug)
+            EnemySprite.drawHitbox(mywindow, sf::Color::Red);
+    }
+
+    virtual int getScore() override
+    {
+        return 50 + rand() % 51; 
+    }
+
+}; 
+
+
+
+
+
+class Gamakichi : public  Mogera
+{
+private:
+
+sf::Texture GamakichiSpriteSheet ; 
+
+AnimationComponent *eyeOpenAndCloseLeftAnimation ;
+AnimationComponent *eyeOpenAndCloseRightAnimation ; 
+AnimationComponent *MouthOpenandCloseAnimation ;
+
+sf::Sprite LeftEye ;
+sf::Sprite RightEye ; 
+
+
+
+sf::Clock EyeOpenAndCloseTimer ; 
+float totalTimeForEyeToOpenAndClose ;
+
+sf::Clock timeToOpenEnemyMouth ; 
+float totalTimeAfterWhichToOpenEnemyMouth ;
+bool isMouthOpen ;
+
+
+sf::Clock KeepMouthOpenTimer ; 
+int totatTimeTokeepTheMouthOpen = 2 ; 
+
+int totalCountOfBomber ; 
+sf::Clock  BombersSpawnTimer ; 
+int totalTimeAfterWhichToSpawnTheBombers ;
+Bomber  *bombers ;
+
+// It it just the size of array where all the created minions are stored
+int totalCountOfBombersBossCanSpawnAtaTime =  8 ; 
+
+public : 
+    Gamakichi()
+    {
+        eyeOpenAndCloseLeftAnimation  = new AnimationComponent ;
+        eyeOpenAndCloseRightAnimation  = new AnimationComponent ;
+        MouthOpenandCloseAnimation  = new AnimationComponent ;
+
+        EyeOpenAndCloseTimer.restart() ;
+        totalTimeForEyeToOpenAndClose = 3 ;
+
+        timeToOpenEnemyMouth.restart() ;
+        totalTimeAfterWhichToOpenEnemyMouth = 8 ; 
+        isMouthOpen = false ;
+
+        totalTimeAfterWhichToSpawnTheBombers = 3 ;
+    }
+    ~Gamakichi()
+    {
+        if(eyeOpenAndCloseLeftAnimation != nullptr)
+        {
+            delete eyeOpenAndCloseLeftAnimation ;
+            eyeOpenAndCloseLeftAnimation = nullptr ; 
+
+        }
+        if(eyeOpenAndCloseRightAnimation  != nullptr)
+        {
+            delete eyeOpenAndCloseRightAnimation ; 
+            eyeOpenAndCloseRightAnimation  = nullptr ; 
+        }
+        if(MouthOpenandCloseAnimation != nullptr)
+        {
+            delete MouthOpenandCloseAnimation  ; 
+            MouthOpenandCloseAnimation = nullptr ;
+        }
+    }
+    /////////////////////////////////
+    /////////////////////////////////
+    /////////////////////////////////
+
+    virtual void CreateEnemy(float x, float y)
+    {
+        if(!GamakichiSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Gamakichi.png"))
+        {
+            std::cout << "Error in Loading the SpriteSheet for Gamakichi\n" ;
+            exit(0) ; 
+        }
+        GamakichiSpriteSheet.setSmooth(true) ; 
+        LeftEye.setTexture(GamakichiSpriteSheet) ;
+        RightEye.setTexture(GamakichiSpriteSheet)  ;
+
+        IntRect area(128 , 10 , 1090 , 613);
+        EnemySprite.setScale({0.25 ,  0.25});
+        EnemySprite.setTextureRect(area);
+        EnemySprite.setTexture(GamakichiSpriteSheet);
+        EnemySprite.setPosition(x, y);
+        EnemySprite.setHitbox(FloatRect(area));
+        this->x  = x  ;
+        this->y = y ;
+        
+        sf::IntRect EyeAreaLeft[3] =  {{907 , 732 , 130 , 190} ,{1563 , 733 , 130 , 190} , {2218 , 733 , 130 , 190}} ;
+        sf::IntRect EyeAreaRight[3] =  {{1235 , 733 , 130 , 190} ,{1892 , 733 , 130 , 190} , {2546 , 732 , 130 , 190}} ;
+
+        eyeOpenAndCloseLeftAnimation->loadSprite(EyeAreaLeft , 3 , 0.5) ;
+        eyeOpenAndCloseRightAnimation->loadSprite(EyeAreaRight , 3 , 0.5) ;
+
+        LeftEye.setTextureRect(EyeAreaLeft[0]); 
+        LeftEye.setScale({0.25 ,  0.25}) ;
+        RightEye.setScale({0.25 ,  0.25}) ; 
+        RightEye.setTextureRect(EyeAreaRight[0]) ;
+
+        LeftEye.setPosition({230 , 435});  
+        RightEye.setPosition({310 , 435}) ; 
+
+        bombers = new Bomber[totalCountOfBombersBossCanSpawnAtaTime]; 
+        totalCountOfBomber = 0;    
+        BombersSpawnTimer.restart();
+        
+        
+    }
+    virtual void update(sf::RenderWindow& mywindow, float dt, Block* B, const int BLOCKSIZE)
+    {
+        if(EyeOpenAndCloseTimer.getElapsedTime().asSeconds() >= totalTimeForEyeToOpenAndClose && !isMouthOpen)
+        {
+            LeftEye.setTextureRect(eyeOpenAndCloseLeftAnimation->getCurrentFrame()) ;
+            RightEye.setTextureRect(eyeOpenAndCloseRightAnimation->getCurrentFrame()) ; 
+            eyeOpenAndCloseLeftAnimation->update(dt) ; 
+            eyeOpenAndCloseRightAnimation->update(dt) ; 
+        }
+        else if(isMouthOpen)
+        {
+            if(KeepMouthOpenTimer.getElapsedTime().asSeconds() <= totatTimeTokeepTheMouthOpen)
+            {
+                eyeOpenAndCloseLeftAnimation->setCurrentFrameIndex(2) ;
+                eyeOpenAndCloseRightAnimation->setCurrentFrameIndex(2) ;
+                LeftEye.setTextureRect(eyeOpenAndCloseLeftAnimation->getCurrentFrame()) ;
+                RightEye.setTextureRect(eyeOpenAndCloseRightAnimation->getCurrentFrame()) ;
+                EnemySprite.setTextureRect({1444 , 17 , 1084 , 621}) ; 
+            }
+            else {
+                isMouthOpen = false ; 
+                timeToOpenEnemyMouth.restart() ;
+                EnemySprite.setTextureRect({128 , 10 , 1090 , 613}); 
             }
         }
 
-        // Main floor bounds check
-        if (y + totalHeight >= floorY)
+        if(!isMouthOpen && timeToOpenEnemyMouth.getElapsedTime().asSeconds() >= totalTimeAfterWhichToOpenEnemyMouth)
         {
-            y = floorY - totalHeight;
-            setVy(0);
-            OnLand = true;
+            isMouthOpen = true ;
+            KeepMouthOpenTimer.restart() ; 
+            // Keep Mouth open Timer 
         }
 
-        EnemySprite.setPosition(x, y);
-        EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
+        for(int st =  0 ; st <= BLOCKSIZE - 1  ; st++)
+        {
+            B[st].draw(mywindow , true) ;
+        }
+        ////////////////
+        // all the freaking updates relate with bombers
 
-        return OnLand;
+        if(BombersSpawnTimer.getElapsedTime().asSeconds() >= totalTimeAfterWhichToSpawnTheBombers)
+        {
+            if (totalCountOfBomber < totalCountOfBombersBossCanSpawnAtaTime)
+            {
+                bombers[totalCountOfBomber].CreateEnemy(x + (rand() % 300),  y );
+                bombers[totalCountOfBomber].timeToReverseTheGravity.restart() ; // i saad yes saad did this so they can fly else every spawned will go down since timers is up when all are created  at  time 
+                totalCountOfBomber++;
+            }
+
+        totalTimeAfterWhichToSpawnTheBombers = 3 + (rand() % 4); // making it feel more natural 
+        BombersSpawnTimer.restart();
+        }
+
+        for (int st = 0; st <= totalCountOfBomber -  1; st++)
+        {
+            bombers[st].update(dt, B, BLOCKSIZE);
+        }
+
+
+    /////////////////////
+    /// Checking the end condition of minios 
+    if(totalCountOfBomber >= totalCountOfBombersBossCanSpawnAtaTime)
+    {
+        if(bombers != nullptr)
+        {
+            delete [] bombers; 
+            bombers = nullptr ;
+            bombers = new Bomber[totalCountOfBombersBossCanSpawnAtaTime]  ; 
+            totalCountOfBomber = 0 ; 
+        }
     }
 
+    }
+    virtual void draw(sf::RenderWindow& mywindow, bool debug)
+    {
+        mywindow.draw(EnemySprite) ;
+        mywindow.draw(LeftEye) ;
+        mywindow.draw(RightEye); 
+
+        for(int st = 0; st < totalCountOfBomber ; st++)
+        {
+            bombers[st].draw(mywindow, debug);
+        }
 
 
-
-
-    /////////////////////////////////
-    /////////////////////////////////
-    /////////////////////////////////
-
-    virtual void CreateEnemy(float x, float y) {}
-    virtual void update(sf::RenderWindow& mywindow, float dt, Block* B, const int BLOCKSIZE) {}
-    virtual void draw(sf::RenderWindow& mywindow, bool debug) {}
+        if(debug)
+        {
+            EnemySprite.drawHitbox(mywindow , sf::Color::Red) ; 
+        }
+    }
     virtual int getScore()
     {
         return 10000;
