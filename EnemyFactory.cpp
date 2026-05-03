@@ -319,6 +319,7 @@ void Mogera::update(sf::RenderWindow& mywindow, const float dt, Block* B, const 
     // After Platform it has go up sooo
    }
 
+   
 
 
 

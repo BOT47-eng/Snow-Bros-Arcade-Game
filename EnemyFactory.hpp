@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <cstring>
+#include <cmath>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Hitbox.hpp"
@@ -1413,28 +1414,24 @@ public :
 class Minions : public Botom
 {
 protected:
-
-    bool isInAir  ;
-    bool isOnLand ;
-
+    bool isInAir;
+    bool isOnLand;
+    bool hasStoodUp; // New flag to track if the stand-up animation is finished
 
     sf::Clock inAirTime;
     float totalInAirTime;
 
     AnimationComponent* standUpAnim;
     AnimationComponent* moveAnim;
-
     sf::Texture MinionSpriteSheet;
 
-    sf::IntRect standUpFrames[4];
+    sf::IntRect standUpFrames[3];
     int totalStandUpFrames;
-    // Move frames
+    
     sf::IntRect moveFrames[3];
     int totalMoveFrames;
 
-    
 public:
-
     Minions() : Botom()
     {
         totalInAirTime      = 5.0f;
@@ -1443,6 +1440,7 @@ public:
         totalStandUpFrames  = 3;
         totalMoveFrames     = 3;
         isBoss              = false;
+        hasStoodUp          = false; // Initialize to false
     }
 
     ~Minions()
@@ -1461,73 +1459,107 @@ public:
 
     virtual void CreateEnemy(float x, float y) override
     {
+        // 1. Texture Fix: Load directly into the class member
         if (!MinionSpriteSheet.loadFromFile("Resources/SnowBrosAssets/Images/Mogera.png"))
         {
             std::cout << "Error loading Minion spritesheet\n";
             exit(0);
         }
 
-        sf::IntRect defaultArea(1796, 806, 167 , 161);  
-        sf::Texture defaultTex;
-        defaultTex.loadFromFile("Resources/SnowBrosAssets/Images/Mogera.png", defaultArea);
+        sf::IntRect defaultArea(1796, 806, 167 , 161);
+        sf::Texture defaultTex = MinionSpriteSheet;
+        EnemySprite.setTextureRect(defaultArea) ;
         setEnemyTexture(defaultTex);
         EnemySprite.setScale(0.2f, 0.2f);
-        setEnemyHitBoxSprite();
+        setEnemyHitBoxSprite(); 
 
-      
-        standUpFrames[0] = sf::IntRect(1986,   984, 141, 162);
-        standUpFrames[1] = sf::IntRect(1791,  979, 141, 162);
-        standUpFrames[2] = sf::IntRect(2318  , 811, 147, 162);
+        // Stand up frames
+        standUpFrames[0] = sf::IntRect(1986, 984, 141, 162);
+        standUpFrames[1] = sf::IntRect(1791, 979, 141, 162);
+        standUpFrames[2] = sf::IntRect(2318, 811, 147, 162);
 
         standUpAnim = new AnimationComponent;
-        standUpAnim->loadSprite(standUpFrames, totalStandUpFrames, 0.12f, false); // false = play once
+        standUpAnim->loadSprite(standUpFrames, totalStandUpFrames, 0.12f); 
 
-
-        moveFrames[0] = sf::IntRect(1799,   810, 161, 162);
-        moveFrames[1] = sf::IntRect(1973,  806, 161, 162);
+        // Move frames
+        moveFrames[0] = sf::IntRect(1799, 810, 161, 162);
+        moveFrames[1] = sf::IntRect(1973, 806, 161, 162);
         moveFrames[2] = sf::IntRect(2145, 765, 161, 177);
 
         moveAnim = new AnimationComponent;
-        moveAnim->loadSprite(moveFrames, totalMoveFrames, 0.15f, true); // true = loop
+        moveAnim->loadSprite(moveFrames, totalMoveFrames, 0.15f); 
 
-    
-
+        // Physics Setup
         sethealth(1);
         healthOriginal = 1;
         setPos(x, y);
+        setVx(-200.0f); // Thrown to the left initially
         setVy(200.0f);
-        originalSpeed = 200.0f;
-        setCopyVx(200.0f);
+        originalSpeed = -200.0f;
+        setCopyVx(-200.0f);
         setCopyVy(200.0f);
 
-
-        // Initially in Air
-        isFlying = true ; 
-        isInAir = true ;
-        isOnLand = false ;
+        // State Flags
+        isFlying = true; 
+        isInAir = true;
+        isOnLand = false;
+        hasStoodUp = false;
         inAirTime.restart();
     }
 
     virtual void update(const float dt, Block* B, const int BLOCKSIZE) override
     {
-        if(isInAir)
+        if (isInAir)
         {
-            UpdateY(dt) ;
-            UpdateX(dt) ;
-            if(CheckCollosionsWithPlatforms(B , BLOCKSIZE) == true)
+            // Apply gravity (standardized for smoother arcs)
+            setVy(getVy() + 980.0f * dt); 
+            UpdateY(dt);
+            UpdateX(dt); // Keeps moving horizontally while being thrown
+
+            EnemySprite.setPosition(x, y); 
+
+            // Check if it hit the ground
+            if (CheckCollosionsWithPlatforms(B, BLOCKSIZE))
             {
-                isInAir  = false ;
-                isFlying =  false ;
-                isOnLand = true ;    
+                isInAir  = false;
+                isFlying = false;
+                isOnLand = true;    
+                setVx(0); // Stop moving forward while doing the stand-up animation
+                setVy(0);
             }
         }
-        else if(isOnLand && (CheckCollosionsWithPlatforms(B , BLOCKSIZE) || CheckCollionsWithScreenY(600 , 560))) 
+        else if (isOnLand)
         {
-
-        }
-        else 
-        {
+            if (!hasStoodUp)
+            {
+                // Phase 1: Standing up (Not moving X)
+                EnemySprite.setTextureRect(standUpAnim->getCurrentFrame());
+                standUpAnim->update(dt); 
+                
+                // If it reaches the final frame of the stand up animation, lock it and start moving
+                if (standUpAnim->getCurrentFrameIndex() == totalStandUpFrames - 1)
+                {
+                    hasStoodUp = true;
+                    setVx(-200.0f); // Start moving left only
+                }
+            }
+            else 
+            {
+                // Phase 2: Moving in one direction
+                UpdateX(dt); // Actually apply the X velocity so the sprite moves
+                
+                EnemySprite.setTextureRect(moveAnim->getCurrentFrame());
+                moveAnim->update(dt);
+                
+                // Optional: Ensure it doesn't fall through the floor if it walks off a ledge
+                if (!CheckCollosionsWithPlatforms(B, BLOCKSIZE)) 
+                {
+                    setVy(getVy() + 980.0f * dt); // Re-apply gravity if falling
+                    UpdateY(dt);
+                }
+            }
             
+            EnemySprite.setPosition(x, y); 
         }
     }
 
@@ -1541,9 +1573,8 @@ public:
 
     virtual int getScore() override
     {
-        return 50 + rand() % 51; // minions worth less than regular enemies
+        return 50 + rand() % 51; 
     }
-
 };
 
 
@@ -1697,22 +1728,6 @@ public :
     bool CheckCollionsWithScreenYDOWN(const float width, const float height)
     {
         bool flag = false;
-
-        // // Ceiling hit — stop jump, start falling, don't lock velocity
-        // if (y < 60)
-        // {
-        //     y = 60;
-        //     isJumping  = false; // ← cancel jump so update loop falls into gravity
-        //     isLongJump  = false;
-        //     isSmallJump = false;
-        //     isFalling  = true;
-        //     setVy(abs(CopyVy)); // ← fall down immediately
-        //     flag = true;
-        //     EnemySprite.setPosition(x, y);
-        //     EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
-        //     return flag;
-        // }
-
         if (y + Enemyheight + EnemyLegsSprite.getGlobalBounds().height > height)
         {
             y = height - Enemyheight - EnemyLegsSprite.getGlobalBounds().height;
@@ -1764,7 +1779,7 @@ public :
                     else
                     {
                         y += overlap.height; // Push down
-                        setVy(0);
+                        setVy(abs(CopyVy));
                         isJumping = false ; 
                         isFalling = true ;
                     }
