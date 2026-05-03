@@ -101,6 +101,26 @@ Enemy* LevelManager::createEnemy(const string& type, float x, float y)
 		enemy = new Botom;
 		enemy->CreateEnemy(x, y);
 	}
+	else if (type == "Tornado")
+	{
+		enemy = new Tornado;
+		enemy->CreateEnemy(x, y);
+	}
+	else if (type == "Tornado")
+	{
+		enemy = new Tornado;
+		enemy->CreateEnemy(x, y);
+	}
+	else if (type == "Mogera")
+	{
+		enemy = new Mogera;
+		enemy->CreateEnemy(x, y);
+	}
+	else if (type == "Gamakichi")
+	{
+		enemy = new Gamakichi;
+		enemy->CreateEnemy(x, y);
+	}
 	return enemy;
 }
 

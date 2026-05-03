@@ -1422,7 +1422,7 @@ public :
 };
 //#endif
 
-class MOGUERABOSS :  public  Botom
+class Mogera :  public  Botom
 {
 private: 
 
@@ -1470,7 +1470,7 @@ private:
 
 public : 
 
-    MOGUERABOSS() : Botom()
+    Mogera() : Botom()
     {
         Enemyheight = 0 ;
         xFactorShiftForSpriteToAlignWithEachOther  = 0; 
@@ -1498,7 +1498,7 @@ public :
         totalTimeofDeathAnimation = 5 ;
 
 
-    
+        isBoss = true;
         isOnLand = false ; 
         isFalling  = false ;
         isJumping = false;
@@ -1509,7 +1509,7 @@ public :
         isLongJump = false ; 
         smallJumpCount  =  0 ;
     }
-    ~MOGUERABOSS()
+    ~Mogera()
     {
         if(smallJumpAnimation != nullptr)
         {
@@ -1647,7 +1647,242 @@ public :
     virtual void CreateEnemy(float x , float y)  ;
     virtual void update(sf::RenderWindow &mywindow , float dt, Block* B, const int BLOCKSIZE)  ;
     virtual void draw(sf::RenderWindow &mywindow, bool debug) ;
-    virtual int getScore() ;
+    virtual int getScore()
+    {
+        return 5000;
+    }
+
+};
+
+class Gamakichi : public  Botom
+{
+private:
+
+    float xFactorShiftForSpriteToAlignWithEachOther;
+    float Enemyheight;
+
+    int totalMinionsSpawn;
+
+    sf::Texture SpriteSheetofBoss;
+    AnimationComponent* smallJumpAnimation;
+    AnimationComponent* bigJumpAnimation;
+    AnimationComponent* roarAnimation;
+    AnimationComponent* deathAnimation;
+    HitboxSprite EnemyLegsSprite;
+
+
+    sf::Clock animationTimeofSmallJump;
+    sf::Clock animationTimeofBigJump;
+    sf::Clock animationTimeofRoar;
+    sf::Clock animationTimeofDeath;
+
+    sf::Clock CheckCollosionWithPlatformsOrNot;
+    int TotalTimeofCheckingCollosionWithPaltformsOrNot;
+
+    float totalTimeofSmallJumpAnimation;
+    float totalTimeofBigJumpAnimation;
+    float totalTimeofRoarAnimation;
+    float totalTimeofDeathAnimation;
+
+
+    sf::Clock timeToJumpTimer;
+
+    float totalTimeOfWeatherBossWantsToJumpOrNot;
+
+    int smallJumpCount;
+    bool isSmallJump;
+    bool isLongJump;
+
+    bool isOnLand;
+    bool isFalling;
+    bool isJumping;
+    bool isRoaring;
+    bool isDying; // Lol
+
+
+public:
+
+    Gamakichi() : Botom()
+    {
+        Enemyheight = 0;
+        xFactorShiftForSpriteToAlignWithEachOther = 0;
+
+        health = 10;
+        totalMinionsSpawn = 0;
+        smallJumpAnimation = nullptr;
+        bigJumpAnimation = nullptr;
+        roarAnimation = nullptr;
+        deathAnimation = nullptr;
+
+        animationTimeofBigJump.restart();
+        animationTimeofSmallJump.restart();
+        animationTimeofRoar.restart();
+        animationTimeofDeath.restart();
+        timeToJumpTimer.restart();
+        CheckCollosionWithPlatformsOrNot.restart();
+
+        totalTimeOfWeatherBossWantsToJumpOrNot = 2.0f;
+        TotalTimeofCheckingCollosionWithPaltformsOrNot = 5;
+
+        totalTimeofSmallJumpAnimation = 5;
+        totalTimeofBigJumpAnimation = 3;
+        totalTimeofRoarAnimation = 3;
+        totalTimeofDeathAnimation = 5;
+
+
+        isBoss = true;
+        isOnLand = false;
+        isFalling = false;
+        isJumping = false;
+        isRoaring = false;
+        isDying = false;
+
+        isSmallJump = false;
+        isLongJump = false;
+        smallJumpCount = 0;
+    }
+    ~Gamakichi()
+    {
+        if (smallJumpAnimation != nullptr)
+        {
+            delete[] smallJumpAnimation;
+        }
+        if (bigJumpAnimation != nullptr)
+        {
+            delete[] bigJumpAnimation;
+        }
+        if (roarAnimation != nullptr)
+        {
+            delete[] roarAnimation;
+        }
+        if (deathAnimation != nullptr)
+        {
+            delete[] deathAnimation;
+        }
+    }
+    /////////////////////////////////
+    /////////////////////////////////
+    ////////////////////////////////
+    /// Required Functions by the boss
+
+    void CheckWeatherBossWantsToJumpOrNot()
+    {
+    }
+
+    void UpdateY(const float dt)
+    {
+        y += Vy * dt;
+    }
+    bool CheckCollionsWithScreenY(const float width, const float height)
+    {
+        bool flag = false;
+
+        // // Ceiling hit — stop jump, start falling, don't lock velocity
+        // if (y < 60)
+        // {
+        //     y = 60;
+        //     isJumping  = false; // ← cancel jump so update loop falls into gravity
+        //     isLongJump  = false;
+        //     isSmallJump = false;
+        //     isFalling  = true;
+        //     setVy(abs(CopyVy)); // ← fall down immediately
+        //     flag = true;
+        //     EnemySprite.setPosition(x, y);
+        //     EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
+        //     return flag;
+        // }
+
+        if (y + Enemyheight + EnemyLegsSprite.getGlobalBounds().height > height)
+        {
+            y = height - Enemyheight - EnemyLegsSprite.getGlobalBounds().height;
+            setVy(0);
+            flag = true;
+        }
+
+        EnemySprite.setPosition(x, y);
+        EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
+        return flag;
+    }
+
+    bool CheckCollosionsWithPlatforms(Block* b, const int SIZE)
+    {
+        bool OnLand = false;
+        float floorY = 560.0f;
+
+        float totalHeight = Enemyheight + EnemyLegsSprite.getGlobalBounds().height;
+
+        for (int st = 0; st < SIZE; st++)
+        {
+            sf::FloatRect legBox = EnemyLegsSprite.getGlobalHitbox();
+            sf::FloatRect blockBox = b[st].getHitbox();
+            sf::FloatRect overlap;
+
+            if (legBox.intersects(blockBox, overlap))
+            {
+                if (overlap.width < overlap.height)
+                {
+                    if (legBox.left < blockBox.left)
+                    {
+                        x -= overlap.width;
+                        setVx(-abs(CopyVx));
+                    }
+                    else
+                    {
+                        x += overlap.width;
+                        setVx(abs(CopyVx));
+                    }
+                }
+                else
+                {
+                    if (legBox.top < blockBox.top)
+                    {
+                        y = blockBox.top - totalHeight;
+                        setVy(0);
+                        OnLand = true;
+                    }
+                    else
+                    {
+                        y += overlap.height; // Push down
+                        setVy(0);
+                        isJumping = false;
+                        isFalling = true;
+                    }
+                }
+
+                EnemySprite.setPosition(x, y);
+                EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
+            }
+        }
+
+        // Main floor bounds check
+        if (y + totalHeight >= floorY)
+        {
+            y = floorY - totalHeight;
+            setVy(0);
+            OnLand = true;
+        }
+
+        EnemySprite.setPosition(x, y);
+        EnemyLegsSprite.setPosition(x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight);
+
+        return OnLand;
+    }
+
+
+
+
+
+    /////////////////////////////////
+    /////////////////////////////////
+    /////////////////////////////////
+
+    virtual void CreateEnemy(float x, float y);
+    virtual void update(sf::RenderWindow& mywindow, float dt, Block* B, const int BLOCKSIZE);
+    virtual void draw(sf::RenderWindow& mywindow, bool debug);
+    virtual int getScore()
+    {
+        return 10000;
+    }
 
 };
 

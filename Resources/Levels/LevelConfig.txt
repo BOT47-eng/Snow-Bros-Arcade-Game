@@ -48,10 +48,9 @@ Botom 400 200
 200 160 200 16
 4
 1
-4
+3
 FlyingFoogaFoog 150 200
-FlyingFoogaFoog 300 180
-FlyingFoogaFoog 450 150
+Tornado 150 100
 Botom 300 100
 11
 -200 560 1000 100

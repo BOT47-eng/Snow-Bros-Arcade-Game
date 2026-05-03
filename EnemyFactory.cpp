@@ -214,7 +214,7 @@ void Enemy::breakOutOfSnowball()
     animSnowballBreakout.reset();
 }
 
-void MOGUERABOSS::CreateEnemy(float x, float y)
+void Mogera::CreateEnemy(float x, float y)
 {
     ////////////////////////////////////////
     // Loading and setting all the textures
@@ -275,7 +275,7 @@ void MOGUERABOSS::CreateEnemy(float x, float y)
     setCopyVy(400);
 }
 
-void MOGUERABOSS::update(sf::RenderWindow& mywindow, const float dt, Block* B, const int BLOCKSIZE)
+void Mogera::update(sf::RenderWindow& mywindow, const float dt, Block* B, const int BLOCKSIZE)
 {
     UpdateY(dt);
 
@@ -290,9 +290,7 @@ void MOGUERABOSS::update(sf::RenderWindow& mywindow, const float dt, Block* B, c
     EnemyLegsSprite.setPosition({ x - xFactorShiftForSpriteToAlignWithEachOther, y + Enemyheight });
 }
 
-int  MOGUERABOSS::getScore() { return 0; }
-
-void MOGUERABOSS::draw(sf::RenderWindow& mywindow, bool debug)
+void Mogera::draw(sf::RenderWindow& mywindow, bool debug)
 {
     mywindow.draw(EnemySprite);
     mywindow.draw(EnemyLegsSprite);
